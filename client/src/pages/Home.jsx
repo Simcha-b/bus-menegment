@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
+import BasicDatePicker from "../componenets/BasicDatePicker";
 
 function Home() {
   const [formData, setFormData] = useState({
     company_name: "",
     order_name: "",
-    travel_details: ""
+    travel_details: "",
+    date: "",
   });
 
   function handleChange(e) {
@@ -58,6 +60,13 @@ function Home() {
         value={formData.order_name}
         onChange={(e) => handleChange(e)}
       />
+      <BasicDatePicker
+        name="date"
+        label="תאריך הנסיעה"
+        value={formData.date}
+        onChange={(e) => handleChange(e)}
+       />
+
       <TextField
         name="travel_details"
         label="פירוט הנסיעה"
