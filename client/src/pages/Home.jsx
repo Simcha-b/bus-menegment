@@ -3,24 +3,28 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import BasicDatePicker from "../componenets/BasicDatePicker";
-
+import BasicTimePicker from "../componenets/BasicTimePicker";
 function Home() {
   const [formData, setFormData] = useState({
     company_name: "",
     order_name: "",
     travel_details: "",
     date: "",
+    bus_number: "",
+    start_time: "",
+    end_time: "",
   });
 
+  //handleChange
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   }
-
+  //handleSubmit
   async function handleSubmit(e) {
     console.log("formData", formData);
     e.preventDefault();
-    
+
     const res = await fetch("http://localhost:3001/insert", {
       method: "POST",
       headers: {
@@ -28,8 +32,16 @@ function Home() {
       },
       body: JSON.stringify(formData),
     });
-    
-    setFormData({ company_name: "", order_name: "", travel_details: "" });
+
+    setFormData({
+      company_name: "",
+      order_name: "",
+      travel_details: "",
+      // date: "",
+      bus_number: "",
+      // start_time: null,
+      // end_time: null,
+    });
     const data = await res.json();
     console.log(data);
   }
@@ -40,7 +52,7 @@ function Home() {
         handleSubmit(e);
       }}
       component="form"
-      sx={{ "& > :not(style)": { m: 1, width: "25ch" } }}
+      sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
       noValidate
       autoComplete="off"
     >
@@ -63,10 +75,21 @@ function Home() {
       <BasicDatePicker
         name="date"
         label="תאריך הנסיעה"
-        value={formData.date}
+        setFormData={setFormData}
+        formData={formData}
+      />
+      <TextField
+        name="bus_number"
+        label="כמות אוטובוסים"
+        variant="outlined"
+        type="number"
+        slotProps={{
+          inputLabel: {
+            shrink: true,
+          },
+        }}
         onChange={(e) => handleChange(e)}
-       />
-
+      />
       <TextField
         name="travel_details"
         label="פירוט הנסיעה"
@@ -74,6 +97,21 @@ function Home() {
         value={formData.travel_details}
         onChange={(e) => handleChange(e)}
       />
+
+      <BasicTimePicker
+        name="start_time"
+        label={"start_time"}
+        setFormData={setFormData}
+        formData={formData}
+      />
+
+      <BasicTimePicker
+        name="end_time"
+        label={"end_time"}
+        setFormData={setFormData}
+        formData={formData}
+      />
+
       <Button variant="contained" type="submit">
         שלח
       </Button>

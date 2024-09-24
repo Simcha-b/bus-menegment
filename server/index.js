@@ -1,67 +1,61 @@
-// Get the client
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import bodyParser from "body-parser";
 
-const app = express();
 
-app.use(cors());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
-app.listen(3001, () => {
-  console.log("server is running on port 3001");
-});
 
-const connection = require("./db.js");
+import pool from "./db/connection.js";
 
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the application." });
 });
 
+app.get("/customers", (req, res) => {
+  pool.query("SELECT * FROM Customers", (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(result);
+  });
+});
+
 //יצירת לקוח חדש
 app.post("/nuwCustomer", (req, res) => {
   const { name, contact_person, phone, email } = req.body;
   const query = "INSERT INTO Customers (name, phone, email) VALUES (?, ?, ?)";
-  connection.query(
-    query,
-    [name, contact_person, phone, email],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ customer_id: result.insertId });
+  pool.query(query, [name, contact_person, phone, email], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-  );
-});
-
-//קבלת כל הלקוחות
-app.get("/customers", (req, res) => {
-  connection.query("SELECT * FROM customers", (error, results) => {
-    if (error) {
-      console.log(error);
-      res.json({
-        status: false,
-        message: "There are some error with query",
-      });
-    } else {
-      res.json({
-        status: true,
-        data: results,
-        message: "User registered successfully",
-      });
-    }
+    res.json({ customer_id: result.insertId });
   });
 });
 
 //הדגמה להכנסת נתונים למסד
 app.post("/insert", (req, res) => {
-  const { company_name, order_name, travel_details, date } = req.body;
-  console.log(company_name, order_name, travel_details);
+  const {
+    company_name,
+    order_name,
+    date,
+    travel_details,
+    bus_number,
+    start_time,
+    end_time,
+  } = req.body;
+  console.log(company_name, order_name, travel_details, date);
 
-  connection.query(
-    "INSERT INTO orders ( company_name, order_name, travel_details) VALUES ( ?, ?, ? ,?)",
-    [company_name, order_name, travel_details, date],
+  pool.query(
+    "INSERT INTO orders ( company_name, order_name, date, travel_details, bus_number, start_time, end_time) VALUES ( ?, ?, ? ,?, ?,?,?)",
+    [
+      company_name,
+      order_name,
+      date,
+      travel_details,
+      bus_number,
+      start_time,
+      end_time,
+    ],
     (error, results) => {
       if (error) {
         console.log(error);
