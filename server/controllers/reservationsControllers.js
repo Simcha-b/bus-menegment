@@ -1,11 +1,15 @@
-import reservationsQueries from "../db/queries/reservationsQueries";
+import reservationsQueries from "../db/queries/reservationsQueries.js";
 
 async function getReservations(req, res) {
   try {
     const reservations = await reservationsQueries.getAllReservations();
     res.json(reservations);
   } catch (error) {
-    res.status(500).send("Error retrieving reservations");
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving reservations",
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -16,12 +20,20 @@ async function getReservationById(req, res) {
       reservationId
     );
     if (!reservation) {
-      res.status(404).send("Reservation not found");
+      res.status(404).json({
+        success: false,
+        message: "Reservation not found",
+        error: error.message || "Internal Server Error",
+      });
     } else {
       res.json(reservation);
     }
   } catch (error) {
-    res.status(500).send("Error retrieving reservation");
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving reservation",
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -33,7 +45,11 @@ async function insertReservation(req, res) {
     );
     res.status(201).json(newReservation);
   } catch (error) {
-    res.status(500).send("Error inserting reservation");
+    res.status(500).json({
+      success: false,
+      message: "Error inserting reservation",
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -46,12 +62,20 @@ async function updateReservation(req, res) {
       updates
     );
     if (!updatedReservation) {
-      res.status(404).send("Reservation not found");
+      res.status(404).json({
+        success: false,
+        message: "Reservation not found",
+        error: error.message || "Internal Server Error",
+      });
     } else {
       res.json(updatedReservation);
     }
   } catch (error) {
-    res.status(500).send("Error updating reservation");
+    res.status(500).json({
+      success: false,
+      message: "Error updating reservation",
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -62,12 +86,20 @@ async function deleteReservation(req, res) {
       reservationId
     );
     if (!deletedReservation) {
-      res.status(404).send("Reservation not found");
+      res.status(404).json({
+        success: false,
+        message: "Reservation not found",
+        error: error.message || "Internal Server Error",
+      });
     } else {
       res.json(deletedReservation);
     }
   } catch (error) {
-    res.status(500).send("Error deleting reservation");
+    res.status(500).json({
+      success: false,
+      message: "Error deleting reservation",
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
