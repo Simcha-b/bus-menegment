@@ -36,6 +36,34 @@ async function getReservationById(req, res) {
     });
   }
 }
+async function getReservationsByCustomerId(req, res) {
+  const customerId = req.params.id;
+  try {
+    const reservations = await reservationsQueries.getReservationsByCustomerId(
+      customerId
+    );
+    res.json(reservations);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving reservations",
+      error: error.message || "Internal Server Error",
+    });
+  }
+}
+
+async function getFutureReservations(req, res) {
+  try {
+    const reservations = await reservationsQueries.getFutureReservations();
+    res.json(reservations);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving reservations",
+      error: error.message || "Internal Server Error",
+    });
+  }
+}
 
 async function insertReservation(req, res) {
   const reservation = req.body;
@@ -106,6 +134,8 @@ async function deleteReservation(req, res) {
 export {
   getReservations,
   getReservationById,
+  getReservationsByCustomerId,
+  getFutureReservations,
   insertReservation,
   updateReservation,
   deleteReservation,
