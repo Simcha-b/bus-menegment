@@ -2,8 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getReservations } from "../services/reservationsService";
-import Table from "../componenets/Teble";
-import AdvancedHebrewTable from "../componenets/AdvancedHebrewTable";
+// import Table from "../componenets/Teble";
+import AdvancedHebrewTable from "../components/AdvancedHebrewTable";
 function Reservations() {
   const { isPending, error, data } = useQuery({
     queryKey: ["repoData"],
@@ -19,9 +19,9 @@ function Reservations() {
   return (
     <>
       <h1>Reservations</h1>
-      <Link to="/newReservation">הזמנה חדשה</Link>
-      {/* <AdvancedHebrewTable data={data} /> */}
-      <Table data={data} />
+      <Link to="/reservations/new">הזמנה חדשה</Link>
+      <AdvancedHebrewTable data={data} />
+      {/* <Table data={data} /> */}
     </>
   );
 }
