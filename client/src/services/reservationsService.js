@@ -5,3 +5,12 @@ export const getReservations = async () => {
   return data;
 };
 
+export const sendNewReservation = async (body) => {
+  const response = await fetch("http://localhost:3001/api/reservations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+};
