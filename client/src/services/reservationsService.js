@@ -13,4 +13,7 @@ export const sendNewReservation = async (body) => {
     },
     body: JSON.stringify(body),
   });
+  const data = await response.json();
+  console.log(data);
+  return data;
 };
