@@ -2,7 +2,7 @@ import pool from "../connection.js";
 
 //select
 async function getAllCustomers() {
-  const [rows] = await pool.query("SELECT * FROM Customers");
+  const [rows] = await pool.query("SELECT * FROM customers");
   return rows;
 }
 

@@ -9,6 +9,7 @@ import {
   updateReservation,
   deleteReservation,
 } from "../controllers/reservationsControllers.js";
+// import addNewReservation from "../controllers/newReservation.js";
 
 // router.get("/", getReservations);
 router.get("/", getFutureReservations);

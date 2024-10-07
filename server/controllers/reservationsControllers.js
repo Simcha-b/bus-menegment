@@ -1,3 +1,4 @@
+import addNewReservation  from "../db/queries/addNewReservation.js";
 import reservationsQueries from "../db/queries/reservationsQueries.js";
 
 async function getReservations(req, res) {
@@ -68,7 +69,7 @@ async function getFutureReservations(req, res) {
 async function insertReservation(req, res) {
   const reservation = req.body;
   try {
-    const newReservation = await reservationsQueries.insertReservation(
+    const newReservation = await addNewReservation(reservation) (
       reservation
     );
     res.status(201).json(newReservation);
@@ -80,6 +81,7 @@ async function insertReservation(req, res) {
     });
   }
 }
+
 
 async function updateReservation(req, res) {
   const reservationId = req.params.id;

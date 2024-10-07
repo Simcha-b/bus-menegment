@@ -2,15 +2,14 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { getCustomers } from "../services/customersService";
-export default function ComboBox() {
+export default function ComboBox({ value, fanc }) {
   const { data } = useQuery({
-    queryKey: ["customers"],
-    queryFn: () => getCustomers(),
+    queryKey: [value],
+    queryFn: () => fanc(),
   });
   let names = [];
   async function presData() {
-    await data.map((e) => names.push(e.contact_name));
+    await data.map((c) => names.push(c.name));
   }
   if (data) {
     presData();
@@ -20,7 +19,7 @@ export default function ComboBox() {
       disablePortal
       options={names}
       sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="לקוח קיים" />}
+      renderInput={(params) => <TextField {...params} label={value} />}
     />
   );
 }
