@@ -3,7 +3,7 @@ import institutionsQueries from "../db/queries/institutionsQueries.js";
 //select
 async function getAllInstitutions(req, res) {
     try {
-        const [rows] = await institutionsQueries.getAllInstitutions();
+        const rows = await institutionsQueries.getAllInstitutions();
         res.json(rows);
     } catch (error) {
         res.status(500).json({
@@ -18,7 +18,7 @@ async function getAllInstitutions(req, res) {
 async function getInstitutionById(req, res) {
     const id = req.params.id;
     try {
-        const [rows] = await institutionsQueries.getInstitutionById(id);
+        const rows = await institutionsQueries.getInstitutionById(id);
         if (rows.length === 0) {
             res.status(404).json({
                 success: false,
@@ -41,7 +41,7 @@ async function getInstitutionById(req, res) {
 async function insertInstitution(req, res) {
     const institution = req.body;
     try {
-        const [rows] = await institutionsQueries.insertInstitution(institution);
+        const rows = await institutionsQueries.insertInstitution(institution);
         res.json(rows);
     } catch (error) {
         res.status(500).json({
@@ -56,7 +56,7 @@ async function updateInstitution( req, res) {
     const id = req.params.id;
     const updates = req.body;
     try {
-        const [rows] = await institutionsQueries.updateInstitution(id, updates);
+        const rows = await institutionsQueries.updateInstitution(id, updates);
         res.json(rows);
     } catch (error) {
         res.status(500).json({
@@ -70,7 +70,7 @@ async function updateInstitution( req, res) {
 async function deleteInstitution(req, res) {
     const id = req.params.id;
     try {
-        const [rows] = await institutionsQueries.deleteInstitution(id);
+        const rows = await institutionsQueries.deleteInstitution(id);
         res.json(rows);
     } catch (error) {
         res.status(500).json({
