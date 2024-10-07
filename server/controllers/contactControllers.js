@@ -3,7 +3,7 @@ import contactQueries from "../db/queries/contactQueries.js";
 //get
 async function getAllContacts(req, res) {
     try {
-        const [rows] = await contactQueries.getAllContacts();
+        const rows = await contactQueries.getAllContacts();
         res.json(rows);
     } catch (error) {
         res.status(500).json({
@@ -18,7 +18,7 @@ async function getAllContacts(req, res) {
 async function getContactById(req, res) {
     const id = req.params.id;
     try {
-        const [rows] = await contactQueries.getContactById(id);
+        const rows = await contactQueries.getContactById(id);
         if (rows.length === 0) {
             res.status(404).json({
                 success: false,
@@ -41,7 +41,7 @@ async function getContactById(req, res) {
 async function insertContact(req, res) {
     const contact = req.body;
     try {
-        const [rows] = await contactQueries.insertContact(contact);
+        const rows = await contactQueries.insertContact(contact);
         res.json(rows);
     } catch (error) {
         res.status(500).json({
@@ -72,7 +72,7 @@ async function updateContact(req, res) {
 async function deleteContact(req, res) {
     const id = req.params.id;
     try {
-        const [rows] = await contactQueries.deleteContact(id);
+        const rows= await contactQueries.deleteContact(id);
         res.json(rows);
     } catch (error) {
         res.status(500).json({
