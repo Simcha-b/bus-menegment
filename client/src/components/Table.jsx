@@ -32,15 +32,15 @@ const columns = [
 
 const paginationModel = { page: 0, pageSize: 5 };
 
-export default function DataTable({ data }) {
+export function Table({ data }) {
   const rows = data;
-
+  console.log(rows);
   return (
-    <Paper sx={{ height: 400, width: "100%", direction: "rtl" }}>
+    <Paper sx={{ height: 400, width: "100%" }}>
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowId={(row) => row.reservation_id}
+        getRowId={(row) => row.order_id}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         sx={{ border: 0, direction: "rtl" }}

@@ -1,36 +1,36 @@
 import pool from "../connection.js";
 
 //select
-async function getAllReservations() {
+async function getAllOrders() {
   const [rows] =
-    await pool.query(`SELECT * FROM reservations, customers, bus_companies
-     WHERE reservations.customer_id = customers.customer_id AND reservations.company_id = bus_companies.company_id`);
+    await pool.query(`SELECT * FROM orders, customers, bus_companies
+     WHERE orders.customer_id = customers.customer_id AND orders.company_id = bus_companies.company_id`);
   return rows;
 }
 
-async function getReservationById(id) {
+async function getOrderById(id) {
   const [rows] = await pool.query(
-    "SELECT * FROM reservations WHERE reservation_id = ?",
+    "SELECT * FROM orders WHERE order_id = ?",
     [id]
   );
   return rows[0];
 }
 
-async function getReservationsByCustomerId(id) {
-  const query = `SELECT * FROM reservations
+async function getOrdersByCustomerId(id) {
+  const query = `SELECT * FROM orders
   JOIN customers
-  ON reservations.customer_id = customers.customer_id WHERE customer_id = ?`;
+  ON orders.customer_id = customers.customer_id WHERE customer_id = ?`;
 
   const [rows] = await pool.query(query, [id]);
   return rows;
 }
 //select for mein orders table 
 //להכניס תאריך כפרמטר ולטפל בו
-async function getFutureReservations() {
+async function getFutureOrders() {
   const [rows] = await pool.query(
-    `select reservation_id, reservation_date, institution_name, start_time,
+    `select order_id, order_date, institution_name, start_time,
      end_time, bus_quantity, trip_details, company_name
-    from reservations r
+    from orders r
     join customers c
     on r.customer_id = c.customer_id 
     join bus_companies b
@@ -39,20 +39,19 @@ async function getFutureReservations() {
   return rows;
 }
 //insert
-async function insertReservation(reservation) {
-  const entries = Object.entries(reservation);
+async function insertOrder(order) {
+  const entries = Object.entries(order);
   const keys = entries.map(([key]) => key).join(", ");
   const placeholders = entries.map(() => "?").join(", ");
   const values = entries.map(([, value]) => value);
-
-  const query = `INSERT INTO reservations (${keys}) VALUES (${placeholders})`;
+  const query = `INSERT INTO orders (${keys}) VALUES (${placeholders})`;
   const [rows] = await pool.query(query, values);
   return rows;
 }
 
 //update
 
-async function updateReservation(id, updates) {
+async function updateOrder(id, updates) {
   // Ensure we have an id and updates
   if (!id || Object.keys(updates).length === 0) {
     throw new Error(
@@ -70,26 +69,26 @@ async function updateReservation(id, updates) {
   // Add the id to the values array
   values.push(id);
 
-  const query = `UPDATE reservations SET ${setClause} WHERE reservation_id = ?`;
+  const query = `UPDATE orders SET ${setClause} WHERE order_id = ?`;
 
   try {
     const [result] = await pool.query(query, values);
 
     if (result.affectedRows === 0) {
-      throw new Error("No reservation found with the given id");
+      throw new Error("No order found with the given id");
     }
 
-    return { success: true, message: "Reservation updated successfully" };
+    return { success: true, message: "order updated successfully" };
   } catch (error) {
-    console.error("Error updating reservation:", error);
+    console.error("Error updating order:", error);
     throw error;
   }
 }
 //delete
 
-async function deleteReservation(id) {
+async function deleteOrder(id) {
   const [result] = await pool.query(
-    "DELETE FROM reservations WHERE reservation_id = ?",
+    "DELETE FROM orders WHERE order_id = ?",
     [id]
   );
 
@@ -97,11 +96,11 @@ async function deleteReservation(id) {
 }
 
 export default {
-  getAllReservations,
-  getReservationById,
-  getReservationsByCustomerId,
-  getFutureReservations,
-  insertReservation,
-  updateReservation,
-  deleteReservation,
+  getAllOrders,
+  getOrderById,
+  getOrdersByCustomerId,
+  getFutureOrders,
+  insertOrder,
+  updateOrder,
+  deleteOrder,
 };

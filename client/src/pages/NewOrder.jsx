@@ -2,28 +2,28 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { Checkbox, FormControlLabel } from "@mui/material";
-import ComboBox from "../components/ComboBox";
-import { getCustomers } from "../services/customersService";
 import { Button } from "@mui/material";
-import { sendNewReservation } from "../services/reservationsService";
+import { sendNewOrder } from "../services/ordersService";
+import InstitutionContactSelector from "../components/InstitutionContactSelector";
 
-function NewReservation() {
+function NewOrder() {
   const [formData, setFormData] = useState({
-    contact_name: "",
+    customer_id: 0,
+    contact_id: 0,
     trip_details: "",
     start_time: "",
     end_time: "",
-    bus_quantity: "",
-    price_per_bus_customer: "",
-    extra: "",
-    total_price: "",
-    notes: "",
+    bus_quantity: 0,
+    price_per_bus_customer: 0,
+    extra_pay_customer: 0,
+    total_price_customer: 0,
+    notes_customer: "",
     paid: false,
-    total_paid_customer: "",
-    price_company: "",
+    total_paid_customer: 0,
+    price_company: 0,
     notes_company: "",
-    extra_pay_company: "",
-    total_price_company: "",
+    extra_pay_company: 0,
+    total_price_company: 0,
     submitted_invoice: false,
   });
 
@@ -31,7 +31,7 @@ function NewReservation() {
     const { id, value, type, checked } = event.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [id]: type === 'checkbox' ? checked : value,
+      [id]: type === "Checkbox" ? checked : value,
     }));
   };
 
@@ -44,14 +44,13 @@ function NewReservation() {
     setNumber(Number(price.current.value) * Number(numBus.current.value));
   };
 
- 
   const handleSubmit = async () => {
     try {
-      const response = await sendNewReservation(formData);
-      console.log("Reservation submitted successfully:", response);
-      // Reset form or show success message
+      const response = await sendNewOrder(formData);
+      console.log("Order submitted successfully:", response);
+
     } catch (error) {
-      console.error("Error submitting reservation:", error);
+      console.error("Error submitting order:", error);
       // Show error message to user
     }
   };
@@ -67,19 +66,7 @@ function NewReservation() {
         {
           //TODO date piker
         }
-        {/* <ComboBox id="institution_name" label="מוסד" onChange={handleInputChange} /> */}
-        <TextField
-          id="institution_name"
-          label="מוסד"
-          variant="outlined"
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="contact_name"
-          label="איש קשר"
-          variant="outlined"
-          onChange={handleInputChange}
-        />
+        <InstitutionContactSelector setFormData={setFormData} />
         <TextField
           id="trip_details"
           label="פרטי הנסיעה"
@@ -131,7 +118,6 @@ function NewReservation() {
 
         <TextField
           id="company_name"
-          //לעשות השלמה אוטומטית
           label="מבצע"
           variant="outlined"
           onChange={handleInputChange}
@@ -140,11 +126,11 @@ function NewReservation() {
           id="extra_pay_customer"
           label="תשלומים נוספים"
           variant="outlined"
-          inputRef={extra}
+          // inputRef={extra}
           onChange={handleChange}
         />
         <TextField
-          id="total_price"
+          id="total_paid_customer"
           label="סכום כולל"
           variant="outlined"
           slotProps={{
@@ -156,7 +142,7 @@ function NewReservation() {
           // onChange={handleInputChange}
         />
         <TextField
-          id="notes"
+          id="notes_customer"
           label="הערות"
           variant="outlined"
           multiline={true}
@@ -217,4 +203,4 @@ function NewReservation() {
     </>
   );
 }
-export default NewReservation;
+export default NewOrder;
