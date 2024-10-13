@@ -11,6 +11,11 @@ async function getContactById(id) {
     const [rows] = await pool.query("SELECT * FROM contacts WHERE id = ?", [id]);
     return rows;
 }
+//select
+async function getContactsByInstitutionId(id) {
+    const [rows] = await pool.query("SELECT * FROM contacts WHERE institution_id = ?", [id]);
+    return rows;
+}
 //insert
 async function insertContact(contact) {
     const [rows] = await pool.query("INSERT INTO contacts SET ?", contact);
@@ -28,4 +33,4 @@ async function deleteContact(id) {
     return rows;
 }
 
-export default {getAllContacts, getContactById, insertContact, updateContact, deleteContact}
+export default {getAllContacts, getContactById,getContactsByInstitutionId, insertContact, updateContact, deleteContact}

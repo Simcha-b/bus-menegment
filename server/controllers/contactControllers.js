@@ -37,6 +37,21 @@ async function getContactById(req, res) {
     }
 }
 
+//get
+async function getContactsByInstitutionId(req, res) {
+    const id = req.params.id;
+    try {
+        const rows = await contactQueries.getContactsByInstitutionId(id);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error retrieving contacts",
+            error: error.message || "Internal Server Error",
+        });
+    }
+}
+
 //insert
 async function insertContact(req, res) {
     const contact = req.body;
@@ -83,4 +98,4 @@ async function deleteContact(req, res) {
     }
 }
 
-export  { getAllContacts, getContactById, insertContact, updateContact, deleteContact };
+export  { getAllContacts, getContactById, getContactsByInstitutionId, insertContact, updateContact, deleteContact };
