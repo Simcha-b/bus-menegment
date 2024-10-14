@@ -1,10 +1,16 @@
-import companiesQueries from "../db/queries/companiesQueries";
+import companiesQueries from "../db/queries/companiesQueries.js";
 async function getCompanies(_, res) {
   try {
     const companies = await companiesQueries.getAllCompanies();
     res.json(companies);
   } catch (error) {
-    res.status(500).send("Error retrieving companies");
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Error retrieving companies",
+        error: error.message || "Internal Server Error",
+      });
   }
 }
 
@@ -13,12 +19,20 @@ async function getCompany(req, res) {
   try {
     const company = await companiesQueries.getCompanyById(companyId);
     if (!company) {
-      res.status(404).send("Company not found");
+      res.status(404).json({
+        success: false,
+        message: "Company not found",
+        error: error.message || "Internal Server Error",
+      })
     } else {
       res.json(company);
     }
   } catch (error) {
-    res.status(500).send("Error retrieving company");
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving company",
+      error: error.message || "Internal Server Error",
+    })
   }
 }
 
@@ -28,7 +42,11 @@ async function insertCompany(req, res) {
     const newCompany = await companiesQueries.insertCompany(company);
     res.status(201).json(newCompany);
   } catch (error) {
-    res.status(500).send("Error inserting company");
+    res.status(500).json({
+      success: false,
+      message: "Error inserting company",
+      error: error.message || "Internal Server Error",
+    })
   }
 }
 
@@ -41,12 +59,20 @@ async function updateCompany(req, res) {
       updates
     );
     if (!updatedCompany) {
-      res.status(404).send("Company not found");
+      res.status(404).json({
+        success: false,
+        message: "Company not found",
+        error: error.message || "Internal Server Error",
+      })
     } else {
       res.json(updatedCompany);
     }
   } catch (error) {
-    res.status(500).send("Error updating company");
+    res.status(500).json({
+      success: false,
+      message: "Error updating company",
+      error: error.message || "Internal Server Error",
+    })
   }
 }
 
@@ -55,12 +81,20 @@ async function deleteCompany(req, res) {
   try {
     const deletedCompany = await companiesQueries.deleteCompany(companyId);
     if (!deletedCompany) {
-      res.status(404).send("Company not found");
+      res.status(404).json({
+        success: false,
+        message: "Company not found",
+        error: error.message || "Internal Server Error",
+      })
     } else {
       res.json(deletedCompany);
     }
   } catch (error) {
-    res.status(500).send("Error deleting company");
+    res.status(500).json({
+      success: false,
+      message: "Error deleting company",
+      error: error.message || "Internal Server Error",
+    })
   }
 }
 

@@ -5,7 +5,11 @@ async function getCustomers(_, res) {
     const customers = await customersQueries.getAllCustomers();
     res.json(customers);
   } catch (error) {
-    res.status(500).send("Error retrieving customers");
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving customers",
+      error: error.message || "Internal Server Error"
+    })
   }
 }
 
@@ -14,12 +18,20 @@ async function getCustomer(req, res) {
   try {
     const customer = await customersQueries.getCustomerById(userId);
     if (!customer) {
-      res.status(404).send("customer not found");
+      res.status(404).json({
+        success: false,
+        message: "Customer not found",
+        error: error.message || "Internal Server Error"
+      })
     } else {
       res.json(customer);
     }
   } catch (error) {
-    res.status(500).send("Error retrieving customer");
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving customer",
+      error: error.message || "Internal Server Error"
+    })
   }
 }
 
@@ -29,7 +41,11 @@ async function insertCustomer(req, res) {
     const newCustomer = await customersQueries.insertCustomer(customer);
     res.status(201).json(newCustomer);
   } catch (error) {
-    res.status(500).send("Error inserting customer");
+    res.status(500).json({
+      success: false,
+      message: "Error inserting customer",
+      error: error.message || "Internal Server Error"
+    })
   }
 }
 
@@ -42,12 +58,20 @@ async function updateCustomer(req, res) {
       updates
     );
     if (!updatedCustomer) {
-      res.status(404).send("customer not found");
+      res.status(404).json({
+        success: false,
+        message: "Customer not found",
+        error: error.message || "Internal Server Error"
+      })
     } else {
       res.json(updatedCustomer);
     }
   } catch (error) {
-    res.status(500).send("Error updating customer");
+    res.status(500).json({
+      success: false,
+      message: "Error updating customer",
+      error: error.message || "Internal Server Error"
+    })
   }
 }
 
@@ -56,15 +80,23 @@ async function deleteCustomer(req, res) {
   try {
     const deletedCustomer = await customersQueries.deleteCustomer(customerId);
     if (!deletedCustomer) {
-      res.status(404).send("customer not found");
+      res.status(404).json({
+        success: false,
+        message: "Customer not found",
+        error: error.message || "Internal Server Error"
+      })
     } else {
       res.json(deletedCustomer);
     }
   } catch (error) {
-    res.status(500).send("Error deleting customer");
+    res.status(500).json({
+      success: false,
+      message: "Error deleting customer",
+      error: error.message || "Internal Server Error"
+    })
   }
 }
-export {
+export  {
   getCustomers,
   getCustomer,
   insertCustomer,
