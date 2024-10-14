@@ -2,7 +2,7 @@ import pool from "../connection.js";
 
 //select
 async function getAllCustomers() {
-  const [rows] = await pool.query("SELECT * FROM Customers");
+  const [rows] = await pool.query("SELECT * FROM customers");
   return rows;
 }
 
@@ -13,6 +13,13 @@ async function getCustomerById(id) {
   );
   return rows[0];
 }
+
+// async function getCustomersWithReservations() {
+//   const [rows] = await pool.query(
+//     "SELECT * FROM Customers WHERE customer_id IN (SELECT customer_id FROM reservations)"
+//   );
+//   return rows;
+// }
 
 //insert
 async function insertCustomer(customer) {
