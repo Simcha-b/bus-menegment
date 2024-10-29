@@ -11,11 +11,11 @@ export function CompanySelector({ setFormData }) {
     queryFn: getCompanies,
   });
 
-  useEffect(() => {
+  useEffect(() => {    
     if (selectedCompany) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        company_id: selectedCompany.id,
+        company_id: selectedCompany.company_id,
       }));
     }
   }, [selectedCompany, setFormData]);
@@ -26,6 +26,7 @@ export function CompanySelector({ setFormData }) {
       disablePortal
       id="company"
       options={companyOptions}
+      getOptionLabel={(option) => option.company_name}
       loading={isLoadingCompanies}
       value={selectedCompany}
       sx={{ width: 300 }}

@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Checkbox, FormControlLabel, Snackbar, Alert } from "@mui/material";
 import { Button } from "@mui/material";
 import { sendNewOrder } from "../services/ordersService";
 import InstitutionContactSelector from "../components/InstitutionContactSelector";
 import { CompanySelector } from "../components/CompanySelector";
+import { useNavigate } from "react-router-dom";
+import BasicTimePicker from "../components/BasicTimePicker";
 
 function NewOrder() {
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     customer_id: 0,
     contact_id: 0,
+    company_id: 0,
     trip_details: "",
     start_time: "",
     end_time: "",
@@ -28,6 +32,13 @@ function NewOrder() {
     submitted_invoice: false,
   });
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
   const handleInputChange = (event) => {
     const { id, value, type, checked } = event.target;
     setFormData((prevFormData) => ({
@@ -44,11 +55,15 @@ function NewOrder() {
   const handleChange = () => {
     setNumber(Number(price.current.value) * Number(numBus.current.value));
   };
-
+  const navigate = useNavigate();
   const handleSubmit = async () => {
     try {
       const response = await sendNewOrder(formData);
       console.log("Order submitted successfully:", response);
+      setOpen(true);
+      setTimeout(() => {
+        navigate("/orders");
+      }, 3000);
     } catch (error) {
       console.error("Error submitting order:", error);
       // Show error message to user
@@ -59,7 +74,7 @@ function NewOrder() {
     <>
       <Box
         component="form"
-        sx={{ "& > :not(style)": { m: 1, width: "25ch" } }}
+        sx={{ "& > :not(style)": { m: 1, width: "50ch", direction: "rtl" } }}
         noValidate
         // autoComplete="off"
       >
@@ -68,6 +83,8 @@ function NewOrder() {
         }
         <InstitutionContactSelector setFormData={setFormData} />
         <TextField
+          required
+          dir="rtl"
           id="trip_details"
           label="פרטי הנסיעה"
           variant="outlined"
@@ -79,6 +96,7 @@ function NewOrder() {
           variant="outlined"
           onChange={handleInputChange}
         />
+        {/* <BasicTimePicker label="start_time" formData={formData} setFormData={setFormData} /> */}
         <TextField
           id="end_time"
           label="שעת סיום"
@@ -201,6 +219,21 @@ function NewOrder() {
       <Button variant="contained" color="success" onClick={handleSubmit}>
         שלח
       </Button>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        dir="rtl"
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          הזמנה נוספה בהצלחה
+        </Alert>
+      </Snackbar>
     </>
   );
 }
