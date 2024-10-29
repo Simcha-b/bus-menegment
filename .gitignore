@@ -3,6 +3,7 @@
 # dependencies
 clinent/node_modules
 server/node_modules
+server/firebase
 /.pnp
 .pnp.js
 
