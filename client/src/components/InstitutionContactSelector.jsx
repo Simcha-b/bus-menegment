@@ -8,7 +8,6 @@ import { getContactsByInstitutionId } from "../services/contactService";
 export default function InstitutionContactSelector({ setFormData }) {
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
-  
 
   // שליפת מוסדות
   const { data: institutions, isLoading: isLoadingInstitutions } = useQuery({
@@ -48,6 +47,7 @@ export default function InstitutionContactSelector({ setFormData }) {
     <div>
       {/* בחירת מוסד */}
       <Autocomplete
+         required
         disablePortal
         options={institutionOptions}
         getOptionLabel={(option) => option.name}
@@ -63,6 +63,7 @@ export default function InstitutionContactSelector({ setFormData }) {
 
       {/* בחירת איש קשר */}
       <Autocomplete
+        required
         disablePortal
         options={contactOptions}
         getOptionLabel={(option) => option.name}

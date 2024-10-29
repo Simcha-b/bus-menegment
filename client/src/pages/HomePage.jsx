@@ -8,13 +8,9 @@ function HomePage() {
 
   return (
     <Container maxWidth="md">
-      <AppBar position="static">
-        <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             ברוך הבא, {userEmail}
           </Typography>
-        </Toolbar>
-      </AppBar>
       
       <Box
         sx={{

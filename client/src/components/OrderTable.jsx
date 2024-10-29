@@ -14,8 +14,8 @@ function OrderTable(props) {
   const columns = [
     {
       title: "ID",
-      dataIndex: "reservation_id",
-      key: "reservation_id",
+      dataIndex: "order_id",
+      key: "order_id",
     },
     {
       title: "תאריך",
