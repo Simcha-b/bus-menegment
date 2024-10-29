@@ -5,6 +5,7 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import { Button } from "@mui/material";
 import { sendNewOrder } from "../services/ordersService";
 import InstitutionContactSelector from "../components/InstitutionContactSelector";
+import { CompanySelector } from "../components/CompanySelector";
 
 function NewOrder() {
   const [formData, setFormData] = useState({
@@ -48,7 +49,6 @@ function NewOrder() {
     try {
       const response = await sendNewOrder(formData);
       console.log("Order submitted successfully:", response);
-
     } catch (error) {
       console.error("Error submitting order:", error);
       // Show error message to user
@@ -115,13 +115,14 @@ function NewOrder() {
           }}
           value={number}
         />
+        <CompanySelector setFormData={setFormData} />
 
-        <TextField
+        {/* <TextField
           id="company_name"
           label="מבצע"
           variant="outlined"
           onChange={handleInputChange}
-        />
+        /> */}
         <TextField
           id="extra_pay_customer"
           label="תשלומים נוספים"
