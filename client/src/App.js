@@ -15,7 +15,6 @@ import Orders from "./pages/Orders";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NewOrder from "./pages/NewOrder";
-import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
 const queryClient = new QueryClient();
 
