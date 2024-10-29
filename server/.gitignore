@@ -1,8 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-clinent/node_modules
-server/node_modules
+/node_modules
+/firebase
 /.pnp
 .pnp.js
 
