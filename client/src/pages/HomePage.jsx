@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';
+import { Typography, Button, Box, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
@@ -44,6 +44,14 @@ function HomePage() {
           sx={{ width: 150, height: 70 }}
         >
           מבצעים
+        </Button>
+        <Button
+          variant="contained"
+          color="warning"
+          onClick={() => navigate('/orders/new')}
+          sx={{ width: 150, height: 70 }}
+        >
+          הזמנה חדשה
         </Button>
       </Box>
     </Container>

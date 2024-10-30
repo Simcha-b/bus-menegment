@@ -7,19 +7,32 @@ import { useNavigate } from "react-router-dom";
 
 const MyAppBar = () => {
   const navigate = useNavigate();
-
+  const userName = "Simcha";
   const handleHomeClick = () => {
-    navigate("/"); // כאן תשים את הנתיב לדף הבית שלך
+    navigate("/");
   };
 
   return (
     <AppBar position="static">
       <Toolbar>
+        
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          בדרך הישר
+          {userName}
         </Typography>
         <Button color="inherit" onClick={handleHomeClick}>
           דף הבית
+        </Button>
+        <Button color="inherit" onClick={() => navigate("/orders")}>
+          הזמנות
+        </Button>
+        <Button color="inherit" onClick={() => navigate("/orders/new")}>
+          הזמנה חדשה
+        </Button>
+        <Button color="inherit" onClick={() => navigate("/customers")}>
+          לקוחות
+        </Button>
+        <Button color="inherit" onClick={() => navigate("/offers")}>
+          מבצעים
         </Button>
       </Toolbar>
     </AppBar>
