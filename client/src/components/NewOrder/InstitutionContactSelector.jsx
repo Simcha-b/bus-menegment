@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { getInstitutions } from "../services/institutionsService";
-import { getContactsByInstitutionId } from "../services/contactService";
+import { getInstitutions } from "../../services/institutionsService";
+import { getContactsByInstitutionId } from "../../services/contactService";
 
 export default function InstitutionContactSelector({ setFormData }) {
   const [selectedInstitution, setSelectedInstitution] = useState(null);
@@ -47,7 +47,7 @@ export default function InstitutionContactSelector({ setFormData }) {
     <div>
       {/* בחירת מוסד */}
       <Autocomplete
-         required
+        required
         disablePortal
         options={institutionOptions}
         getOptionLabel={(option) => option.name}

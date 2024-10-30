@@ -14,7 +14,8 @@ import Orders from "./pages/Orders";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NewOrder from "./pages/NewOrder";
 import HomePage from "./pages/HomePage";
-import MyAppBar from "./components/MyAppBar";
+import MyAppBar from "./components/Layout/heder";
+import NewOrdercopy from "./pages/NewOrdercopy";
 const queryClient = new QueryClient();
 
 const theme = createTheme(
@@ -38,7 +39,7 @@ function App() {
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<HomePage />}></Route>
             <Route path="/orders" element={<Orders />}></Route>
-            <Route path="orders/new" element={<NewOrder />} />
+            <Route path="orders/new" element={<NewOrdercopy />} />
           </Routes>
         </QueryClientProvider>
       </Router>

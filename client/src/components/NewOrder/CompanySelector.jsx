@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { getCompanies } from "../services/companiesService.js";
+import { getCompanies } from "../../services/companiesService.js";
 export function CompanySelector({ setFormData }) {
   const [selectedCompany, setSelectedCompany] = useState(null);
 
@@ -11,7 +11,7 @@ export function CompanySelector({ setFormData }) {
     queryFn: getCompanies,
   });
 
-  useEffect(() => {    
+  useEffect(() => {
     if (selectedCompany) {
       setFormData((prevFormData) => ({
         ...prevFormData,
