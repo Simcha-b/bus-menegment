@@ -1,11 +1,12 @@
 import { Table, ConfigProvider } from "antd";
 import heIL from "antd/lib/locale/he_IL";
-import moment from "moment";
 import EditOrder from "./EditOrder";
 import DeleteOrder from "./DeleteOrder";
+import { formatDate } from "../../services/ordersService";
 
 function OrderTable(props) {
   const data = props.data;
+
   const names = data.map((item) => {
     return {
       text: item.institution_name,
@@ -24,10 +25,8 @@ function OrderTable(props) {
       title: "תאריך",
       dataIndex: "order_date",
       key: "order_date",
-      sorter: (a, b) =>
-        moment(a.reservation_date, "YYYY-MM-DD").unix() -
-        moment(b.reservation_date, "YYYY-MM-DD").unix(),
-      render: (text) => moment(text).format("DD/MM/YYYY"), // מציג את התאריך בפורמט יום/חודש/שנה
+      sorter: (a, b) => a.order_date - b.order_date,
+      render: (text) => formatDate(text),
     },
     {
       title: "שם",

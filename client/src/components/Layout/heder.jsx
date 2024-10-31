@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const MyAppBar = () => {
   const navigate = useNavigate();
-  const userName = "Simcha";
+  const userName = localStorage.getItem("user");
   const handleHomeClick = () => {
     navigate("/");
   };
@@ -15,7 +15,6 @@ const MyAppBar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {userName}
         </Typography>
