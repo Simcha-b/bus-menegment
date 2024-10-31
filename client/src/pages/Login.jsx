@@ -1,15 +1,35 @@
-import React from "react";
+import React, { useRef } from "react";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { checkLogin} from "../services/loginServis.js";
 
 function Login() {
-  const handleLogin = () => {
-    // הוסף את הלוגיקה לטיפול בכניסה כאן
-    console.log("Login clicked");
-  };
+  const navigate = useNavigate();
+  const emailInput = useRef();
+  const passwordInput = useRef();
+
+  function handleLogin(e) {
+    e.preventDefault();
+    if (checkLogin(emailInput.current.value, passwordInput.current.value)) {
+      navigate("/home");
+    } else {
+      alert("שם משתמש או סיסמא אינם נכונים");
+      navigate("/");
+    }
+  }
 
   return (
     <>
-    <h1 style={{ textAlign: "center" , margin: "20px", fontSize: "30px", fontWeight: "bold"}}>בדרך הישר</h1>
+      <h1
+        style={{
+          textAlign: "center",
+          margin: "20px",
+          fontSize: "30px",
+          fontWeight: "bold",
+        }}
+      >
+        בדרך הישר
+      </h1>
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
@@ -33,9 +53,10 @@ function Login() {
               required
               fullWidth
               id="email"
+              type="email"
               label="אימייל"
               name="email"
-              autoComplete="email"
+              inputRef={emailInput}
               autoFocus
             />
             <TextField
@@ -46,7 +67,7 @@ function Login() {
               label="סיסמה"
               type="password"
               id="password"
-              autoComplete="current-password"
+              inputRef={passwordInput}
             />
             <Button
               type="submit"
