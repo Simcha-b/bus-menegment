@@ -5,9 +5,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
-const MyAppBar = () => {
+const Heder = () => {
   const navigate = useNavigate();
-  const userName = localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user"))[0].name;
+  
   const handleHomeClick = () => {
     navigate("/");
   };
@@ -16,7 +17,7 @@ const MyAppBar = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          {userName}
+          {user}
         </Typography>
         <Button color="inherit" onClick={handleHomeClick}>
           דף הבית
@@ -38,4 +39,4 @@ const MyAppBar = () => {
   );
 };
 
-export default MyAppBar;
+export default Heder;

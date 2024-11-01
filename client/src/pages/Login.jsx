@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { checkLogin} from "../services/loginServis.js";
-
+import { checkLogin } from "../services/loginServis.js";
+import "../css/login.css"
 function Login() {
   const navigate = useNavigate();
   const emailInput = useRef();
@@ -77,6 +77,14 @@ function Login() {
             >
               כניסה
             </Button>
+            <button class="google-btn" >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                alt="Google logo"
+                class="google-logo"
+              />
+              התחבר עם גוגל
+            </button>
           </Box>
         </Box>
       </Container>

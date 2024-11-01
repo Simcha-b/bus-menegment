@@ -5,6 +5,7 @@ import { sendNewOrder } from "../services/ordersService";
 import InstitutionContactSelector from "../components/NewOrder/InstitutionContactSelector";
 import { CompanySelector } from "../components/NewOrder/CompanySelector";
 import { useNavigate } from "react-router-dom";
+import {  Form, Input } from "antd";
 function NewOrdercopy() {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -49,8 +50,10 @@ function NewOrdercopy() {
   const numBus = React.useRef();
   const price = React.useRef();
   const extra = React.useRef();
+
   const handleChange = () => {
     setNumber(Number(price.current.value) * Number(numBus.current.value));
+    setTotal(Number(number) + Number(extra));
   };
   const navigate = useNavigate();
   const handleSubmit = async () => {
@@ -69,10 +72,10 @@ function NewOrdercopy() {
 
   return (
     <>
-      <form>
-        <input type="date" id="order_date" onChange={handleInputChange} />
+      <Form >
+        <Input type="date" id="order_date" onChange={handleInputChange} />
         <InstitutionContactSelector setFormData={setFormData} />
-        <input
+        <Input
           type="text"
           required
           dir="rtl"
@@ -80,19 +83,19 @@ function NewOrdercopy() {
           placeholder="פרטי הנסיעה"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="time"
           id="start_time"
           placeholder="שעת התחלה"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="time"
           id="end_time"
           placeholder="שעת סיום"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="number"
           id="bus_quantity"
           placeholder="כמות אוטובוסים"
@@ -103,14 +106,14 @@ function NewOrdercopy() {
             handleChange();
           }}
         />
-        <input
+        <Input
           type="text"
           id="price_per_bus_customer"
           placeholder="מחיר לאוטובוס"
           ref={price}
           onChange={() => handleChange()}
         />
-        <input
+        <Input
           type="text"
           id="price_customer"
           placeholder="מחיר ללקוח"
@@ -119,14 +122,14 @@ function NewOrdercopy() {
           value={number}
         />
         <CompanySelector setFormData={setFormData} />
-        <input
+        <Input
           type="text"
           id="extra_pay_customer"
           placeholder="תשלומים נוספים"
-          // ref={extra}
+          ref={extra}
           onChange={handleChange}
         />
-        <input
+        <Input
           type="text"
           id="total_paid_customer"
           placeholder="סכום כולל"
@@ -134,61 +137,61 @@ function NewOrdercopy() {
           value={total}
           // onChange={handleInputChange}
         />
-        <input
+        <Input
           type="text"
           id="notes_customer"
           placeholder="הערות"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="text"
           id="invoice"
           placeholder="מספר חשבונית"
           onChange={handleInputChange}
         />
 
-        <input
+        <Input
           type="checkbox"
           id="paid"
           placeholder="שולם"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="text"
           id="total_paid_customer"
           placeholder="סה''כ שולם"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="text"
           id="price_company"
           placeholder="מחיר ספק לאוטובוס"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="text"
           id="notes_company"
           placeholder="הערות ספק"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="text"
           id="extra_pay_company"
           placeholder="תשלומים נוספים"
         />
-        <input
+        <Input
           type="text"
           id="total_price_company"
           placeholder="סכום כולל ספק"
           onChange={handleInputChange}
         />
-        <input
+        <Input
           type="checkbox"
           id="submitted_invoice"
           placeholder="הגיש חשבונית"
           onChange={handleInputChange}
         />
-      </form>
+      </Form>
       <Button variant="contained" color="success" onClick={handleSubmit}>
         שלח
       </Button>
