@@ -13,10 +13,17 @@ import Orders from "./pages/Orders";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import NewOrder from "./pages/NewOrder";
+
+import { CacheProvider } from "@emotion/react";
+import createCache from "@emotion/cache";
+import { prefixer } from "stylis";
+import rtlPlugin from "stylis-plugin-rtl";
+
 import HomePage from "./pages/HomePage";
-import MyAppBar from "./components/Layout/heder";
-import NewOrdercopy from "./pages/NewOrdercopy";
+import NewOrder from "./pages/NewOrder";
 import Login from "./pages/Login";
+import Layout from "./components/Layout/Layout";
+import ProtectedPages from "./pages/ProtectedPages";
 const queryClient = new QueryClient();
 
 const theme = createTheme(
@@ -28,23 +35,31 @@ const theme = createTheme(
   },
   heIL // לוקליזציה בעברית
 );
+const cacheRtl = createCache({
+  key: "muirtl",
+  stylisPlugins: [prefixer, rtlPlugin],
+});
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        {/* <MyAppBar /> */}
-        <QueryClientProvider client={queryClient}>
-          <Routes>
-            {/* <Route path="/" element={<Login/>} /> */}
-
-            <Route path="/" element={<Login />} />
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/home" element={<HomePage />}></Route>
-            <Route path="/orders" element={<Orders />}></Route>
-            <Route path="orders/new" element={<NewOrdercopy />} />
-          </Routes>
-        </QueryClientProvider>
-      </Router>
+      <CacheProvider value={cacheRtl}>
+        <Router>
+          <QueryClientProvider client={queryClient}>
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" />} />
+              <Route path="/login" element={<Login />} />
+              <Route element={<ProtectedPages />}>
+                <Route path="/home" element={<HomePage />}></Route>
+                <Route element={<Layout />}>
+                  <Route path="/orders" element={<Orders />}></Route>
+                  <Route path="orders/new" element={<NewOrder />} />
+                </Route>
+              </Route>
+            </Routes>
+          </QueryClientProvider>
+        </Router>
+      </CacheProvider>
     </ThemeProvider>
   );
 }

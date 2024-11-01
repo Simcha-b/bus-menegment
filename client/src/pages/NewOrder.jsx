@@ -8,6 +8,7 @@ import InstitutionContactSelector from "../components/NewOrder/InstitutionContac
 import { CompanySelector } from "../components/NewOrder/CompanySelector";
 import { useNavigate } from "react-router-dom";
 import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
+import { grid } from "@mui/system";
 
 function NewOrder() {
   const [open, setOpen] = useState(false);
@@ -73,8 +74,9 @@ function NewOrder() {
   return (
     <>
       <Box
+      dir="rtl"
         component="form"
-        sx={{ "& > :not(style)": { m: 1, width: "50ch", direction: "rtl" } }}
+        sx={{ "& > :not(style)": { m: 1 } , display: "flex", flexWrap: "wrap", justifyContent: "center" }}
         noValidate
         // autoComplete="off"
       >
@@ -108,6 +110,7 @@ function NewOrder() {
           label="כמות אוטובוסים"
           type="number"
           variant="outlined"
+          sx={{ width: "10ch" }}
           //למנוע מינוס
           inputRef={numBus}
           onChange={() => {
