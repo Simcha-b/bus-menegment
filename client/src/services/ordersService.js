@@ -16,3 +16,14 @@ export const sendNewOrder = async (body) => {
   // console.log(data);
   return data;
 };
+
+export const formatDate = (date) => {
+//("DD/MM/YYYY")
+  const formattedDate = new Date(date).toLocaleDateString("he-IL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  return formattedDate;
+};
+

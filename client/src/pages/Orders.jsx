@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { getOrders } from "../services/ordersService";
 
-import OrsersTable from "../components/OrderTable";
+import OrsersTable from "../components/Orders/OrderTable";
 function Orders() {
   const navigate = useNavigate();
   const { isPending, error, data } = useQuery({

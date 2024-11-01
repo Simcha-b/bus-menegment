@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { getCompanies } from "../services/companiesService.js";
+import { getCompanies } from "../../services/companiesService.js";
 export function CompanySelector({ setFormData }) {
   const [selectedCompany, setSelectedCompany] = useState(null);
 
@@ -15,7 +15,7 @@ export function CompanySelector({ setFormData }) {
     if (selectedCompany) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        company_id: selectedCompany.id,
+        company_id: selectedCompany.company_id,
       }));
     }
   }, [selectedCompany, setFormData]);
@@ -26,6 +26,7 @@ export function CompanySelector({ setFormData }) {
       disablePortal
       id="company"
       options={companyOptions}
+      getOptionLabel={(option) => option.company_name}
       loading={isLoadingCompanies}
       value={selectedCompany}
       sx={{ width: 300 }}
