@@ -1,18 +1,15 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import { Checkbox, FormControlLabel, Snackbar, Alert } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 import { Button } from "@mui/material";
 import { sendNewOrder } from "../services/ordersService";
 import InstitutionContactSelector from "../components/NewOrder/InstitutionContactSelector";
 import { CompanySelector } from "../components/NewOrder/CompanySelector";
 import { useNavigate } from "react-router-dom";
-import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
-import { grid } from "@mui/system";
-
-function NewOrder() {
+import {  Form, Input } from "antd";
+function NewOrdercopy() {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
+    order_date: "",
     customer_id: 0,
     contact_id: 0,
     company_id: 0,
@@ -53,8 +50,10 @@ function NewOrder() {
   const numBus = React.useRef();
   const price = React.useRef();
   const extra = React.useRef();
+
   const handleChange = () => {
     setNumber(Number(price.current.value) * Number(numBus.current.value));
+    setTotal(Number(number) + Number(extra));
   };
   const navigate = useNavigate();
   const handleSubmit = async () => {
@@ -73,155 +72,130 @@ function NewOrder() {
 
   return (
     <>
-      <Box
-      dir="rtl"
-        component="form"
-        sx={{ "& > :not(style)": { m: 1 } , display: "flex", flexWrap: "wrap", justifyContent: "center" }}
-        noValidate
-        // autoComplete="off"
-      >
-        {
-          //TODO date piker
-        }
+      <Form >
+        <Input type="date" id="order_date" onChange={handleInputChange} />
         <InstitutionContactSelector setFormData={setFormData} />
-        <TextField
+        <Input
+          type="text"
           required
           dir="rtl"
           id="trip_details"
-          label="פרטי הנסיעה"
-          variant="outlined"
+          placeholder="פרטי הנסיעה"
           onChange={handleInputChange}
         />
-        <TextField
+        <Input
+          type="time"
           id="start_time"
-          label="שעת התחלה"
-          variant="outlined"
+          placeholder="שעת התחלה"
           onChange={handleInputChange}
         />
-        {/* <BasicTimePicker label="start_time" formData={formData} setFormData={setFormData} /> */}
-        <TextField
+        <Input
+          type="time"
           id="end_time"
-          label="שעת סיום"
-          variant="outlined"
+          placeholder="שעת סיום"
           onChange={handleInputChange}
         />
-        <TextField
-          id="bus_quantity"
-          label="כמות אוטובוסים"
+        <Input
           type="number"
-          variant="outlined"
-          sx={{ width: "10ch" }}
+          id="bus_quantity"
+          placeholder="כמות אוטובוסים"
+          defaultValue={number}
           //למנוע מינוס
-          inputRef={numBus}
+          ref={numBus}
           onChange={() => {
             handleChange();
           }}
         />
-        <TextField
+        <Input
+          type="text"
           id="price_per_bus_customer"
-          label="מחיר לאוטובוס"
-          variant="outlined"
-          inputRef={price}
+          placeholder="מחיר לאוטובוס"
+          ref={price}
           onChange={() => handleChange()}
         />
-        <TextField
+        <Input
+          type="text"
           id="price_customer"
-          label="מחיר ללקוח"
-          variant="outlined"
+          placeholder="מחיר ללקוח"
           onChange={handleInputChange}
-          slotProps={{
-            input: {
-              readOnly: true,
-            },
-          }}
+          readOnly
           value={number}
         />
         <CompanySelector setFormData={setFormData} />
-
-        {/* <TextField
-          id="company_name"
-          label="מבצע"
-          variant="outlined"
-          onChange={handleInputChange}
-        /> */}
-        <TextField
+        <Input
+          type="text"
           id="extra_pay_customer"
-          label="תשלומים נוספים"
-          variant="outlined"
-          // inputRef={extra}
+          placeholder="תשלומים נוספים"
+          ref={extra}
           onChange={handleChange}
         />
-        <TextField
+        <Input
+          type="text"
           id="total_paid_customer"
-          label="סכום כולל"
-          variant="outlined"
-          slotProps={{
-            input: {
-              readOnly: true,
-            },
-          }}
+          placeholder="סכום כולל"
+          readOnly
           value={total}
           // onChange={handleInputChange}
         />
-        <TextField
+        <Input
+          type="text"
           id="notes_customer"
-          label="הערות"
-          variant="outlined"
-          multiline={true}
+          placeholder="הערות"
           onChange={handleInputChange}
         />
-        <TextField
+        <Input
+          type="text"
           id="invoice"
-          label="מספר חשבונית"
-          variant="outlined"
+          placeholder="מספר חשבונית"
           onChange={handleInputChange}
         />
-        <FormControlLabel
-          control={<Checkbox />}
+
+        <Input
+          type="checkbox"
           id="paid"
-          label="שולם"
+          placeholder="שולם"
           onChange={handleInputChange}
         />
-        <TextField
+        <Input
+          type="text"
           id="total_paid_customer"
-          label="סה''כ שולם"
-          variant="outlined"
+          placeholder="סה''כ שולם"
           onChange={handleInputChange}
         />
-        <TextField
+        <Input
+          type="text"
           id="price_company"
-          label="מחיר ספק לאוטובוס"
-          variant="outlined"
+          placeholder="מחיר ספק לאוטובוס"
           onChange={handleInputChange}
         />
-        <TextField
+        <Input
+          type="text"
           id="notes_company"
-          label="הערות ספק"
-          variant="outlined"
-          multiline={true}
+          placeholder="הערות ספק"
           onChange={handleInputChange}
         />
-        <TextField
+        <Input
+          type="text"
           id="extra_pay_company"
-          label="תשלומים נוספים"
-          variant="outlined"
+          placeholder="תשלומים נוספים"
         />
-        <TextField
+        <Input
+          type="text"
           id="total_price_company"
-          label="סכום כולל ספק"
-          variant="outlined"
+          placeholder="סכום כולל ספק"
           onChange={handleInputChange}
         />
-        <FormControlLabel
-          control={<Checkbox />}
+        <Input
+          type="checkbox"
           id="submitted_invoice"
-          label="הגיש חשבונית"
+          placeholder="הגיש חשבונית"
           onChange={handleInputChange}
         />
-      </Box>
+      </Form>
       <Button variant="contained" color="success" onClick={handleSubmit}>
         שלח
       </Button>
+
       <Snackbar
         open={open}
         autoHideDuration={6000}
@@ -240,4 +214,4 @@ function NewOrder() {
     </>
   );
 }
-export default NewOrder;
+export default NewOrdercopy;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { TimeClock } from "@mui/x-date-pickers/TimeClock";
 import dayjs from "dayjs";
 
 export default function BasicTimePicker({ label, formData, setFormData }) {
@@ -12,8 +12,7 @@ export default function BasicTimePicker({ label, formData, setFormData }) {
   }
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <TimePicker
-        label={label}
+      <TimeClock
         onChange={(newValue) => handleTimeChange(newValue)}
       />
     </LocalizationProvider>

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@fontsource/rubik": "^5.1.0",
@@ -19,6 +20,7 @@
     "antd": "^5.21.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
+    "firebase": "^11.0.1",
     "jss": "^10.10.0",
     "jss-rtl": "^0.3.0",
     "moment": "^2.30.1",

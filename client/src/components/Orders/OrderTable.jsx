@@ -1,9 +1,12 @@
 import { Table, ConfigProvider } from "antd";
 import heIL from "antd/lib/locale/he_IL";
-import moment from "moment";
-  
+import EditOrder from "./EditOrder";
+import DeleteOrder from "./DeleteOrder";
+import { formatDate } from "../../services/ordersService";
+
 function OrderTable(props) {
   const data = props.data;
+
   const names = data.map((item) => {
     return {
       text: item.institution_name,
@@ -13,18 +16,17 @@ function OrderTable(props) {
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "reservation_id",
-      key: "reservation_id",
+      title: "מספר הזמנה",
+      dataIndex: "order_id",
+      key: "order_id",
+      sorter: (a, b) => a.order_id - b.order_id,
     },
     {
       title: "תאריך",
-      dataIndex: "reservation_date",
-      key: "reservation_date",
-      sorter: (a, b) =>
-        moment(a.reservation_date, "YYYY-MM-DD").unix() -
-        moment(b.reservation_date, "YYYY-MM-DD").unix(),
-      render: (text) => moment(text).format("DD/MM/YYYY"), // מציג את התאריך בפורמט יום/חודש/שנה
+      dataIndex: "order_date",
+      key: "order_date",
+      sorter: (a, b) => a.order_date - b.order_date,
+      render: (text) => formatDate(text),
     },
     {
       title: "שם",
@@ -58,7 +60,7 @@ function OrderTable(props) {
       key: "trip_details",
     },
     {
-      title: "חברת אוטובוסים",
+      title: "מבצע",
       dataIndex: "company_name",
       key: "company_name",
       sorter: (a, b) => a.company_name.localeCompare(b.company_name),
@@ -69,11 +71,21 @@ function OrderTable(props) {
       key: "status",
       sorter: (a, b) => a.status.localeCompare(b.status),
     },
+    {
+      title: "פעולות",
+      key: "action",
+      render: (text, record) => (
+        <div style={{ display: "flex", gap: "10px" }}>
+          <EditOrder order={record} />
+          <DeleteOrder order={record} />
+        </div>
+      ),
+    },
   ];
 
   return (
     <ConfigProvider direction="rtl" locale={heIL}>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={data} bordered={true} />
     </ConfigProvider>
   );
 }

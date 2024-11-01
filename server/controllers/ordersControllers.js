@@ -50,7 +50,7 @@ async function getOrdersByCustomerId(req, res) {
 
 async function getFutureOrders(req, res) {
   try {
-    const orders = await reservationsQueries.getFutureOrders();
+    const orders = await ordersQueries.getFutureOrders();
     res.json(orders);
   } catch (error) {
     res.status(500).json({
