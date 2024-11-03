@@ -1,22 +1,33 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { checkLogin } from "../services/loginServis.js";
-import "../css/login.css"
+import "../css/login.css";
+import { loginWithGoogle } from "../firebase/authentication.js";
 function Login() {
   const navigate = useNavigate();
-  const emailInput = useRef();
-  const passwordInput = useRef();
-
-  function handleLogin(e) {
+  const [error, setError] = useState(null);
+  const email = useRef();
+  const password = useRef();
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (checkLogin(emailInput.current.value, passwordInput.current.value)) {
+    setError(null);
+    try {
+      const user = await checkLogin(email, password);
+      console.log("User logged in:", user);
       navigate("/home");
-    } else {
-      alert("שם משתמש או סיסמא אינם נכונים");
-      navigate("/");
+    } catch (error) {
+      setError("שם משתמש או סיסמה לא נכונים");
     }
-  }
+  };
+  const handleGoogleLogin = async () => {
+    try {
+      const user = await loginWithGoogle();
+      console.log("User logged in with Google:", user);
+    } catch (error) {
+      setError("שגיאה בהתחברות עם גוגל");
+    }
+  };
 
   return (
     <>
@@ -56,7 +67,8 @@ function Login() {
               type="email"
               label="אימייל"
               name="email"
-              inputRef={emailInput}
+              inputRef={email}
+              // onChange={(e) =>  setPassword(email)}
               autoFocus
             />
             <TextField
@@ -67,7 +79,8 @@ function Login() {
               label="סיסמה"
               type="password"
               id="password"
-              inputRef={passwordInput}
+              inputRef={password}              
+              // onChange={(e) => setPassword(password)}
             />
             <Button
               type="submit"
@@ -77,14 +90,20 @@ function Login() {
             >
               כניסה
             </Button>
-            <button class="google-btn" >
+            <Button
+              type="submit"
+              
+              variant="contained"
+              onClick={handleGoogleLogin}
+            >
+               התחבר עם גוגל
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                alt="Google logo"
-                class="google-logo"
+                src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000"
+                alt="logo"
+                height={"20px"}
+                width={"20px"}
               />
-              התחבר עם גוגל
-            </button>
+            </Button>
           </Box>
         </Box>
       </Container>

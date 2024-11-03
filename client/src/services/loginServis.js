@@ -1,4 +1,4 @@
-import loginWithEmailAndPassword from "../firebase/authentication.js";
+import {loginWithEmailAndPassword} from "../firebase/authentication.js";
 
 export const getUser = async (email) => {
   const response = await fetch(`http://localhost:3001/api/users/${email}`);
@@ -18,3 +18,5 @@ export const checkLogin = async (email, password) => {
     return false;
   }
 };
+
+

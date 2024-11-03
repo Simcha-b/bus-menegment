@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getInstitutions } from "../../services/institutionsService";
 import { getContactsByInstitutionId } from "../../services/contactService";
+import { Box } from "@mui/material";
 
 export default function InstitutionContactSelector({ setFormData }) {
   const [selectedInstitution, setSelectedInstitution] = useState(null);
@@ -44,7 +45,14 @@ export default function InstitutionContactSelector({ setFormData }) {
   const contactOptions = contacts || [];
 
   return (
-    <div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        gap: 2,
+        width: "100%",
+      }}
+    >
       {/* בחירת מוסד */}
       <Autocomplete
         required
@@ -76,6 +84,6 @@ export default function InstitutionContactSelector({ setFormData }) {
         }}
         renderInput={(params) => <TextField {...params} label="בחר איש קשר" />}
       />
-    </div>
+    </Box>
   );
 }
