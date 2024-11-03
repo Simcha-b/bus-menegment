@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 
-const Heder = () => {
+export  function Heder() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"))[0].name;
   
@@ -39,4 +39,3 @@ const Heder = () => {
   );
 };
 
-export default Heder;

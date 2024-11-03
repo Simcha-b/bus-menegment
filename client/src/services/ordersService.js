@@ -13,12 +13,11 @@ export const sendNewOrder = async (body) => {
     body: JSON.stringify(body),
   });
   const data = await response.json();
-  // console.log(data);
   return data;
 };
 
 export const formatDate = (date) => {
-//("DD/MM/YYYY")
+  //("DD/MM/YYYY")
   const formattedDate = new Date(date).toLocaleDateString("he-IL", {
     day: "2-digit",
     month: "2-digit",
@@ -26,4 +25,3 @@ export const formatDate = (date) => {
   });
   return formattedDate;
 };
-

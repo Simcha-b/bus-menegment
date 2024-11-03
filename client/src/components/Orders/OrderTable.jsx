@@ -5,8 +5,9 @@ import DeleteOrder from "./DeleteOrder";
 import { formatDate } from "../../services/ordersService";
 
 function OrderTable(props) {
-  const data = props.data;
 
+  
+  const data = props.data;
   const names = data.map((item) => {
     return {
       text: item.institution_name,
@@ -20,6 +21,7 @@ function OrderTable(props) {
       dataIndex: "order_id",
       key: "order_id",
       sorter: (a, b) => a.order_id - b.order_id,
+      width: "5%",
     },
     {
       title: "תאריך",
@@ -29,7 +31,7 @@ function OrderTable(props) {
       render: (text) => formatDate(text),
     },
     {
-      title: "שם",
+      title: "שם המזמין",
       dataIndex: "institution_name",
       key: "institution_name",
       sorter: (a, b) => a.institution_name.localeCompare(b.institution_name),
@@ -42,6 +44,7 @@ function OrderTable(props) {
       title: "שעת התחלה",
       dataIndex: "start_time",
       key: "start_time",
+      
     },
     {
       title: "שעת סיום",
