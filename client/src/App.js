@@ -8,12 +8,11 @@ import {
 } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { heIL } from "@mui/material/locale";
-import { heIL as  dateheIL } from "@mui/x-date-pickers/locales";
+import { heIL as dateheIL } from "@mui/x-date-pickers/locales";
 
 import Orders from "./pages/Orders";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import NewOrder from "./pages/NewOrder";
 
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
@@ -25,6 +24,8 @@ import NewOrder from "./pages/NewOrder";
 import Login from "./pages/Login";
 import ProtectedPages from "./pages/ProtectedPages";
 import Layout from "./components/layout/Layout";
+import Customers from "./pages/Customers";
+import FutureOrders from "./pages/FutureOrders";
 const queryClient = new QueryClient();
 
 const theme = createTheme(
@@ -55,7 +56,10 @@ function App() {
                 <Route path="/home" element={<HomePage />}></Route>
                 <Route element={<Layout />}>
                   <Route path="/orders" element={<Orders />}></Route>
+                  <Route path="/orders/future" element={<FutureOrders />}></Route>
                   <Route path="orders/new" element={<NewOrder />} />
+                  <Route path="orders/:id" element={<NewOrder />} />
+                  <Route path="customers" element={<Customers />} />
                 </Route>
               </Route>
             </Routes>

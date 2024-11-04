@@ -2,26 +2,40 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { getInstitutions } from "../../services/institutionsService";
-import { getContactsByInstitutionId } from "../../services/contactService";
-import { Box } from "@mui/material";
+import { getCustomers } from "../../services/customersService";
+import { getContactsByCustomerId } from "../../services/contactService";
 
-export default function InstitutionContactSelector({ setFormData }) {
+export default function CustomerContactSelector({ setFormData, formData}) {
+
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
 
-  // שליפת מוסדות
+  // שליפת לקוחות
   const { data: institutions, isLoading: isLoadingInstitutions } = useQuery({
     queryKey: ["institutions"],
-    queryFn: getInstitutions,
+    queryFn: getCustomers,
   });
 
   // שליפת אנשי קשר של המוסד שנבחר
   const { data: contacts, isLoading: isLoadingContacts } = useQuery({
     queryKey: ["contacts", selectedInstitution?.id],
-    queryFn: () => getContactsByInstitutionId(selectedInstitution?.id),
-    enabled: !!selectedInstitution?.id,
+    queryFn: () => getContactsByCustomerId(selectedInstitution?.customer_id),
+    enabled: !!selectedInstitution?.customer_id,
   });
+
+  useEffect(() => {
+    if (formData.customer_id && institutions) {
+      const institution = institutions.find((inst) => inst.customer_id === formData.customer_id);
+      setSelectedInstitution(institution);      
+    }
+  }, [formData.customer_id, institutions]);
+
+  useEffect(() => {
+    if (formData.contact_id && contacts) {
+      const contact = contacts.find((cont) => cont.id === formData.contact_id);
+      setSelectedContact(contact);
+    }
+  }, [formData.contact_id, contacts]);
 
   useEffect(() => {
     if (selectedInstitution) {
@@ -45,14 +59,7 @@ export default function InstitutionContactSelector({ setFormData }) {
   const contactOptions = contacts || [];
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        gap: 2,
-        width: "100%",
-      }}
-    >
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
       {/* בחירת מוסד */}
       <Autocomplete
         required
@@ -61,7 +68,7 @@ export default function InstitutionContactSelector({ setFormData }) {
         getOptionLabel={(option) => option.name}
         sx={{ width: 300 }}
         loading={isLoadingInstitutions}
-        value={selectedInstitution}
+        value={formData.in||selectedInstitution}
         onChange={(event, newValue) => {
           setSelectedInstitution(newValue);
           setSelectedContact(null);
@@ -75,7 +82,7 @@ export default function InstitutionContactSelector({ setFormData }) {
         disablePortal
         options={contactOptions}
         getOptionLabel={(option) => option.name}
-        sx={{ width: 300, marginTop: 2 }}
+        sx={{ width: 300 }}
         loading={isLoadingContacts}
         disabled={!selectedInstitution}
         value={selectedContact}
@@ -84,6 +91,6 @@ export default function InstitutionContactSelector({ setFormData }) {
         }}
         renderInput={(params) => <TextField {...params} label="בחר איש קשר" />}
       />
-    </Box>
+    </div>
   );
 }

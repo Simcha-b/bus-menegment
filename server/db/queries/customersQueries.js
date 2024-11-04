@@ -8,23 +8,17 @@ async function getAllCustomers() {
 
 async function getCustomerById(id) {
   const [rows] = await pool.query(
-    "SELECT * FROM Customers WHERE customer_id = ?",
+    "SELECT * FROM customers WHERE customer_id = ?",
     [id]
   );
   return rows[0];
 }
 
-// async function getCustomersWithReservations() {
-//   const [rows] = await pool.query(
-//     "SELECT * FROM Customers WHERE customer_id IN (SELECT customer_id FROM reservations)"
-//   );
-//   return rows;
-// }
 
 //insert
 async function insertCustomer(customer) {
   const [rows] = await pool.query(
-    "INSERT INTO Customers (institution_name, contact_person, phone, email) values(?,?,?,?)",
+    "INSERT INTO customers (institution_name, contact_person, phone, email) values(?,?,?,?)",
     [customer.name, customer.contact_person, customer.phone, customer.email]
   );
   return rows;
@@ -33,7 +27,7 @@ async function insertCustomer(customer) {
 //update
 async function updateCustomer(customer) {
   const [rows] = await pool.query(
-    "UPDATE Customers SET institution_name = ?, contact_person = ?, phone = ?, email = ? WHERE customer_id = ?",
+    "UPDATE customers SET institution_name = ?, contact_person = ?, phone = ?, email = ? WHERE customer_id = ?",
     [
       customer.name,
       customer.contact_person,
@@ -48,7 +42,7 @@ async function updateCustomer(customer) {
 //delete
 async function deleteCustomer(id) {
   const [rows] = await pool.query(
-    "DELETE FROM Customers WHERE customer_id = ?",
+    "DELETE FROM customers WHERE customer_id = ?",
     [id]
   );
   return rows;

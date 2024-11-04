@@ -14,6 +14,7 @@ function Login() {
     setError(null);
     try {
       const user = await checkLogin(email, password);
+      if(!user) throw new Error("שם משתמש או סיסמה לא נכונים");
       console.log("User logged in:", user);
       navigate("/home");
     } catch (error) {
