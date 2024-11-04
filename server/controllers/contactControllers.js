@@ -38,10 +38,10 @@ async function getContactById(req, res) {
 }
 
 //get
-async function getContactsByInstitutionId(req, res) {
-    const id = req.params.id;
+async function getContactsByCustomerId(req, res) {
+    const id = req.query.customer_id;
     try {
-        const rows = await contactQueries.getContactsByInstitutionId(id);
+        const rows = await contactQueries.getContactsByCustomerId(id);
         res.json(rows);
     } catch (error) {
         res.status(500).json({
@@ -98,4 +98,4 @@ async function deleteContact(req, res) {
     }
 }
 
-export  { getAllContacts, getContactById, getContactsByInstitutionId, insertContact, updateContact, deleteContact };
+export  { getAllContacts, getContactById, getContactsByCustomerId, insertContact, updateContact, deleteContact };

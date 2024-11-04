@@ -3,14 +3,19 @@ import { useQuery } from "@tanstack/react-query";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getCompanies } from "../../services/companiesService.js";
-export function CompanySelector({ setFormData }) {
+export function CompanySelector({ setFormData, formData }) {
   const [selectedCompany, setSelectedCompany] = useState(null);
 
   const { data: companies, isLoading: isLoadingCompanies } = useQuery({
     queryKey: ["companies"],
     queryFn: getCompanies,
   });
-
+  // useEffect(() => {
+  //   if (formData.company_id && companies) {
+  //     const company = companies.find((com) => com.company_id === formData.company_id);
+  //     setSelectedCompany(company);
+  //   }
+  // }, [formData.company_id, companies]);
   useEffect(() => {
     if (selectedCompany) {
       setFormData((prevFormData) => ({

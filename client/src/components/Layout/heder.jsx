@@ -10,7 +10,7 @@ export  function Heder() {
   const user = JSON.parse(localStorage.getItem("user"))[0].name;
   
   const handleHomeClick = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   return (

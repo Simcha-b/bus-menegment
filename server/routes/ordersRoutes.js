@@ -15,6 +15,7 @@ import {
 // router.get("/", getOrders);
 router.get("/", getOrders);
 router.get("/:id", getOrderById);
+router.get("/future", getFutureOrders);
 router.get("/customer/:id", getOrdersByCustomerId);
 router.post("/", insertOrders);
 router.put("/:id", updateOrders);

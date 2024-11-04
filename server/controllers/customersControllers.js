@@ -8,8 +8,8 @@ async function getCustomers(_, res) {
     res.status(500).json({
       success: false,
       message: "Error retrieving customers",
-      error: error.message || "Internal Server Error"
-    })
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -21,8 +21,8 @@ async function getCustomer(req, res) {
       res.status(404).json({
         success: false,
         message: "Customer not found",
-        error: error.message || "Internal Server Error"
-      })
+        error: error.message || "Internal Server Error",
+      });
     } else {
       res.json(customer);
     }
@@ -30,8 +30,8 @@ async function getCustomer(req, res) {
     res.status(500).json({
       success: false,
       message: "Error retrieving customer",
-      error: error.message || "Internal Server Error"
-    })
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -44,8 +44,8 @@ async function insertCustomer(req, res) {
     res.status(500).json({
       success: false,
       message: "Error inserting customer",
-      error: error.message || "Internal Server Error"
-    })
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -61,8 +61,8 @@ async function updateCustomer(req, res) {
       res.status(404).json({
         success: false,
         message: "Customer not found",
-        error: error.message || "Internal Server Error"
-      })
+        error: error.message || "Internal Server Error",
+      });
     } else {
       res.json(updatedCustomer);
     }
@@ -70,8 +70,8 @@ async function updateCustomer(req, res) {
     res.status(500).json({
       success: false,
       message: "Error updating customer",
-      error: error.message || "Internal Server Error"
-    })
+      error: error.message || "Internal Server Error",
+    });
   }
 }
 
@@ -83,8 +83,8 @@ async function deleteCustomer(req, res) {
       res.status(404).json({
         success: false,
         message: "Customer not found",
-        error: error.message || "Internal Server Error"
-      })
+        error: error.message || "Internal Server Error",
+      });
     } else {
       res.json(deletedCustomer);
     }
@@ -92,11 +92,11 @@ async function deleteCustomer(req, res) {
     res.status(500).json({
       success: false,
       message: "Error deleting customer",
-      error: error.message || "Internal Server Error"
-    })
+      error: error.message || "Internal Server Error",
+    });
   }
 }
-export  {
+export {
   getCustomers,
   getCustomer,
   insertCustomer,
