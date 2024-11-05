@@ -1,35 +1,56 @@
 import { Table, ConfigProvider, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import DeleteOrder from "./DeleteOrder";
-import { formatDate, getOrders, getOrdersByDate } from "../../services/ordersService";
+import {
+  deleteOrder,
+  formatDate,
+  getFutureOrders,
+  getOrders,
+  getOrdersByDate,
+} from "../../services/ordersService";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
- function OrderTable(props) {
+function OrderTable({ past, future, year, month }) {
   const navigate = useNavigate();
-  const { isLoading, error, data } =  useQuery({
-    queryKey: ["repoData"],
-    // queryFn: () => getOrdersByDate(props.date.year, props.date.month),
-    queryFn: () => getOrders(),
+  const { isLoading, error, data } = useQuery({
+    queryKey: past
+    ? ["ordersByDate", year, month]
+    : future
+    ? ["futureOrders"]
+    : ["orders"],    queryFn: () =>
+      past
+        ? getOrdersByDate(year, month)
+        : future
+        ? getFutureOrders()
+        : getOrders(),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: (order_id) => deleteOrder(order_id),
+    onSuccess: () => {
+      QueryClient.invalidateQueries("orders");
+    },
   });
   if (isLoading) {
     return <div>Loading...</div>;
   }
   if (error) {
-    return <div>Error</div>;
+    return <div>{error.message}</div>;
   }
 
-  const dataSource = data.map((item) => ({
-    ...item,
-    key: item.order_id,
-  }));
+  const dataSource =
+    data.map((item) => ({
+      ...item,
+      key: item.order_id,
+    })) || [];
 
-  const names = dataSource.map((item) => {
-    return {
-      text: item.name,
-      value: item.name,
-    };
-  });
+  const names =
+    dataSource.map((item) => {
+      return {
+        text: item.name,
+        value: item.name,
+      };
+    }) || [];
 
   const columns = [
     {
@@ -106,7 +127,9 @@ import { useQuery } from "@tanstack/react-query";
             ערוך
           </Button>
 
-          <DeleteOrder order={record} />
+          <Button onClick={() => deleteMutation.mutate(record.order_id)} > 
+            מחק
+          </Button>
         </div>
       ),
     },

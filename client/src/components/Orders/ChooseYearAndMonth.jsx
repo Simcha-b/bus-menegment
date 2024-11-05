@@ -7,23 +7,20 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
+import { useNavigate } from "react-router-dom";
 
-export default function ChooseYearAndMonth() {
-  const [open, setOpen] = useState(false);
+export default function ChooseYearAndMonth(props) {
+  const navigate = useNavigate();
+  const setOpenProps = props.setOpen;
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
   const handleClose = () => {
-    setOpen(false);
+    // setOpen(false);
+    setOpenProps(false);
   };
 
   const handleMonthChange = (event) => {
@@ -35,7 +32,7 @@ export default function ChooseYearAndMonth() {
   };
 
   return (
-    <Dialog month={month} year={year} open={open} onClose={handleClose}>
+    <Dialog month={month} year={year} open={props.open} onClose={handleClose}>
       <DialogTitle>בחירת שנה וחודש להצגה</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -52,7 +49,7 @@ export default function ChooseYearAndMonth() {
           }}
         >
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
-            <InputLabel htmlFor="year">year</InputLabel>
+            <InputLabel htmlFor="year">שנה</InputLabel>
             <Select
               autoFocus
               value={year}
@@ -63,7 +60,6 @@ export default function ChooseYearAndMonth() {
                 id: "year",
               }}
             >
-              <MenuItem value={false}>false</MenuItem>
               <MenuItem value="2020">2020</MenuItem>
               <MenuItem value="2021">2021</MenuItem>
               <MenuItem value="2022">2022</MenuItem>
@@ -71,30 +67,48 @@ export default function ChooseYearAndMonth() {
               <MenuItem value="2024">2024</MenuItem>
             </Select>
           </FormControl>
-          {/* <FormControl sx={{ mt: 2, minWidth: 120 }}>
-              <InputLabel htmlFor="year">year</InputLabel>
-              <Select
-                autoFocus
-                value={year}
-                onChange={handleYearChange}
-                label="year"
-                inputProps={{
-                  name: "year",
-                  id: "year",
-                }}
-              >
-                <MenuItem value={false}>false</MenuItem>
-                <MenuItem value="2020">2020</MenuItem>
-                <MenuItem value="2021">2021</MenuItem>
-                <MenuItem value="2022">2022</MenuItem>
-                <MenuItem value="2023">2023</MenuItem>
-                <MenuItem value="2024">2024</MenuItem>
-              </Select>
-            </FormControl> */}
+          <FormControl sx={{ mt: 2, minWidth: 120 }}>
+            <InputLabel htmlFor="month">חודש</InputLabel>
+            <Select
+              autoFocus
+              value={month}
+              onChange={handleMonthChange}
+              label="month"
+              inputProps={{
+                name: "month",
+                id: "month",
+              }}
+            >
+              <MenuItem value="01">ינואר</MenuItem>
+              <MenuItem value="02">פברואר</MenuItem>
+              <MenuItem value="03">מרץ</MenuItem>
+              <MenuItem value="04">אפריל</MenuItem>
+              <MenuItem value="05">מאי</MenuItem>
+              <MenuItem value="06">יוני</MenuItem>
+              <MenuItem value="07">יולי</MenuItem>
+              <MenuItem value="08">אוגוסט</MenuItem>
+              <MenuItem value="09">ספטמבר</MenuItem>
+              <MenuItem value="10">אוקטובר</MenuItem>
+              <MenuItem value="11">נובמבר</MenuItem>
+              <MenuItem value="12">דצמבר</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Close</Button>
+        <Button
+          onClick={() => {
+            navigate("/orders/past", {
+              state: {
+                year: year,
+                month: month,
+              },
+            });
+          }}
+        >
+          אישור
+        </Button>
+        <Button onClick={handleClose}>ביטול</Button>
       </DialogActions>
     </Dialog>
   );
