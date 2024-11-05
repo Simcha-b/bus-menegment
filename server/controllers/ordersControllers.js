@@ -16,7 +16,7 @@ async function getOrders(req, res) {
 async function getOrderById(req, res) {
   const orderId = req.params.id;
   try {
-    const order = await ordersQueries.getOrderById(reservationId);
+    const order = await ordersQueries.getOrderById(orderId);
     if (!order) {
       res.status(404).json({
         success: false,
@@ -26,6 +26,18 @@ async function getOrderById(req, res) {
     } else {
       res.json(order);
     }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving orders",
+      error: error.message || "Internal Server Error",
+    });
+  }
+}
+async function getFutureOrders(req, res) {
+  try {
+    const FutureOrders = await ordersQueries.getFutureOrders();
+    res.json(FutureOrders);    
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -48,19 +60,6 @@ async function getOrdersByCustomerId(req, res) {
   }
 }
 
-async function getFutureOrders(req, res) {
-  try {
-    const orders = await ordersQueries.getFutureOrders();
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error retrieving orders",
-      error: error.message || "Internal Server Error",
-    });
-  }
-}
-
 async function insertOrders(req, res) {
   const order = req.body;
   try {
@@ -69,7 +68,7 @@ async function insertOrders(req, res) {
       success: true,
       message: "Order created",
       data: newOrder,
-    })
+    });
     console.log(newOrder);
   } catch (error) {
     res.status(500).json({

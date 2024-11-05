@@ -9,10 +9,9 @@ async function getAllOrders() {
 }
 
 async function getOrderById(id) {
-  const [rows] = await pool.query(
-    "SELECT * FROM orders WHERE order_id = ?",
-    [id]
-  );
+  const [rows] = await pool.query("SELECT * FROM orders WHERE order_id = ?", [
+    id,
+  ]);
   return rows[0];
 }
 
@@ -24,20 +23,16 @@ async function getOrdersByCustomerId(id) {
   const [rows] = await pool.query(query, [id]);
   return rows;
 }
-//select for mein orders table 
-//להכניס תאריך כפרמטר ולטפל בו
+// select future orders
 async function getFutureOrders() {
   const [rows] = await pool.query(
-    `select order_id, order_date, institution_name, start_time,
-     end_time, bus_quantity, trip_details, company_name
-    from orders r
-    join customers c
-    on r.customer_id = c.customer_id 
-    join bus_companies b
-    on r.company_id = b.company_id`
+    `select * from orders
+    where order_date > CURDATE()`
   );
   return rows;
 }
+//select for mein orders table
+//להכניס תאריך כפרמטר ולטפל בו
 //insert
 async function insertOrder(order) {
   const entries = Object.entries(order);
@@ -87,10 +82,9 @@ async function updateOrder(id, updates) {
 //delete
 
 async function deleteOrder(id) {
-  const [result] = await pool.query(
-    "DELETE FROM orders WHERE order_id = ?",
-    [id]
-  );
+  const [result] = await pool.query("DELETE FROM orders WHERE order_id = ?", [
+    id,
+  ]);
 
   return result;
 }
@@ -98,6 +92,7 @@ async function deleteOrder(id) {
 export default {
   getAllOrders,
   getOrderById,
+  getFutureOrders,
   getOrdersByCustomerId,
   getFutureOrders,
   insertOrder,

@@ -1,5 +1,6 @@
 import app from "./firebase-config.js";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const auth = getAuth(app);
 
@@ -19,5 +20,18 @@ const loginWithEmailAndPassword = async (email, password) => {
     console.log(errorCode, errorMessage);
   }
 };
+// פונקציה להתחברות באמצעות גוגל
+const loginWithGoogle = async () => {
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
 
-export default loginWithEmailAndPassword;
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("User logged in with Google:", user);
+    return user;
+  } catch (error) {
+    console.error("Error during Google login", error);
+  }
+};
+export { loginWithEmailAndPassword, loginWithGoogle };

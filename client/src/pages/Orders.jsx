@@ -1,28 +1,44 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { getOrders } from "../services/ordersService";
+import { Box } from "@mui/system";
 
-import OrsersTable from "../components/Orders/OrderTable";
 function Orders() {
   const navigate = useNavigate();
-  const { isPending, error, data } = useQuery({
-    queryKey: ["repoData"],
-    queryFn: () => getOrders(),
-  });
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error</div>;
-  }
-
   return (
-    <>
-      <h1 style={{ textAlign: "center", margin: "20px", fontSize: "30px" }}>
-        orders
-      </h1>
+    <Box sx={{ display: "flex",flexDirection:"row", alignItems: "center", justifyContent: "center"  }}>
+
+      <Button
+        sx={{ margin: "20px", alignItems: "center" }}
+        variant="contained"
+        color="success"
+        onClick={() => {
+          navigate("/orders/new");
+        }}
+      >
+        הזמנה חדשה
+      </Button>
+      <Button
+        sx={{ margin: "20px", alignItems: "center" }}
+        variant="contained"
+        color="success"
+        onClick={() => {
+          navigate("/orders/future");
+        }}
+      >
+        הזמנות עתידיות
+      </Button>
+      
+      <Button
+        sx={{ margin: "20px", alignItems: "center" }}
+        variant="contained"
+        color="success"
+        onClick={() => {
+          navigate("/orders/new");
+        }}
+      >
+        כל ההזמנות
+      </Button>
       <Button
         sx={{ margin: "20px", alignItems: "center" }}
         variant="contained"
@@ -32,10 +48,9 @@ function Orders() {
         }}
       >
         {" "}
-        הזמנה חדשה
+        הזמנות קודמות
       </Button>
-      <OrsersTable data={data} />
-    </>
+    </Box>
   );
 }
 

@@ -1,16 +1,32 @@
-import { Table, ConfigProvider } from "antd";
+import { Table, ConfigProvider, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
-import EditOrder from "./EditOrder";
 import DeleteOrder from "./DeleteOrder";
-import { formatDate } from "../../services/ordersService";
+import { formatDate, getOrders } from "../../services/ordersService";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
-function OrderTable(props) {
-  const data = props.data;
+ function OrderTable(props) {
+  const navigate = useNavigate();
+  const { isLoading, error, data } =  useQuery({
+    queryKey: ["repoData"],
+    queryFn: () => getOrders(),
+  });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error</div>;
+  }
 
-  const names = data.map((item) => {
+  const dataSource = data.map((item) => ({
+    ...item,
+    key: item.order_id,
+  }));
+
+  const names = dataSource.map((item) => {
     return {
-      text: item.institution_name,
-      value: item.institution_name,
+      text: item.name,
+      value: item.name,
     };
   });
 
@@ -20,19 +36,20 @@ function OrderTable(props) {
       dataIndex: "order_id",
       key: "order_id",
       sorter: (a, b) => a.order_id - b.order_id,
+      width: "5%",
     },
     {
       title: "תאריך",
       dataIndex: "order_date",
       key: "order_date",
-      sorter: (a, b) => a.order_date - b.order_date,
+      sorter: (a, b) => new Date(a.order_date) - new Date(b.order_date),
       render: (text) => formatDate(text),
     },
     {
-      title: "שם",
-      dataIndex: "institution_name",
-      key: "institution_name",
-      sorter: (a, b) => a.institution_name.localeCompare(b.institution_name),
+      title: "שם המזמין",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
       filters: names,
       filterMode: "tree",
       filterSearch: true,
@@ -76,7 +93,18 @@ function OrderTable(props) {
       key: "action",
       render: (text, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
-          <EditOrder order={record} />
+          <Button
+            onClick={() => {
+              navigate(`/orders/:${record.order_id}`, {
+                state: {
+                  order: record,
+                },
+              });
+            }}
+          >
+            ערוך
+          </Button>
+
           <DeleteOrder order={record} />
         </div>
       ),
@@ -85,7 +113,7 @@ function OrderTable(props) {
 
   return (
     <ConfigProvider direction="rtl" locale={heIL}>
-      <Table columns={columns} dataSource={data} bordered={true} />
+      <Table columns={columns} dataSource={dataSource} bordered={true} />
     </ConfigProvider>
   );
 }

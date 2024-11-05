@@ -6,14 +6,15 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 export default function BasicDatePicker({ formData, setFormData }) {
   function handleDateChange(newDate) {
     const formattedDate = newDate.toISOString().split("T")[0]; // המרת התאריך לפורמט YYYY-MM-DD
-    setFormData({ ...formData, date: formattedDate });
+    setFormData({ ...formData, order_date: formattedDate });
   }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
+        label="תאריך ההזמנה"
         onChange={(newValue) => {
-         handleDateChange(newValue);
+          handleDateChange(newValue);
         }}
       />
     </LocalizationProvider>

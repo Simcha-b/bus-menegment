@@ -12,8 +12,8 @@ async function getContactById(id) {
     return rows;
 }
 //select
-async function getContactsByInstitutionId(id) {
-    const [rows] = await pool.query("SELECT * FROM contacts WHERE institution_id = ?", [id]);
+async function getContactsByCustomerId(id) {
+    const [rows] = await pool.query("SELECT * FROM contacts WHERE customer_id = ?", [id]);
     return rows;
 }
 //insert
@@ -33,4 +33,4 @@ async function deleteContact(id) {
     return rows;
 }
 
-export default {getAllContacts, getContactById,getContactsByInstitutionId, insertContact, updateContact, deleteContact}
+export default {getAllContacts, getContactById, getContactsByCustomerId, insertContact, updateContact, deleteContact}
