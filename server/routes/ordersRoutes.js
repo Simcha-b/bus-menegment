@@ -8,15 +8,16 @@ import {
   insertOrders,
   updateOrders,
   deleteOrder,
+  getOrdersByDate,
 } from "../controllers/ordersControllers.js";
 
-// import addNewOrder from "../controllers/newOrder.js";
-
-// router.get("/", getOrders);
-router.get("/", getOrders);
-router.get("/:id", getOrderById);
+router.get("/byDate", getOrdersByDate);
 router.get("/future", getFutureOrders);
 router.get("/customer/:id", getOrdersByCustomerId);
+
+router.get("/", getOrders);
+router.get("/:id", getOrderById);
+
 router.post("/", insertOrders);
 router.put("/:id", updateOrders);
 router.delete("/:id", deleteOrder);

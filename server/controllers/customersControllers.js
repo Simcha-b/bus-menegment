@@ -1,6 +1,6 @@
 import customersQueries from "../db/queries/customersQueries.js";
 
-async function getCustomers(_, res) {
+async function getCustomers(req, res) {
   try {
     const customers = await customersQueries.getAllCustomers();
     res.json(customers);

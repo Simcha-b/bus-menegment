@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Box } from "@mui/system";
+import ChooseYearAndMonth from "../components/Orders/ChooseYearAndMonth";
 
 function Orders() {
   const navigate = useNavigate();
@@ -28,12 +29,13 @@ function Orders() {
       >
         הזמנות עתידיות
       </Button>
-      
+
       <Button
         sx={{ margin: "20px", alignItems: "center" }}
         variant="contained"
         color="success"
         onClick={() => {
+          <ChooseYearAndMonth />
           navigate("/orders/new");
         }}
       >
@@ -44,10 +46,9 @@ function Orders() {
         variant="contained"
         color="success"
         onClick={() => {
-          navigate("/orders/new");
+          navigate("/orders/");
         }}
       >
-        {" "}
         הזמנות קודמות
       </Button>
     </Box>

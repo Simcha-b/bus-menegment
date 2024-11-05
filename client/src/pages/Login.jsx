@@ -25,6 +25,7 @@ function Login() {
     try {
       const user = await loginWithGoogle();
       console.log("User logged in with Google:", user);
+      navigate("/home");
     } catch (error) {
       setError("שגיאה בהתחברות עם גוגל");
     }
