@@ -18,4 +18,13 @@ app.use("/api/contacts", contactsRoutes);
 // app.use("/api/institutions", institutionsRoutes);
 app.use("/api/users", usersRoutes);
 
+app.use((req, res) => {
+    res.status(404).json({ error: "Not Found" });
+  });
+  
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: "Something went wrong!" });
+  });
+
 export default app;

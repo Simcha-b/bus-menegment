@@ -1,9 +1,17 @@
 import React from "react";
+import { deleteOrder } from "../../services/ordersService";
+import { Button } from "antd";
 
-function DeleteOrder() {
+function DeleteOrder({ order_id }) {
   return (
     <div>
-      <button onClick={() => {}}>מחק</button>
+      <Button
+        onClick={() => {
+          deleteOrder(order_id);
+        }}
+      >
+        מחק
+      </Button>
     </div>
   );
 }

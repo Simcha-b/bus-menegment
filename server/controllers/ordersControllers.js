@@ -36,7 +36,6 @@ async function getOrderById(req, res) {
   }
 }
 async function getFutureOrders(req, res) {
-  console.log('111'); 
   try {
     const FutureOrders = await ordersQueries.getFutureOrders();
     res.json(FutureOrders);    
@@ -128,7 +127,7 @@ async function updateOrders(req, res) {
 async function deleteOrder(req, res) {
   const orderId = req.params.id;
   try {
-    const deletedOrder = await ordersQueries.deleteOrders(orderId);
+    const deletedOrder = await ordersQueries.deleteOrder(orderId);
     if (!deletedOrder) {
       res.status(404).json({
         success: false,
