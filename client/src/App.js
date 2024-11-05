@@ -56,12 +56,16 @@ function App() {
                 <Route path="/home" element={<HomePage />}></Route>
                 <Route element={<Layout />}>
                   <Route path="/orders" element={<Orders />}></Route>
-                  <Route path="/orders/future" element={<FutureOrders />}></Route>
+                  <Route
+                    path="/orders/future"
+                    element={<FutureOrders />}
+                  ></Route>
                   <Route path="orders/new" element={<NewOrder />} />
                   <Route path="orders/:id" element={<NewOrder />} />
                   <Route path="customers" element={<Customers />} />
                 </Route>
               </Route>
+              <Route path="*" element={<h1>404</h1>} />
             </Routes>
           </QueryClientProvider>
         </Router>

@@ -1,7 +1,7 @@
 import { Table, ConfigProvider, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import DeleteOrder from "./DeleteOrder";
-import { formatDate, getOrders } from "../../services/ordersService";
+import { formatDate, getOrders, getOrdersByDate } from "../../services/ordersService";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
   const navigate = useNavigate();
   const { isLoading, error, data } =  useQuery({
     queryKey: ["repoData"],
+    // queryFn: () => getOrdersByDate(props.date.year, props.date.month),
     queryFn: () => getOrders(),
   });
   if (isLoading) {

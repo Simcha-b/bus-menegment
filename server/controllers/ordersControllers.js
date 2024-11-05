@@ -1,6 +1,7 @@
 import ordersQueries from "../db/queries/ordersQueries.js";
 
 async function getOrders(req, res) {
+  
   try {
     const orders = await ordersQueries.getAllOrders();
     res.json(orders);
@@ -35,10 +36,29 @@ async function getOrderById(req, res) {
   }
 }
 async function getFutureOrders(req, res) {
+  console.log('111'); 
   try {
     const FutureOrders = await ordersQueries.getFutureOrders();
     res.json(FutureOrders);    
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving orders",
+      error: error.message || "Internal Server Error",
+    });
+  }
+}
+
+ async function getOrdersByDate(req, res) {
+  const {from , to} = req.query;
+  if (!from || !to) {
+    return res.status(400).json({ error: 'Start date and end date are required' });
+  }
+  try {
+    const orders = await ordersQueries.getOrderByDate(from, to);
+    res.json(orders);
+  } catch (error) {
+    console.log("hahah");
     res.status(500).json({
       success: false,
       message: "Error retrieving orders",
@@ -126,12 +146,12 @@ async function deleteOrder(req, res) {
     });
   }
 }
-
 export {
   getOrders,
   getOrderById,
   getOrdersByCustomerId,
   getFutureOrders,
+  getOrdersByDate,
   insertOrders,
   updateOrders,
   deleteOrder,

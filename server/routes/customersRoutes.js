@@ -10,6 +10,7 @@ import {
 
 router.get("/", getCustomers);
 router.get("/:id", getCustomer);
+
 router.post("/", insertCustomer);
 router.put("/:id", updateCustomer);
 router.delete("/:id", deleteCustomer);

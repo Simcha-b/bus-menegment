@@ -24,16 +24,22 @@ async function getOrdersByCustomerId(id) {
   return rows;
 }
 // select future orders
-async function getFutureOrders() {
+async function getFutureOrders() {  
   const [rows] = await pool.query(
     `select * from orders
     where order_date > CURDATE()`
   );
   return rows;
 }
-//select for mein orders table
-//להכניס תאריך כפרמטר ולטפל בו
-//insert
+//select orders by date
+async function getOrderByDate(from, to) {
+  const [rows] = await pool.query(
+    `select * from orders
+    where order_date between ? and ?`,
+    [from, to]
+  );
+  return rows;
+}
 async function insertOrder(order) {
   const entries = Object.entries(order);
   const keys = entries.map(([key]) => key).join(", ");
@@ -93,8 +99,8 @@ export default {
   getAllOrders,
   getOrderById,
   getFutureOrders,
+  getOrderByDate,
   getOrdersByCustomerId,
-  getFutureOrders,
   insertOrder,
   updateOrder,
   deleteOrder,
