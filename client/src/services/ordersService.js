@@ -54,18 +54,19 @@ export const updateOrder = async (id, body) => {
   const data = await response.json();
   return data;
 };
-export async function updateOrderStatus(order_id, status) {
-  const response = await fetch(`/api/orders/${order_id}/status`, {
+export async function updateOrderStatus(id, status) {
+  const response = await fetch(`http://localhost:3001/api/orders/${id}/status`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ status }),
-  });
+  }
+);
   if (!response.ok) {
     throw new Error("Failed to update order status");
   }
-}
+} 
 export const deleteOrder = async (id) => {
   const response = await fetch(`http://localhost:3001/api/orders/${id}`, {
     method: "DELETE",
@@ -73,12 +74,8 @@ export const deleteOrder = async (id) => {
   const data = await response.json();
   return data;
 };
+
 export const formatDate = (date) => {
-  //("DD/MM/YYYY")
-  const formattedDate = new Date(date).toLocaleDateString("he-IL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
+  const formattedDate = new Date(date).toLocaleDateString("he-IL");
   return formattedDate;
 };

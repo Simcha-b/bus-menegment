@@ -1,10 +1,11 @@
 import React from "react";
 import OrderTable from "../components/Orders/OrderTable";
+import FutureOrdersTable from "../components/Orders/FutureOrdersTable";
 
 function FutureOrders() {
   return (
     <div>
-      <OrderTable future={true} />
+      <FutureOrdersTable future={true} />
     </div>
   );
 }
