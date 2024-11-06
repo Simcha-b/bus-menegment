@@ -121,7 +121,7 @@ function NewOrder() {
         dir="rtl"
         component="form"
         sx={{
-          "& > :not(style)": { m: 1 },
+          "& > :not(style)": { m: 1 }, display: "flex", flexDirection: "column", alignItems: "center"
         }}
       >
         <BasicDatePicker setFormData={setFormData} formData={formData} />
@@ -174,7 +174,7 @@ function NewOrder() {
           value={formData.price_per_bus_customer}
           onChange={handleInputChange}
         />
-        <TextField
+        {/* <TextField
           id="price_customer"
           label="מחיר ללקוח"
           variant="outlined"
@@ -185,7 +185,8 @@ function NewOrder() {
               readOnly: true,
             },
           }}
-        />
+        /> */}
+        <h4>{`מחיר ללקוח ${formData.price_customer} ש"ח`}</h4>
         <CompanySelector setFormData={setFormData} />
 
         <TextField
@@ -195,7 +196,7 @@ function NewOrder() {
           value={formData.extra_pay_customer}
           onChange={handleInputChange}
         />
-        <TextField
+        {/* <TextField
           id="total_paid_customer"
           label="סכום כולל"
           variant="outlined"
@@ -205,7 +206,9 @@ function NewOrder() {
             },
           }}
           value={formData.total_price_customer}
-        />
+        /> */}
+        <h4>{`סכום כולל ${formData.total_price_customer} ש"ח`}</h4>
+
         <TextField
           id="notes_customer"
           label="הערות"
@@ -256,13 +259,14 @@ function NewOrder() {
           value={formData.extra_pay_company}
           onChange={handleInputChange}
         />
-        <TextField
+        {/* <TextField
           id="total_price_company"
           label="סכום כולל ספק"
           variant="outlined"
           value={formData.total_price_company}
           onChange={handleInputChange}
-        />
+        /> */}
+        <h4>{`סכום כולל ספק ${formData.total_price_company} ש"ח`}</h4>
         <FormControlLabel
           control={<Checkbox />}
           id="submitted_invoice"

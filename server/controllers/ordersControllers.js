@@ -123,22 +123,27 @@ async function updateOrders(req, res) {
     });
   }
 }
-
 async function updateOrderStatus(req, res) {
   const orderId = req.params.id;
   const status = req.body.status;
+
+  console.log(`Updating order ${orderId} to status ${status}`); // Log the input values
+
   try {
     const updatedOrder = await ordersQueries.updateOrderStatus(orderId, status);
     if (!updatedOrder) {
+      console.log(`Order ${orderId} not found`); // Log if order is not found
       res.status(404).json({
         success: false,
         message: "Order not found",
-        error: error.message || "Internal Server Error",
+        error: "Order not found",
       });
     } else {
+      console.log(`Order ${orderId} updated successfully`); // Log successful update
       res.json(updatedOrder);
     }
   } catch (error) {
+    console.error(`Error updating order ${orderId}: ${error.message}`); // Log the error
     res.status(500).json({
       success: false,
       message: "Error updating order",

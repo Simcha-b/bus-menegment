@@ -19,8 +19,8 @@ router.get("/customer/:id", getOrdersByCustomerId);
 router.get("/", getOrders);
 router.get("/:id", getOrderById);
 
+router.put("/:id/status", updateOrderStatus);
 router.post("/", insertOrders);
 router.put("/:id", updateOrders);
-router.put("/:id/status", updateOrderStatus);
 router.delete("/:id", deleteOrder);
 export default router;

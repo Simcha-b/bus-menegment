@@ -90,6 +90,13 @@ async function updateOrder(id, updates) {
     throw error;
   }
 }
+
+//update order status
+async function updateOrderStatus(order_id, status) {
+  const query = `UPDATE orders SET status = ? WHERE order_id = ?`;
+  const result =  await pool.query(query, [status, order_id]);
+  return result;
+}
 //delete
 
 async function deleteOrder(id) {
@@ -108,5 +115,6 @@ export default {
   getOrdersByCustomerId,
   insertOrder,
   updateOrder,
+  updateOrderStatus,
   deleteOrder,
 };
