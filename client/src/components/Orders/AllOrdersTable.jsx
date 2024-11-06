@@ -2,7 +2,6 @@ import { Table, ConfigProvider, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import {
   formatDate,
-  getFutureOrders,
   getOrders,
 } from "../../services/ordersService";
 import { useEffect, useState } from "react";
