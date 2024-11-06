@@ -124,6 +124,29 @@ async function updateOrders(req, res) {
   }
 }
 
+async function updateOrderStatus(req, res) {
+  const orderId = req.params.id;
+  const status = req.body.status;
+  try {
+    const updatedOrder = await ordersQueries.updateOrderStatus(orderId, status);
+    if (!updatedOrder) {
+      res.status(404).json({
+        success: false,
+        message: "Order not found",
+        error: error.message || "Internal Server Error",
+      });
+    } else {
+      res.json(updatedOrder);
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating order",
+      error: error.message || "Internal Server Error",
+    });
+  }
+}
+
 async function deleteOrder(req, res) {
   const orderId = req.params.id;
   try {
@@ -153,5 +176,6 @@ export {
   getOrdersByDate,
   insertOrders,
   updateOrders,
+  updateOrderStatus,
   deleteOrder,
 };
