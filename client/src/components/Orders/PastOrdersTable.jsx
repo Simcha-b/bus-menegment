@@ -1,4 +1,4 @@
-import { Table, ConfigProvider, Button } from "antd";
+import { Table, ConfigProvider } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import {
   formatDate,
@@ -32,6 +32,7 @@ function PastOrdersTable({year, month}) {
     fetchOrders();
   }, []);
 
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -43,7 +44,20 @@ function PastOrdersTable({year, month}) {
     ...item,
     key: item.order_id,
   }));
-
+  const filters = [
+    {
+      text: "חסר שיבוץ",
+      value: "ממתין לאישור",
+    },
+    {
+      text: "מאושר",
+      value: "מאושר",
+    },
+    {
+      text: "בוטל",
+      value: "בוטל",
+    },
+  ];
   const columns = [
     {
       title: "מספר הזמנה",

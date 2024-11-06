@@ -1,9 +1,9 @@
 import React from 'react'
-import OrderTable from '../components/Orders/OrderTable'
+import AllOrdersTable from '../components/Orders/AllOrdersTable'
 
 function AllOrders() {
   return (
-    <div><OrderTable /></div>
+    <div><AllOrdersTable /></div>
   )
 }
 
