@@ -9,6 +9,7 @@ import {
   updateOrders,
   deleteOrder,
   getOrdersByDate,
+  updateOrderStatus,
 } from "../controllers/ordersControllers.js";
 
 router.get("/byDate", getOrdersByDate);
@@ -20,5 +21,6 @@ router.get("/:id", getOrderById);
 
 router.post("/", insertOrders);
 router.put("/:id", updateOrders);
+router.put("/:id/status", updateOrderStatus);
 router.delete("/:id", deleteOrder);
 export default router;

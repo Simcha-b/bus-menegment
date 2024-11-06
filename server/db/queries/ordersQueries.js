@@ -24,11 +24,12 @@ async function getOrdersByCustomerId(id) {
   return rows;
 }
 // select future orders
-async function getFutureOrders() {  
-  const [rows] = await pool.query(
-    `select * from orders
-    where order_date > CURDATE()`
-  );
+async function getFutureOrders() {
+  const query = `SELECT * FROM orders
+    LEFT JOIN customers ON orders.customer_id = customers.customer_id
+    LEFT JOIN bus_companies ON orders.company_id = bus_companies.company_id
+    WHERE order_date > CURDATE()`;
+  const [rows] = await pool.query(query);
   return rows;
 }
 //select orders by date
@@ -58,6 +59,10 @@ async function updateOrder(id, updates) {
     throw new Error(
       "Invalid input: id is required and updates object cannot be empty"
     );
+  }
+  async function updateOrderStatus(order_id, status) {
+    const query = `UPDATE orders SET status = ? WHERE order_id = ?`;
+    await pool.query(query, [status, order_id]);
   }
 
   // Create the SET part of the query dynamically

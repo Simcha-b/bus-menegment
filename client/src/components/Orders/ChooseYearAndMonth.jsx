@@ -17,7 +17,15 @@ export default function ChooseYearAndMonth(props) {
   const setOpenProps = props.setOpen;
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
+  
 
+  //לשנות את הפונקציה לתאריך מינימום
+  const years = [
+    new Date().getFullYear().toString(),
+    (new Date().getFullYear() - 1).toString(),
+    (new Date().getFullYear() - 2).toString(),
+    (new Date().getFullYear() - 3).toString(),
+  ];
   const handleClose = () => {
     // setOpen(false);
     setOpenProps(false);
@@ -33,11 +41,9 @@ export default function ChooseYearAndMonth(props) {
 
   return (
     <Dialog month={month} year={year} open={props.open} onClose={handleClose}>
-      <DialogTitle>בחירת שנה וחודש להצגה</DialogTitle>
+      <DialogTitle> שנה וחודש</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          בחר שנה וחודש להצגת הנתונים בטבלה{" "}
-        </DialogContentText>
+        <DialogContentText>בחר שנה וחודש להצגת הנתונים בטבלה</DialogContentText>
         <Box
           noValidate
           component="form"
@@ -51,7 +57,6 @@ export default function ChooseYearAndMonth(props) {
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
             <InputLabel htmlFor="year">שנה</InputLabel>
             <Select
-              autoFocus
               value={year}
               onChange={handleYearChange}
               label="year"
@@ -60,17 +65,14 @@ export default function ChooseYearAndMonth(props) {
                 id: "year",
               }}
             >
-              <MenuItem value="2020">2020</MenuItem>
-              <MenuItem value="2021">2021</MenuItem>
-              <MenuItem value="2022">2022</MenuItem>
-              <MenuItem value="2023">2023</MenuItem>
-              <MenuItem value="2024">2024</MenuItem>
+              {years.map((year) => (
+                <MenuItem value={year}>{year}</MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
             <InputLabel htmlFor="month">חודש</InputLabel>
             <Select
-              autoFocus
               value={month}
               onChange={handleMonthChange}
               label="month"
@@ -79,6 +81,7 @@ export default function ChooseYearAndMonth(props) {
                 id: "month",
               }}
             >
+              <MenuItem value="">בחר חודש</MenuItem>
               <MenuItem value="01">ינואר</MenuItem>
               <MenuItem value="02">פברואר</MenuItem>
               <MenuItem value="03">מרץ</MenuItem>

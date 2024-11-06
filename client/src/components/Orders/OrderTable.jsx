@@ -1,56 +1,53 @@
 import { Table, ConfigProvider, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
-import DeleteOrder from "./DeleteOrder";
 import {
-  deleteOrder,
   formatDate,
   getFutureOrders,
   getOrders,
   getOrdersByDate,
 } from "../../services/ordersService";
 import { useNavigate } from "react-router-dom";
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+
 
 function OrderTable({ past, future, year, month }) {
   const navigate = useNavigate();
+  const queryKey = past
+  ? ["ordersByDate", year, month]
+  : future
+  ? ["futureOrders"]
+  : ["orders"];
   const { isLoading, error, data } = useQuery({
-    queryKey: past
-    ? ["ordersByDate", year, month]
-    : future
-    ? ["futureOrders"]
-    : ["orders"],    queryFn: () =>
+    queryKey: queryKey,
+    queryFn: () =>
       past
         ? getOrdersByDate(year, month)
         : future
         ? getFutureOrders()
         : getOrders(),
   });
-  const deleteMutation = useMutation({
-    mutationFn: (order_id) => deleteOrder(order_id),
-    onSuccess: () => {
-      QueryClient.invalidateQueries("orders");
-    },
-  });
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
   if (error) {
     return <div>{error.message}</div>;
   }
+  console.log(data);
 
-  const dataSource =
-    data.map((item) => ({
-      ...item,
-      key: item.order_id,
-    })) || [];
+  const dataSource = data.map((item) => ({
+    ...item,
+    key: item.order_id,
+  }));
 
-  const names =
-    dataSource.map((item) => {
-      return {
-        text: item.name,
-        value: item.name,
-      };
-    }) || [];
+  // const names =
+  //   dataSource.map((item) => {
+  //     return {
+  //       text: item.name,
+  //       value: item.name,
+  //     };
+  //   });
 
   const columns = [
     {
@@ -72,9 +69,6 @@ function OrderTable({ past, future, year, month }) {
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
-      filters: names,
-      filterMode: "tree",
-      filterSearch: true,
       onFilter: (value, record) => record.name.startsWith(value),
     },
     {
@@ -109,6 +103,22 @@ function OrderTable({ past, future, year, month }) {
       dataIndex: "status",
       key: "status",
       sorter: (a, b) => a.status.localeCompare(b.status),
+      render: (text, record) => (
+        <FormControl fullWidth>
+          <InputLabel id="status">סטטוס</InputLabel>
+          <Select
+            labelId="status"
+            value={text}
+            label="status"
+            // onChange={(value) => handleStatusChange(record.order_id, value)}
+          >
+            <MenuItem value={"הושלם"}>הושלם</MenuItem>
+            <MenuItem value={"בתהליך"}>בתהליך</MenuItem>
+            <MenuItem value={"בוטל"}>בוטל</MenuItem>
+            <MenuItem value={"חסר שיבוץ"}>חסר שיבוץ</MenuItem>
+          </Select>
+        </FormControl>
+      ),
     },
     {
       title: "פעולות",
@@ -126,10 +136,7 @@ function OrderTable({ past, future, year, month }) {
           >
             ערוך
           </Button>
-
-          <Button onClick={() => deleteMutation.mutate(record.order_id)} > 
-            מחק
-          </Button>
+          <Button>מחק</Button>
         </div>
       ),
     },
