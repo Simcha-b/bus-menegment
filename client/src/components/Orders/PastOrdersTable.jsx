@@ -1,15 +1,12 @@
 import { Table, ConfigProvider } from "antd";
 import heIL from "antd/lib/locale/he_IL";
-import {
-  formatDate,
-  getOrdersByDate,
-} from "../../services/ordersService";
+import { formatDate, getOrdersByDate } from "../../services/ordersService";
 import { useEffect, useState } from "react";
 import DeleteOrder from "../order-actions/DeleteOrder";
 import ChangeStatus from "../order-actions/ChangeStatus";
 import EditOrder from "../order-actions/EditOrder";
 
-function PastOrdersTable({year, month}) {
+function PastOrdersTable({ year, month }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +29,6 @@ function PastOrdersTable({year, month}) {
     fetchOrders();
   }, []);
 
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -47,15 +43,23 @@ function PastOrdersTable({year, month}) {
   const filters = [
     {
       text: "חסר שיבוץ",
-      value: "ממתין לאישור",
+      value: "חסר שיבוץ",
     },
     {
-      text: "מאושר",
-      value: "מאושר",
+      text: "הושלם",
+      value: "הושלם",
     },
     {
       text: "בוטל",
       value: "בוטל",
+    },
+    {
+      text: "בתהליך",
+      value: "בתהליך",
+    },
+    {
+      text: "בביצוע",
+      value: "בביצוע",
     },
   ];
   const columns = [
@@ -113,6 +117,7 @@ function PastOrdersTable({year, month}) {
       title: "סטטוס",
       dataIndex: "status",
       key: "status",
+      filters: filters,
       sorter: (a, b) => a.status.localeCompare(b.status),
     },
     {

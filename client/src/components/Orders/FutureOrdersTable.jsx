@@ -1,9 +1,6 @@
 import { Table, ConfigProvider, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
-import {
-  formatDate,
-  getFutureOrders,
-} from "../../services/ordersService";
+import { formatDate, getFutureOrders } from "../../services/ordersService";
 import { useEffect, useState } from "react";
 import DeleteOrder from "../order-actions/DeleteOrder";
 import ChangeStatus from "../order-actions/ChangeStatus";
@@ -43,6 +40,29 @@ function FutureOrdersTable() {
     ...item,
     key: item.order_id,
   }));
+
+  const filters = [
+    {
+      text: "חסר שיבוץ",
+      value: "חסר שיבוץ",
+    },
+    {
+      text: "הושלם",
+      value: "הושלם",
+    },
+    {
+      text: "בוטל",
+      value: "בוטל",
+    },
+    {
+      text: "בתהליך",
+      value: "בתהליך",
+    },
+    {
+      text: "בביצוע",
+      value: "בביצוע",
+    },
+  ];
 
   const columns = [
     {
@@ -99,6 +119,7 @@ function FutureOrdersTable() {
       title: "סטטוס",
       dataIndex: "status",
       key: "status",
+      filters: filters,
       sorter: (a, b) => a.status.localeCompare(b.status),
     },
     {
@@ -114,9 +135,43 @@ function FutureOrdersTable() {
     },
   ];
 
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        "selectedRows: ",
+        selectedRows
+      );
+    },
+  };
+
   return (
     <ConfigProvider direction="rtl" locale={heIL}>
-      <Table columns={columns} dataSource={dataSource} bordered={true} />
+      <Table
+        rowSelection={{
+          type: "checkbox",
+          ...rowSelection,
+        }}
+        expandable={{
+          expandedRowRender: (record) => (
+            <>
+              <span
+                style={{
+                  display: "block",
+                  marginBottom: 16,
+                  color: "black",
+                }}
+              >
+                פרטי הנסיעה: {record.trip_details}
+              </span>
+              <span>סכום כולל: {record.total_price_customer}</span>
+            </>
+          ),
+        }}
+        columns={columns}
+        dataSource={dataSource}
+        bordered={true}
+      />
     </ConfigProvider>
   );
 }

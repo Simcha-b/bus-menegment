@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import {
   Checkbox,
@@ -7,21 +7,32 @@ import {
   Snackbar,
   Alert,
   Box,
-  Paper,
   Button,
+  Paper,
+  Typography,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { sendNewOrder } from "../services/ordersService";
 import { CompanySelector } from "../components/NewOrder/CompanySelector";
 import { useNavigate } from "react-router-dom";
 // import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
 import BasicDatePicker from "../components/NewOrder/BasicDatePicker";
 import CustomerContactSelector from "../components/NewOrder/CustomerContactSelector";
+import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
 
 function NewOrder() {
-  const location = useLocation();
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [open, setOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [showPaymentDetails, setShowPaymentDetails] = useState(false);
+  const [showCompanyDetails, setShowCompanyDetails] = useState(false);
+
+  const [priceCustomer, setPriceCustomer] = useState(0);
+  const [totalPriceCustomer, setTotalPriceCustomer] = useState(0);
+  const [totalPriceCompany, setTotalPriceCompany] = useState(0);
 
   const [formData, setFormData] = useState({
     customer_id: 0,
@@ -30,20 +41,39 @@ function NewOrder() {
     trip_details: "",
     start_time: "",
     end_time: "",
-    bus_quantity: 0,
-    price_per_bus_customer: 0,
-    price_customer: 0,
-    extra_pay_customer: 0,
-    total_price_customer: 0,
+    bus_quantity: null,
+    price_per_bus_customer: null,
+    extra_pay_customer: null,
     notes_customer: "",
     paid: false,
-    total_paid_customer: 0,
-    price_company: 0,
+    total_paid_customer: null,
+    price_per_bus_company: null,
     notes_company: "",
-    extra_pay_company: 0,
-    total_price_company: 0,
+    extra_pay_company: null,
     submitted_invoice: false,
+    status: "חסר שיבוץ",
   });
+
+  const [errors, setErrors] = useState({});
+
+  //function to calculate the price
+  const calculatePrice = () => {
+    const priceCustomer =
+      Number(formData.bus_quantity) * Number(formData.price_per_bus_customer);
+    setPriceCustomer(priceCustomer);
+    const totalPriceCustomer =
+      priceCustomer + Number(formData.extra_pay_customer);
+    setTotalPriceCustomer(totalPriceCustomer);
+    const totalPriceCompany =
+      Number(formData.bus_quantity) * Number(formData.price_per_bus_company) +
+      Number(formData.extra_pay_company);
+    setTotalPriceCompany(totalPriceCompany);
+  };
+
+  useEffect(() => {
+    calculatePrice();
+  }, [formData]);
+
   useEffect(() => {
     if (location.state && location.state.order) {
       console.log("Edit order:", location.state.order);
@@ -51,11 +81,19 @@ function NewOrder() {
       setFormData(location.state.order);
     }
   }, [location.state]);
+
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setOpen(false);
+  };
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setErrorOpen(false);
   };
 
   const handleInputChange = (event) => {
@@ -66,33 +104,31 @@ function NewOrder() {
     }));
   };
 
-  const calculateTotals = () => {
-    const busQuantity = Number(formData.bus_quantity);
-    const pricePerBus = Number(formData.price_per_bus_customer);
-    const extraPay = Number(formData.extra_pay_customer);
-    const price_customer = busQuantity * pricePerBus;
-    const totalCustomer = price_customer + extraPay;
-    const totalCompany =
-      Number(formData.price_company) + Number(formData.extra_pay_company);
-
-    setFormData((prevData) => ({
-      ...prevData,
-      price_customer: price_customer,
-      total_price_customer: totalCustomer,
-      total_price_company: totalCompany,
-    }));
+  // Validate form fields
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.trip_details) newErrors.trip_details = "פרטי הנסיעה נדרשים";
+    if (!formData.customer_id) newErrors.customer_id = "לקוח נדרש";
+    if (!formData.contact_id) newErrors.contact_id = "איש קשר נדרש";
+    if (!formData.start_time) newErrors.start_time = "שעת התחלה נדרשת";
+    if (!formData.end_time) newErrors.end_time = "שעת סיום נדרשת";
+    if (!formData.bus_quantity) newErrors.bus_quantity = "כמות אוטובוסים נדרשת";
+    if (!formData.order_date) newErrors.date = "תאריך נדרש";
+    if (showPaymentDetails && !formData.price_per_bus_customer)
+      newErrors.price_per_bus_customer = "מחיר לאוטובוס נדרש";
+    if (showCompanyDetails && !formData.price_per_bus_company)
+      newErrors.price_per_bus_company = "מחיר ספק לאוטובוס נדרש";
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      setErrorMessage("אנא מלא את כל השדות הנדרשים");
+      setErrorOpen(true);
+    }
+    return Object.keys(newErrors).length === 0;
   };
-  useEffect(() => {
-    calculateTotals();
-  }, [
-    formData.bus_quantity,
-    formData.price_per_bus_customer,
-    formData.extra_pay_customer,
-    formData.price_company,
-    formData.extra_pay_company,
-  ]);
 
+  // Submit form
   const handleSubmit = async () => {
+    if (!validateForm()) return;
     try {
       const response = await sendNewOrder(formData);
       if (response.success) {
@@ -111,179 +147,289 @@ function NewOrder() {
     }
   };
 
-  const StyledPaper = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(3),
-    margin: theme.spacing(2),
-  }));
   return (
-    <>
-      <Box
-        dir="rtl"
-        component="form"
-        sx={{
-          "& > :not(style)": { m: 1 }, display: "flex", flexDirection: "column", alignItems: "center"
-        }}
-      >
-        <BasicDatePicker setFormData={setFormData} formData={formData} />
-        <CustomerContactSelector
-          setFormData={setFormData}
-          formData={formData}
-        />
-        <TextField
-          required
-          dir="rtl"
-          id="trip_details"
-          label="פרטי הנסיעה"
-          variant="outlined"
-          value={formData.trip_details}
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="start_time"
-          label="שעת התחלה"
-          variant="outlined"
-          value={formData.start_time}
-          onChange={handleInputChange}
-        />
-        {/* <BasicTimePicker
-            label="start_time"
-            formData={formData}
-            setFormData={setFormData}
-          /> */}
-        <TextField
-          id="end_time"
-          label="שעת סיום"
-          variant="outlined"
-          value={formData.end_time}
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="bus_quantity"
-          label="כמות אוטובוסים"
-          type="number"
-          variant="outlined"
-          value={formData.bus_quantity}
-          sx={{ width: "10ch" }}
-          //למנוע מינוס
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="price_per_bus_customer"
-          label="מחיר לאוטובוס"
-          variant="outlined"
-          value={formData.price_per_bus_customer}
-          onChange={handleInputChange}
-        />
-        {/* <TextField
-          id="price_customer"
-          label="מחיר ללקוח"
-          variant="outlined"
-          onChange={handleInputChange}
-          value={formData.price_customer}
-          slotProps={{
-            input: {
-              readOnly: true,
-            },
+    <Box sx={{ p: 3, maxWidth: 1200, margin: "0 auto" }}>
+      {/* Main Form Container */}
+      <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
+        <Box
+          component="form"
+          noValidate
+          autoComplete="off"
+          sx={{
+            display: "grid",
+            gap: 2,
+            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           }}
-        /> */}
-        <h4>{`מחיר ללקוח ${formData.price_customer} ש"ח`}</h4>
-        <CompanySelector setFormData={setFormData} />
+        >
+          {/* Trip Details Section */}
+          <Box
+            sx={{
+              gridColumn: "1/-1",
+              display: "grid",
+              gap: 2,
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+            }}
+          >
+            <BasicDatePicker setFormData={setFormData} formData={formData} />
 
-        <TextField
-          id="extra_pay_customer"
-          label="תשלומים נוספים"
-          variant="outlined"
-          value={formData.extra_pay_customer}
-          onChange={handleInputChange}
-        />
-        {/* <TextField
-          id="total_paid_customer"
-          label="סכום כולל"
-          variant="outlined"
-          slotProps={{
-            input: {
-              readOnly: true,
-            },
-          }}
-          value={formData.total_price_customer}
-        /> */}
-        <h4>{`סכום כולל ${formData.total_price_customer} ש"ח`}</h4>
+            <Box sx={{ gridColumn: "1/-1" }}>
+              <CustomerContactSelector
+                setFormData={setFormData}
+                formData={formData}
+                errors={errors}
+              />
+            </Box>
+            <TextField
+              required
+              fullWidth
+              dir="rtl"
+              id="trip_details"
+              label="פרטי הנסיעה"
+              variant="outlined"
+              value={formData.trip_details}
+              onChange={handleInputChange}
+              error={!!errors.trip_details}
+              helperText={errors.trip_details}
+            />
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 2,
+              }}
+            >
+              {/* <TextField
+                fullWidth
+                id="start_time"
+                label="שעת התחלה"
+                variant="outlined"
+                value={formData.start_time}
+                onChange={handleInputChange}
+                error={!!errors.start_time}
+                helperText={errors.start_time}
+              />
+              <TextField
+                fullWidth
+                id="end_time"
+                label="שעת סיום"
+                variant="outlined"
+                value={formData.end_time}
+                onChange={handleInputChange}
+                error={!!errors.end_time}
+                helperText={errors.end_time}
+              /> */}
+              <BasicTimePicker
+                label="שעת התחלה"
+                formData={formData}
+                setFormData={setFormData}
+                error={!!errors.start_time}
+                helperText={errors.start_time}
+              />
+              <BasicTimePicker
+                label="שעת סיום"
+                formData={formData}
+                setFormData={setFormData}
+                error={!!errors.end_time}
+                helperText={errors.end_time}
+              />
+              <TextField
+                fullWidth
+                id="bus_quantity"
+                label="כמות אוטובוסים"
+                type="number"
+                variant="outlined"
+                value={formData.bus_quantity}
+                onChange={handleInputChange}
+                error={!!errors.bus_quantity}
+                helperText={errors.bus_quantity}
+              />
+            </Box>
+          </Box>
 
-        <TextField
-          id="notes_customer"
-          label="הערות"
-          variant="outlined"
-          multiline={true}
-          value={formData.notes_customer}
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="invoice"
-          label="מספר חשבונית"
-          variant="outlined"
-          value={formData.invoice}
-          onChange={handleInputChange}
-        />
-        <FormControlLabel
-          control={<Checkbox />}
-          id="paid"
-          label="שולם"
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="total_paid_customer"
-          label="סה''כ שולם"
-          variant="outlined"
-          value={formData.total_paid_customer}
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="price_company"
-          label="מחיר ספק לאוטובוס"
-          variant="outlined"
-          value={formData.price_company}
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="notes_company"
-          label="הערות ספק"
-          variant="outlined"
-          multiline={true}
-          value={formData.notes_company}
-          onChange={handleInputChange}
-        />
-        <TextField
-          id="extra_pay_company"
-          label="תשלומים נוספים"
-          variant="outlined"
-          value={formData.extra_pay_company}
-          onChange={handleInputChange}
-        />
-        {/* <TextField
-          id="total_price_company"
-          label="סכום כולל ספק"
-          variant="outlined"
-          value={formData.total_price_company}
-          onChange={handleInputChange}
-        /> */}
-        <h4>{`סכום כולל ספק ${formData.total_price_company} ש"ח`}</h4>
-        <FormControlLabel
-          control={<Checkbox />}
-          id="submitted_invoice"
-          label="הגיש חשבונית"
-          onChange={handleInputChange}
-        />
+          {/* Payment Details Section */}
+          <Button
+            variant="contained"
+            onClick={() => setShowPaymentDetails(!showPaymentDetails)}
+            sx={{
+              gridColumn: "1/-1",
+              justifySelf: "start",
+              maxWidth: "180px",
+              minWidth: "140px",
+              height: "36px",
+            }}
+          >
+            {showPaymentDetails ? "הסתר פרטי תשלום" : "הוסף פרטי תשלום"}
+          </Button>
+
+          {showPaymentDetails && (
+            <Paper elevation={2} sx={{ p: 2, gridColumn: "1/-1" }}>
+              <Box
+                sx={{
+                  display: "grid",
+                  gap: 2,
+                  gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+                }}
+              >
+                <TextField
+                  fullWidth
+                  id="price_per_bus_customer"
+                  label="מחיר לאוטובוס"
+                  variant="outlined"
+                  value={formData.price_per_bus_customer}
+                  onChange={handleInputChange}
+                  error={!!errors.price_per_bus_customer}
+                  helperText={errors.price_per_bus_customer}
+                />
+                <TextField
+                  fullWidth
+                  id="extra_pay_customer"
+                  label="תשלומים נוספים"
+                  variant="outlined"
+                  value={formData.extra_pay_customer}
+                  onChange={handleInputChange}
+                />
+                <Box sx={{ gridColumn: "1/-1" }}>
+                  <Typography variant="h6">
+                    {`מחיר ללקוח: ${priceCustomer} ש"ח`}
+                  </Typography>
+                  <Typography variant="h6">
+                    {`סכום כולל: ${totalPriceCustomer} ש"ח`}
+                  </Typography>
+                </Box>
+                <TextField
+                  fullWidth
+                  id="notes_customer"
+                  label="הערות"
+                  variant="outlined"
+                  multiline
+                  rows={3}
+                  value={formData.notes_customer}
+                  onChange={handleInputChange}
+                  sx={{ gridColumn: "1/-1" }}
+                />
+              </Box>
+            </Paper>
+          )}
+
+          {/* Company Details Section */}
+          <Button
+            variant="contained"
+            onClick={() => setShowCompanyDetails(!showCompanyDetails)}
+            sx={{
+              gridColumn: "1/-1",
+              justifySelf: "start",
+              maxWidth: "180px",
+              minWidth: "140px",
+              height: "36px",
+            }}
+          >
+            {showCompanyDetails ? "הסתר פרטי ספק" : "הוסף פרטי ספק"}
+          </Button>
+
+          {showCompanyDetails && (
+            <Paper elevation={2} sx={{ p: 2, gridColumn: "1/-1" }}>
+              <Box
+                sx={{
+                  display: "grid",
+                  gap: 2,
+                  gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
+                }}
+              >
+                <CompanySelector setFormData={setFormData} />
+                <TextField
+                  fullWidth
+                  id="invoice"
+                  label="מספר חשבונית"
+                  variant="outlined"
+                  value={formData.invoice}
+                  onChange={handleInputChange}
+                />
+                <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    id="paid"
+                    label="שולם"
+                    onChange={handleInputChange}
+                  />
+                  <TextField
+                    fullWidth
+                    id="total_paid_customer"
+                    label="סה''כ שולם"
+                    variant="outlined"
+                    value={formData.total_paid_customer}
+                    onChange={handleInputChange}
+                  />
+                </Box>
+                <TextField
+                  fullWidth
+                  id="price_per_bus_company"
+                  label="מחיר ספק לאוטובוס"
+                  variant="outlined"
+                  value={formData.price_per_bus_company}
+                  onChange={handleInputChange}
+                  error={!!errors.price_per_bus_company}
+                  helperText={errors.price_per_bus_company}
+                />
+                <TextField
+                  fullWidth
+                  id="extra_pay_company"
+                  label="תשלומים נוספים"
+                  variant="outlined"
+                  value={formData.extra_pay_company}
+                  onChange={handleInputChange}
+                />
+                <Typography variant="h6" sx={{ gridColumn: "1/-1" }}>
+                  {`סכום כולל ספק: ${totalPriceCompany} ש"ח`}
+                </Typography>
+                <TextField
+                  fullWidth
+                  id="notes_company"
+                  label="הערות ספק"
+                  variant="outlined"
+                  multiline
+                  rows={3}
+                  value={formData.notes_company}
+                  onChange={handleInputChange}
+                  sx={{ gridColumn: "1/-1" }}
+                />
+                <FormControlLabel
+                  control={<Checkbox />}
+                  id="submitted_invoice"
+                  label="הגיש חשבונית"
+                  onChange={handleInputChange}
+                />
+              </Box>
+            </Paper>
+          )}
+        </Box>
+      </Paper>
+
+      {/* Submit Button */}
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+        {location.state ? (
+          <Button
+            onClick={() => {}}
+            variant="contained"
+            sx={{
+              width: "120px",
+              height: "36px",
+            }}
+          >
+            עדכן
+          </Button>
+        ) : (
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            sx={{
+              width: "120px",
+              height: "36px",
+            }}
+          >
+            שלח
+          </Button>
+        )}
       </Box>
-
-      {location.state ? (
-        <Button onClick={() => {}} variant="contained">
-          עדכן
-        </Button>
-      ) : (
-        <Button onClick={handleSubmit} variant="contained">
-          שלח
-        </Button>
-      )}
 
       <Snackbar
         open={open}
@@ -300,7 +446,23 @@ function NewOrder() {
           הזמנה נוספה בהצלחה
         </Alert>
       </Snackbar>
-    </>
+
+      <Snackbar
+        open={errorOpen}
+        autoHideDuration={6000}
+        onClose={handleErrorClose}
+        dir="rtl"
+      >
+        <Alert
+          onClose={handleErrorClose}
+          severity="error"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 }
 export default NewOrder;

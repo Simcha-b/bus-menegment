@@ -9,12 +9,15 @@ function Orders() {
   const navigate = useNavigate();
   return (
     <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+    sx={{
+      display: "flex",
+      flexDirection: "colum",
+      flexWrap: "wrap",
+      justifyContent: "center",
+      alignItems: "center",
+      mt: 5,
+      gap: 2, // ריווח בין הכפתורים
+    }}
     >
       <Button
         sx={{ margin: "20px", alignItems: "center" }}
@@ -24,7 +27,7 @@ function Orders() {
           navigate("/orders/new");
         }}
       >
-        הזמנה חדשה
+        נסיעה חדשה
       </Button>
       <Button
         sx={{ margin: "20px", alignItems: "center" }}
@@ -34,7 +37,7 @@ function Orders() {
           navigate("/orders/future");
         }}
       >
-        הזמנות עתידיות
+        נסיעות עתידיות
       </Button>
 
       <Button
@@ -45,7 +48,7 @@ function Orders() {
           navigate("/orders/all");
         }}
       >
-        כל ההזמנות
+        כל הנסיעות
       </Button>
       <Button
         sx={{ margin: "20px", alignItems: "center" }}
@@ -55,7 +58,7 @@ function Orders() {
           setOpen(true);
         }}
       >
-        הזמנות קודמות
+        נסיעות קודמות
       </Button>
       {open && <ChooseYearAndMonth open={open} setOpen={setOpen} />}
     </Box>

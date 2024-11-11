@@ -68,7 +68,7 @@ async function getFutureOrders(req, res) {
 async function getOrdersByCustomerId(req, res) {
   const customerId = req.params.id;
   try {
-    const orders = await ordersQueries.getOrderByCustomerId(customerId);
+    const orders = await ordersQueries.getOrdersByCustomerId(customerId);
     res.json(orders);
   } catch (error) {
     res.status(500).json({

@@ -37,8 +37,9 @@ async function getCustomer(req, res) {
 
 async function insertCustomer(req, res) {
   const customer = req.body;
+  const contacts = req.body.contacts;
   try {
-    const newCustomer = await customersQueries.insertCustomer(customer);
+    const newCustomer = await customersQueries.insertCustomerWithContacts(customer, contacts);
     res.status(201).json(newCustomer);
   } catch (error) {
     res.status(500).json({
