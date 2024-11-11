@@ -18,11 +18,12 @@ async function getOrderById(id) {
 async function getOrdersByCustomerId(id) {
   const query = `SELECT * FROM orders
   JOIN customers
-  ON orders.customer_id = customers.customer_id WHERE customer_id = ?`;
+  ON orders.customer_id = customers.customer_id WHERE customers.customer_id = ?`;
 
   const [rows] = await pool.query(query, [id]);
   return rows;
 }
+
 // select future orders
 async function getFutureOrders() {
   const query = `SELECT * FROM orders
@@ -41,6 +42,7 @@ async function getOrderByDate(from, to) {
   );
   return rows;
 }
+// insert
 async function insertOrder(order) {
   const entries = Object.entries(order);
   const keys = entries.map(([key]) => key).join(", ");
@@ -94,7 +96,7 @@ async function updateOrder(id, updates) {
 //update order status
 async function updateOrderStatus(order_id, status) {
   const query = `UPDATE orders SET status = ? WHERE order_id = ?`;
-  const result =  await pool.query(query, [status, order_id]);
+  const result = await pool.query(query, [status, order_id]);
   return result;
 }
 //delete

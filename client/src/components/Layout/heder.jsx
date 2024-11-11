@@ -31,7 +31,7 @@ export function Heder() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" color="info">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {user}
@@ -43,10 +43,10 @@ export function Heder() {
           דף הבית
         </Button>
         <Button color="inherit" onClick={() => navigate("/orders")}>
-          הזמנות
+          נסיעות
         </Button>
         <Button color="inherit" onClick={() => navigate("/orders/new")}>
-          הזמנה חדשה
+          נסיעה חדשה
         </Button>
         <Button color="inherit" onClick={() => navigate("/customers")}>
           לקוחות

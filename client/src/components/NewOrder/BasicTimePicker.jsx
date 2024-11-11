@@ -6,7 +6,12 @@ import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 
 import dayjs from "dayjs";
 
-export default function BasicTimePicker({ label, formData, setFormData }) {
+export default function BasicTimePicker({
+  label,
+  formData,
+  setFormData,
+  errors,
+}) {
   function handleTimeChange(newTime) {
     const formattedTime = dayjs(newTime).format("HH:mm");
     console.log(formattedTime);

@@ -30,8 +30,16 @@ export const getOrdersByDate = async (year, month) => {
     throw error;
   }
 };
+export const getOrdersByCustomerId = async (id) => {
+
+  const response = await fetch(`http://localhost:3001/api/orders/customer/${id}`);
+  const data = await response.json();
+  return data;
+};
 
 export const sendNewOrder = async (body) => {
+  console.log(body);
+
   const response = await fetch("http://localhost:3001/api/orders", {
     method: "POST",
     headers: {
@@ -55,18 +63,20 @@ export const updateOrder = async (id, body) => {
   return data;
 };
 export async function updateOrderStatus(id, status) {
-  const response = await fetch(`http://localhost:3001/api/orders/${id}/status`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ status }),
-  }
-);
+  const response = await fetch(
+    `http://localhost:3001/api/orders/${id}/status`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    }
+  );
   if (!response.ok) {
     throw new Error("Failed to update order status");
   }
-} 
+}
 export const deleteOrder = async (id) => {
   const response = await fetch(`http://localhost:3001/api/orders/${id}`, {
     method: "DELETE",

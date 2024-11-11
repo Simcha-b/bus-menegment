@@ -43,7 +43,28 @@ function AllOrdersTable() {
     ...item,
     key: item.order_id,
   }));
-
+  const filters = [
+    {
+      text: "חסר שיבוץ",
+      value: "חסר שיבוץ",
+    },
+    {
+      text: "הושלם",
+      value: "הושלם",
+    },
+    {
+      text: "בוטל",
+      value: "בוטל",
+    },
+    {
+      text: "בתהליך",
+      value: "בתהליך",
+    },
+    {
+      text: "בביצוע",
+      value: "בביצוע",
+    },
+  ];
   const columns = [
     {
       title: "מספר הזמנה",
@@ -100,6 +121,8 @@ function AllOrdersTable() {
       dataIndex: "status",
       key: "status",
       sorter: (a, b) => a.status.localeCompare(b.status),
+      filters: filters,
+      onFilter: (value, record) => record.status.startsWith(value),
     },
     {
       title: "פעולות",
