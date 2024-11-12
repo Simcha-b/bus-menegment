@@ -1,4 +1,4 @@
-import { Table, ConfigProvider, Button } from "antd";
+import { Table, ConfigProvider, Button, Tag } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import {
   formatDate,
@@ -20,6 +20,12 @@ const statusColors = {
   בתהליך: "orange",
   בוטל: "red",
   "חסר שיבוץ": "gray",
+};
+
+const tagColors = {
+  "חסר שיבוץ": "orange",
+  "לא שולם": "red",
+  "שולם חלקית": "blue",
 };
 
 function OrderTable({ tableType, year, month }) {
@@ -52,17 +58,13 @@ function OrderTable({ tableType, year, month }) {
     fetchOrders();
   }, [tableType, year, month]);
 
-  const updateTags = () => {
+  const updateTags = (order) => {
     let tags = [];
-    if (!data.company_id) tags.push("חסר שיבוץ");
-    if (!data.paid) tags.push("לא שולם");
-    if (!data.invoice) tags.push("לא הוגש חשבונית");
-    if (!data.total_paid_customer) tags.push("שולם חלקית");
+    if (!order.company_id) tags.push("חסר שיבוץ");
+    if (!order.paid) tags.push("לא שולם");
+    if (!order.total_paid_customer) tags.push("שולם חלקית");
+    return tags;
   };
-
-  useEffect(() => {
-    updateTags();
-  }, [data]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -134,6 +136,20 @@ function OrderTable({ tableType, year, month }) {
       sorter: (a, b) => a.status.localeCompare(b.status),
     },
     {
+      title: "תגיות",
+      key: "tags",
+      render: (text, record) => (
+        <div>
+          {updateTags(record).map((tag) => (
+            <Tag key={tag} color={tagColors[tag]} style={{ marginRight: 5 }}>
+              {tag}
+            </Tag>
+          ))}
+        </div>
+      ),
+      sorter: (a, b) => updateTags(a).length - updateTags(b).length,
+    },
+    {
       title: "פעולות",
       key: "action",
       render: (text, record) => (
@@ -189,7 +205,10 @@ function OrderTable({ tableType, year, month }) {
                 >
                   פרטי הנסיעה: {record.trip_details}
                 </span>
-                <span>סכום כולל: {record.total_price_customer}</span>
+                <span>
+                  סכום כולל:{" "}
+                  {record.bus_quantity * record.price_per_bus_customer}
+                </span>
               </>
             ),
           }}
