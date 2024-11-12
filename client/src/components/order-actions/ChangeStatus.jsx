@@ -46,9 +46,8 @@ const ChangeStatus = ({ order_id, fetchOrders }) => {
         <DialogContent>
           <DialogContentText>בחר סטטוס</DialogContentText>
           <Select value={status} onChange={handleChange} fullWidth>
-            <MenuItem value="בביצוע">בביצוע</MenuItem>
-            <MenuItem value="בתהליך">בתהליך</MenuItem>
-            <MenuItem value="הושלם">הושלם</MenuItem>
+            <MenuItem value="בביצוע">חסרים פרטים</MenuItem>
+            <MenuItem value="בתהליך">לביצוע</MenuItem>
             <MenuItem value="חסר שיבוץ">חסר שיבוץ</MenuItem>
           </Select>
         </DialogContent>

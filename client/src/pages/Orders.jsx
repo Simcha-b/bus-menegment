@@ -1,66 +1,75 @@
-import React, { useState } from "react";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import ChooseYearAndMonth from "../components/Orders/ChooseYearAndMonth";
+import OrderTable from "../components/Orders/OrderTable";
 
 function Orders() {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
-  return (
-    <Box
-    sx={{
-      display: "flex",
-      flexDirection: "colum",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      alignItems: "center",
-      mt: 5,
-      gap: 2, // ריווח בין הכפתורים
-    }}
-    >
-      <Button
-        sx={{ margin: "20px", alignItems: "center" }}
-        variant="contained"
-        color="success"
-        onClick={() => {
-          navigate("/orders/new");
-        }}
-      >
-        נסיעה חדשה
-      </Button>
-      <Button
-        sx={{ margin: "20px", alignItems: "center" }}
-        variant="contained"
-        color="success"
-        onClick={() => {
-          navigate("/orders/future");
-        }}
-      >
-        נסיעות עתידיות
-      </Button>
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
 
-      <Button
-        sx={{ margin: "20px", alignItems: "center" }}
-        variant="contained"
-        color="success"
-        onClick={() => {
-          navigate("/orders/all");
-        }}
-      >
-        כל הנסיעות
-      </Button>
-      <Button
-        sx={{ margin: "20px", alignItems: "center" }}
-        variant="contained"
-        color="success"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        נסיעות קודמות
-      </Button>
-      {open && <ChooseYearAndMonth open={open} setOpen={setOpen} />}
+  const [tableType, setTableType] = useState("future");
+
+  useEffect(() => {
+    if (tableType !== "past") {
+      setYear("");
+      setMonth("");
+    }
+  }, [tableType]);
+
+  return (
+    <Box>
+      <FormControl>
+        <RadioGroup
+          row
+          value={tableType}
+          onChange={(e) => {
+            setTableType(e.target.value);
+            if (e.target.value === "past") {
+              setOpen(true);
+            }
+          }}
+        >
+          <FormControlLabel
+            value="future"
+            control={<Radio />}
+            label="הזמנות עתידיות"
+          />
+          <FormControlLabel
+            value="past"
+            control={<Radio />}
+            label="הזמנות קודמות"
+          />
+          <FormControlLabel
+            value="all"
+            control={<Radio />}
+            label="כל ההזמנות"
+          />
+        </RadioGroup>
+      </FormControl>
+      {tableType === "past" && (
+        <ChooseYearAndMonth
+          open={open}
+          year={year}
+          month={month}
+          setOpen={setOpen}
+          setYear={setYear}
+          setMonth={setMonth}
+        />
+      )}
+      <OrderTable
+        tableType={tableType}
+        year={tableType === "past" ? year : ""}
+        month={tableType === "past" ? month : ""}
+      />
     </Box>
   );
 }
