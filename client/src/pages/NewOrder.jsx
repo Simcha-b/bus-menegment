@@ -39,8 +39,8 @@ function NewOrder() {
     contact_id: 0,
     company_id: 0,
     trip_details: "",
-    start_time: "",
-    end_time: "",
+    start_time: null,
+    end_time: null,
     bus_quantity: null,
     price_per_bus_customer: null,
     extra_pay_customer: null,
@@ -110,14 +110,14 @@ function NewOrder() {
     if (!formData.trip_details) newErrors.trip_details = "פרטי הנסיעה נדרשים";
     if (!formData.customer_id) newErrors.customer_id = "לקוח נדרש";
     if (!formData.contact_id) newErrors.contact_id = "איש קשר נדרש";
-    if (!formData.start_time) newErrors.start_time = "שעת התחלה נדרשת";
-    if (!formData.end_time) newErrors.end_time = "שעת סיום נדרשת";
+    // if (!formData.start_time) newErrors.start_time = "שעת התחלה נדרשת";
+    // if (!formData.end_time) newErrors.end_time = "שעת סיום נדרשת";
     if (!formData.bus_quantity) newErrors.bus_quantity = "כמות אוטובוסים נדרשת";
     if (!formData.order_date) newErrors.date = "תאריך נדרש";
-    if (showPaymentDetails && !formData.price_per_bus_customer)
-      newErrors.price_per_bus_customer = "מחיר לאוטובוס נדרש";
-    if (showCompanyDetails && !formData.price_per_bus_company)
-      newErrors.price_per_bus_company = "מחיר ספק לאוטובוס נדרש";
+    // if (showPaymentDetails && !formData.price_per_bus_customer)
+    //   newErrors.price_per_bus_customer = "מחיר לאוטובוס נדרש";
+    // if (showCompanyDetails && !formData.price_per_bus_company)
+    //   newErrors.price_per_bus_company = "מחיר ספק לאוטובוס נדרש";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrorMessage("אנא מלא את כל השדות הנדרשים");
@@ -220,17 +220,19 @@ function NewOrder() {
               /> */}
               <BasicTimePicker
                 label="שעת התחלה"
+                keyTable="start_time"
                 formData={formData}
                 setFormData={setFormData}
-                error={!!errors.start_time}
-                helperText={errors.start_time}
+                // error={!!errors.start_time}
+                // helperText={errors.start_time}
               />
               <BasicTimePicker
                 label="שעת סיום"
+                keyTable="end_time"
                 formData={formData}
                 setFormData={setFormData}
-                error={!!errors.end_time}
-                helperText={errors.end_time}
+                // error={!!errors.end_time}
+                // helperText={errors.end_time}
               />
               <TextField
                 fullWidth

@@ -4,7 +4,6 @@ import { formatDate, getOrdersByDate } from "../../services/ordersService";
 import { useEffect, useState } from "react";
 import DeleteOrder from "../order-actions/DeleteOrder";
 import ChangeStatus from "../order-actions/ChangeStatus";
-import EditOrder from "../order-actions/EditOrder";
 
 function PastOrdersTable({ year, month }) {
   const [data, setData] = useState([]);
@@ -126,7 +125,6 @@ function PastOrdersTable({ year, month }) {
       render: (text, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
           <ChangeStatus order_id={record.order_id} fetchOrders={fetchOrders} />
-          <EditOrder order={record} fetchOrders={fetchOrders} />
           <DeleteOrder order_id={record.order_id} fetchOrders={fetchOrders} />
         </div>
       ),
