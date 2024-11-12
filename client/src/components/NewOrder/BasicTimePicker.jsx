@@ -10,16 +10,19 @@ export default function BasicTimePicker({
   label,
   formData,
   setFormData,
-  errors,
+  keyTable,
 }) {
   function handleTimeChange(newTime) {
     const formattedTime = dayjs(newTime).format("HH:mm");
-    console.log(formattedTime);
-    setFormData({ ...formData, [label]: formattedTime });
+    setFormData({ ...formData, [keyTable]: formattedTime });
   }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <MobileTimePicker onChange={(newValue) => handleTimeChange(newValue)} />
+      <MobileTimePicker
+        onChange={(newValue) => handleTimeChange(newValue)}
+        label={label}
+      />
     </LocalizationProvider>
   );
 }

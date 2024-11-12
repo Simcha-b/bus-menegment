@@ -93,6 +93,19 @@ function HomePage() {
                 >
                   דוחות
                 </Button>
+                <Button
+                  variant="contained"
+                  color="info"
+                  onClick={() => navigate("/distance")}
+                  sx={{
+                    width: 250,
+                    height: 120,
+                    fontSize: 32,
+                    fontWeight: "bold",
+                  }}
+                >
+                  חישוב מרחק
+                </Button>
               </Box>
             </Paper>
           </Grid>
@@ -104,8 +117,9 @@ function HomePage() {
                 התראות מערכת
               </Typography>
               {/* Placeholder for notifications */}
-              <Box>
+              <Box >
                 <a href="#">יש 2 נסיעות השבוע שעדיין לא שובץ להם נהג</a>
+                <a href="#">יש 3 לקוחות שיש להם חוב פתוח</a>
               </Box>
             </Paper>
           </Grid>

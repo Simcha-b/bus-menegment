@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { addNewCustomer, getCustomers } from "../../services/customersService";
-import { Button, ConfigProvider, Table, Tag } from "antd";
+import { Button, ConfigProvider, Table, Tag, Modal } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import AddNewCustomer from "./AddNewCustomer";
 import { getOrdersByCustomerId } from "../../services/ordersService";
 
 const CustomersTable = () => {
   const [customers, setCustomers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [open, setOpen] = useState(false);
+
   const fetchCustomers = async () => {
     try {
       const customers = await getCustomers();
@@ -18,18 +21,20 @@ const CustomersTable = () => {
       console.error("Failed to fetch customers:", error);
     }
   };
-  
-// const hendleShowOrders = async (record) => {
-//     const res = await getOrdersByCustomerId(record.customer_id);
-//     console.log(res);
 
-//   }
+  const handleShowOrders = async (record) => {
+    const res = await getOrdersByCustomerId(record.customer_id);
+    setOrders(res);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     fetchCustomers();
   }, []);
-
-  // handleClose
 
   const columns = [
     {
@@ -37,23 +42,14 @@ const CustomersTable = () => {
       dataIndex: "name",
       key: "name",
     },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    // },
-    // {
-    //   title: "Phone",
-    //   dataIndex: "phone",
-    //   key: "phone",
-    // },
     {
       title: "פעולות",
       key: "action",
       render: (_, record) => (
         <Button
           type="primary"
-          // onClick={}
+          onClick={() => handleShowOrders(record)}
+          key={`action-${record.key}`}
         >
           הצג פירוט נסיעות
         </Button>
@@ -63,14 +59,37 @@ const CustomersTable = () => {
       title: "סטטוס",
       dataIndex: "status",
       key: "status",
-      render: () => (
+      render: (_, record) => (
         <>
-          <Tag color={"red"}>חוב פתוח</Tag> <Tag color={"green"}>שולם</Tag>
+          <Tag color={"red"} key={`tag-red-${record.key}`}>
+            חוב פתוח
+          </Tag>
+          <Tag color={"green"} key={`tag-green-${record.key}`}>
+            שולם
+          </Tag>
         </>
       ),
     },
   ];
-  const title = "Customers";
+
+  const ordersColumns = [
+    {
+      title: "Order ID",
+      dataIndex: "order_id",
+      key: "order_id",
+    },
+    {
+      title: "Date",
+      dataIndex: "order_date",
+      key: "date",
+    },
+    {
+      title: "Amount",
+      dataIndex: "price_per_bus_customer",
+      key: "amount",
+    },
+  ];
+
   return (
     <ConfigProvider direction="rtl" locale={heIL}>
       <AddNewCustomer customers={customers} setCustomers={setCustomers} />
@@ -98,6 +117,18 @@ const CustomersTable = () => {
         columns={columns}
         bordered={true}
       />
+      <Modal
+        title="פירוט נסיעות"
+        open={open}
+        onCancel={handleClose}
+        footer={[
+          <Button key="close" onClick={handleClose}>
+            סגור
+          </Button>,
+        ]}
+      >
+        <Table dataSource={orders} columns={ordersColumns} pagination={false} />
+      </Modal>
     </ConfigProvider>
   );
 };

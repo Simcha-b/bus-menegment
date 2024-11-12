@@ -1,5 +1,5 @@
 import ordersQueries from "../db/queries/ordersQueries.js";
-
+import { calculateDistance } from "../api-maps/fetchMaps.js";
 async function getOrders(req, res) {
   
   try {
@@ -173,6 +173,19 @@ async function deleteOrder(req, res) {
     });
   }
 }
+async function getDistance(req, res) {
+  const { origin, destination } = req.query;
+  try {
+    const distance = await calculateDistance(origin, destination);
+    res.json(distance);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error calculating distance",
+      error: error.message || "Internal Server Error",
+    });
+  }
+}
 export {
   getOrders,
   getOrderById,
@@ -183,4 +196,5 @@ export {
   updateOrders,
   updateOrderStatus,
   deleteOrder,
+  getDistance,
 };
