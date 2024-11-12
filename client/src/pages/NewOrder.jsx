@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import {
@@ -22,6 +22,7 @@ import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
 function NewOrder() {
   const navigate = useNavigate();
   const location = useLocation();
+  const companyRef = useRef();
 
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
@@ -77,7 +78,7 @@ function NewOrder() {
   useEffect(() => {
     if (location.state && location.state.order) {
       console.log("Edit order:", location.state.order);
-
+      // companyRef.current.focus();
       setFormData(location.state.order);
     }
   }, [location.state]);
@@ -309,7 +310,11 @@ function NewOrder() {
           </Button>
 
           {showCompanyDetails && (
-            <Paper elevation={2} sx={{ p: 2, gridColumn: "1/-1" }}>
+            <Paper
+              elevation={2}
+              sx={{ p: 2, gridColumn: "1/-1" }}
+              ref={companyRef}
+            >
               <Box
                 sx={{
                   display: "grid",
