@@ -1,4 +1,4 @@
-import { Table, ConfigProvider, Button, } from "antd";
+import { Table, ConfigProvider, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import {
   formatDate,
@@ -7,31 +7,34 @@ import {
   getOrdersByDate,
   updateOrderStatus,
 } from "../../services/ordersService";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {Select, FormControl, InputLabel, MenuItem } from "@mui/material";
+import { Select, FormControl, InputLabel, MenuItem } from "@mui/material";
+import ChangeStatus from "../order-actions/ChangeStatus";
+import DeleteOrder from "../order-actions/DeleteOrder";
+import EditOrder from "../order-actions/EditOrder";
+import ChooseYearAndMonth from "./ChooseYearAndMonth";
 
 const statusColors = {
-  "הושלם": "green",
-  "בתהליך": "orange",
-  "בוטל": "red",
+  הושלם: "green",
+  בתהליך: "orange",
+  בוטל: "red",
   "חסר שיבוץ": "gray",
 };
 
-function OrderTable({ past, future, year, month }) {
+function OrderTable({ tableType, year, month }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+
   const fetchOrders = async () => {
     setIsLoading(true);
     setError(null);
-    console.log(data);
     try {
-      if (past) {
+      if (tableType === "past") {
         const orders = await getOrdersByDate(year, month);
         setData(orders);
-      } else if (future) {
+      } else if (tableType === "future") {
         const orders = await getFutureOrders();
         setData(orders);
       } else {
@@ -47,20 +50,19 @@ function OrderTable({ past, future, year, month }) {
 
   useEffect(() => {
     fetchOrders();
-  }, [past, future, year, month]);
+  }, [tableType, year, month]);
 
-  const handleStatusChange = async (orderId, newStatus) => {
-    try {
-      const response = await updateOrderStatus(orderId, newStatus);
-      if (!response.ok) {
-        throw new Error("Failed to update status");
-      }
-      // לאחר עדכון הסטטוס בשרת, רענן את הנתונים מהשרת
-      fetchOrders();
-    } catch (err) {
-      console.error("Error updating status:", err);
-    }
+  const updateTags = () => {
+    let tags = [];
+    if (!data.company_id) tags.push("חסר שיבוץ");
+    if (!data.paid) tags.push("לא שולם");
+    if (!data.invoice) tags.push("לא הוגש חשבונית");
+    if (!data.total_paid_customer) tags.push("שולם חלקית");
   };
+
+  useEffect(() => {
+    updateTags();
+  }, [data]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -73,14 +75,6 @@ function OrderTable({ past, future, year, month }) {
     ...item,
     key: item.order_id,
   }));
-
-  // const names =
-  //   dataSource.map((item) => {
-  //     return {
-  //       text: item.name,
-  //       value: item.name,
-  //     };
-  //   });
 
   const columns = [
     {
@@ -102,17 +96,18 @@ function OrderTable({ past, future, year, month }) {
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
-      onFilter: (value, record) => record.name.startsWith(value),
     },
     {
       title: "שעת התחלה",
       dataIndex: "start_time",
       key: "start_time",
+      render: (text) => text.slice(0, 5),
     },
     {
       title: "שעת סיום",
       dataIndex: "end_time",
       key: "end_time",
+      render: (text) => text.slice(0, 5),
     },
     {
       title: "כמות אוטבוסים",
@@ -130,56 +125,77 @@ function OrderTable({ past, future, year, month }) {
       dataIndex: "company_name",
       key: "company_name",
       sorter: (a, b) => a.company_name.localeCompare(b.company_name),
+      render: (text) => text || "לא שובץ",
     },
     {
-      title: "סטטוס",
+      title: "מצב הזמנה",
       dataIndex: "status",
       key: "status",
       sorter: (a, b) => a.status.localeCompare(b.status),
-      render: (text, record) => (
-        <FormControl fullWidth>
-        <InputLabel id="status">סטטוס</InputLabel>
-        <Select
-          labelId="status"
-          value={text}
-          label="status"
-          onChange={(event) => handleStatusChange(record.order_id, event.target.value)}
-        >
-          {Object.keys(statusColors).map((status) => (
-            <MenuItem key={status} value={status} style={{ color: statusColors[status] }}>
-              {status}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      ),
     },
     {
       title: "פעולות",
       key: "action",
       render: (text, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
-          <Button
-            onClick={() => {
-              navigate(`/orders/:${record.order_id}`, {
-                state: {
-                  order: record,
-                },
-              });
-            }}
-          >
-            ערוך
-          </Button>
-          <Button>מחק</Button>
+          {/* <ChangeStatus
+              order_id={record.order_id}
+              fetchOrders={fetchOrders}
+            /> */}
+
+          <EditOrder order={record} fetchOrders={fetchOrders} />
+
+          <DeleteOrder order_id={record.order_id} fetchOrders={fetchOrders} />
         </div>
       ),
     },
   ];
 
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}`,
+        "selectedRows: ",
+        selectedRows
+      );
+    },
+  };
+
   return (
-    <ConfigProvider direction="rtl" locale={heIL}>
-      <Table columns={columns} dataSource={dataSource} bordered={true} />
-    </ConfigProvider>
+    <div>
+      {tableType === "past" && (
+        <>
+          <h1>{`הזמנות חודש ${month}/${year}`}</h1>
+        </>
+      )}
+      <ConfigProvider direction="rtl" locale={heIL}>
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          bordered={true}
+          rowSelection={{
+            type: "checkbox",
+            ...rowSelection,
+          }}
+          expandable={{
+            expandedRowRender: (record) => (
+              <>
+                <span
+                  style={{
+                    display: "block",
+                    marginBottom: 16,
+                    color: "black",
+                  }}
+                >
+                  פרטי הנסיעה: {record.trip_details}
+                </span>
+                <span>סכום כולל: {record.total_price_customer}</span>
+              </>
+            ),
+          }}
+        />
+      </ConfigProvider>
+    </div>
   );
 }
 

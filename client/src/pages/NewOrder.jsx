@@ -198,26 +198,6 @@ function NewOrder() {
                 gap: 2,
               }}
             >
-              {/* <TextField
-                fullWidth
-                id="start_time"
-                label="שעת התחלה"
-                variant="outlined"
-                value={formData.start_time}
-                onChange={handleInputChange}
-                error={!!errors.start_time}
-                helperText={errors.start_time}
-              />
-              <TextField
-                fullWidth
-                id="end_time"
-                label="שעת סיום"
-                variant="outlined"
-                value={formData.end_time}
-                onChange={handleInputChange}
-                error={!!errors.end_time}
-                helperText={errors.end_time}
-              /> */}
               <BasicTimePicker
                 label="שעת התחלה"
                 keyTable="start_time"

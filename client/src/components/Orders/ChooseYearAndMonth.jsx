@@ -15,9 +15,6 @@ import { useNavigate } from "react-router-dom";
 export default function ChooseYearAndMonth(props) {
   const navigate = useNavigate();
   const setOpenProps = props.setOpen;
-  const [year, setYear] = useState("");
-  const [month, setMonth] = useState("");
-  
 
   //לשנות את הפונקציה לתאריך מינימום
   const years = [
@@ -32,15 +29,20 @@ export default function ChooseYearAndMonth(props) {
   };
 
   const handleMonthChange = (event) => {
-    setMonth(event.target.value);
+    props.setMonth(event.target.value);
   };
 
   const handleYearChange = (event) => {
-    setYear(event.target.value);
+    props.setYear(event.target.value);
   };
 
   return (
-    <Dialog month={month} year={year} open={props.open} onClose={handleClose}>
+    <Dialog
+      month={props.month}
+      year={props.year}
+      open={props.open}
+      onClose={handleClose}
+    >
       <DialogTitle> שנה וחודש</DialogTitle>
       <DialogContent>
         <DialogContentText>בחר שנה וחודש להצגת הנתונים בטבלה</DialogContentText>
@@ -57,7 +59,7 @@ export default function ChooseYearAndMonth(props) {
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
             <InputLabel htmlFor="year">שנה</InputLabel>
             <Select
-              value={year}
+              value={props.year}
               onChange={handleYearChange}
               label="year"
               inputProps={{
@@ -73,7 +75,7 @@ export default function ChooseYearAndMonth(props) {
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
             <InputLabel htmlFor="month">חודש</InputLabel>
             <Select
-              value={month}
+              value={props.month}
               onChange={handleMonthChange}
               label="month"
               inputProps={{
@@ -101,12 +103,7 @@ export default function ChooseYearAndMonth(props) {
       <DialogActions>
         <Button
           onClick={() => {
-            navigate("/orders/past", {
-              state: {
-                year: year,
-                month: month,
-              },
-            });
+            handleClose();
           }}
         >
           אישור
