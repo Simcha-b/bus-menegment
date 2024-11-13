@@ -1,5 +1,6 @@
 import ordersQueries from "../db/queries/ordersQueries.js";
 import { calculateDistance } from "../api-maps/fetchMaps.js";
+import fetchData from "../api-trafik/trafikReports.js";
 async function getOrders(req, res) {
   
   try {
@@ -186,6 +187,19 @@ async function getDistance(req, res) {
     });
   }
 }
+
+async function getTrafikReports(req, res) {
+  try {
+    const reports = await fetchData();
+    res.json(reports);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving reports",
+      error: error.message || "Internal Server Error",
+    });
+  }
+}
 export {
   getOrders,
   getOrderById,
@@ -197,4 +211,5 @@ export {
   updateOrderStatus,
   deleteOrder,
   getDistance,
+  getTrafikReports,
 };

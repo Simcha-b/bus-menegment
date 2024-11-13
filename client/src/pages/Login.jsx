@@ -4,30 +4,62 @@ import { useNavigate } from "react-router-dom";
 import { checkLogin } from "../services/loginServis.js";
 import "../css/login.css";
 import { loginWithGoogle } from "../firebase/authentication.js";
+import { registerUser } from "../services/loginServis.js";
+
 function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const email = useRef();
   const password = useRef();
+  const username = useRef();
+  const [showRegister, setShowRegister] = useState(false);
+
+  // Handles the login process
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
     try {
-      const user = await checkLogin(email, password);
-      if(!user) throw new Error("שם משתמש או סיסמה לא נכונים");
+      const user = await checkLogin(
+        email.current.value,
+        password.current.value
+      );
+      if (!user) throw new Error("שם משתמש או סיסמה לא נכונים");
       console.log("User logged in:", user);
+      localStorage.setItem("token", user.token); // Store token in local storage
       navigate("/home");
     } catch (error) {
       setError("שם משתמש או סיסמה לא נכונים");
     }
   };
+
+  // Handles login with Google
   const handleGoogleLogin = async () => {
     try {
       const user = await loginWithGoogle();
       console.log("User logged in with Google:", user);
+      localStorage.setItem("token", user.token); // Store token in local storage
       navigate("/home");
     } catch (error) {
       setError("שגיאה בהתחברות עם גוגל");
+    }
+  };
+
+  // Handles user registration
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError(null);
+    try {
+      const user = await registerUser(
+        email.current.value,
+        password.current.value,
+        { displayName: username.current.value }
+      );
+      if (!user) throw new Error("רישום נכשל");
+      console.log("User registered:", user);
+      localStorage.setItem("token", user.token); // Store token in local storage
+      navigate("/home");
+    } catch (error) {
+      setError("רישום נכשל");
     }
   };
 
@@ -39,11 +71,20 @@ function Login() {
           margin: "20px",
           fontSize: "30px",
           fontWeight: "bold",
+          fontFamily: "'Roboto', sans-serif", // Apply Roboto font
         }}
       >
         בדרך הישר
       </h1>
-      <Container component="main" maxWidth="xs">
+      <Container
+        component="main"
+        maxWidth="xs"
+        sx={{
+          backgroundColor: "#f0f4f8",
+          borderRadius: "8px",
+          padding: "20px",
+        }}
+      >
         <Box
           sx={{
             marginTop: 8,
@@ -52,7 +93,11 @@ function Login() {
             alignItems: "center",
           }}
         >
-          <Typography component="h1" variant="h5">
+          <Typography
+            component="h1"
+            variant="h5"
+            sx={{ fontFamily: "'Open Sans', sans-serif" }}
+          >
             התחברות
           </Typography>
           <Box
@@ -81,7 +126,7 @@ function Login() {
               label="סיסמה"
               type="password"
               id="password"
-              inputRef={password}              
+              inputRef={password}
               // onChange={(e) => setPassword(password)}
             />
             <Button
@@ -92,21 +137,85 @@ function Login() {
             >
               כניסה
             </Button>
-            <Button
-              type="submit"
-              
-              variant="contained"
-              onClick={handleGoogleLogin}
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
             >
-               התחבר עם גוגל
-              <img
-                src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000"
-                alt="logo"
-                height={"20px"}
-                width={"20px"}
-              />
-            </Button>
+              <Button
+                variant="contained"
+                onClick={handleGoogleLogin}
+                sx={{ flexGrow: 1, mr: 1 }}
+              >
+                התחבר עם גוגל
+                <img
+                  src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000"
+                  alt="logo"
+                  height={"20px"}
+                  width={"20px"}
+                />
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => setShowRegister(!showRegister)}
+                sx={{ flexGrow: 1, ml: 1 }}
+              >
+                {showRegister ? "ביטול" : "עדיין לא רשום?"}
+              </Button>
+            </Box>
+            {error && (
+              <Typography color="error" sx={{ mt: 2 }}>
+                {error}
+              </Typography>
+            )}
           </Box>
+          {showRegister && (
+            <Box
+              component="form"
+              onSubmit={handleRegister}
+              noValidate
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="register-email"
+                type="email"
+                label="אימייל"
+                name="email"
+                inputRef={email}
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="סיסמה"
+                type="password"
+                id="register-password"
+                inputRef={password}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="username"
+                label="שם משתמש"
+                type="text"
+                id="register-username"
+                inputRef={username}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                רישום
+              </Button>
+              {error && <Typography color="error">{error}</Typography>}
+            </Box>
+          )}
         </Box>
       </Container>
     </>

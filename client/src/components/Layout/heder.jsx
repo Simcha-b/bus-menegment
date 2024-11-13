@@ -24,7 +24,7 @@ export function Heder() {
     updateDate();
   }, []);
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"))[0].name;
+  const user = JSON.parse(localStorage.getItem("user")).email; 
 
   const handleHomeClick = () => {
     navigate("/home");
@@ -52,7 +52,7 @@ export function Heder() {
           לקוחות
         </Button>
         <Button color="inherit" onClick={() => navigate("/offers")}>
-          מבצעים
+          ספקים
         </Button>
       </Toolbar>
     </AppBar>

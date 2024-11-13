@@ -115,10 +115,6 @@ function NewOrder() {
     // if (!formData.end_time) newErrors.end_time = "שעת סיום נדרשת";
     if (!formData.bus_quantity) newErrors.bus_quantity = "כמות אוטובוסים נדרשת";
     if (!formData.order_date) newErrors.date = "תאריך נדרש";
-    // if (showPaymentDetails && !formData.price_per_bus_customer)
-    //   newErrors.price_per_bus_customer = "מחיר לאוטובוס נדרש";
-    // if (showCompanyDetails && !formData.price_per_bus_company)
-    //   newErrors.price_per_bus_company = "מחיר ספק לאוטובוס נדרש";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrorMessage("אנא מלא את כל השדות הנדרשים");

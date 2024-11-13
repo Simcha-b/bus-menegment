@@ -5,6 +5,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { getCustomers } from "../../services/customersService";
 import { getContactsByCustomerId } from "../../services/contactService";
 import AddNewCustomer from "../customers/AddNewCustomer";
+import AddNewContact from "../customers/AddNewContact";
 import {
   FormControl,
   FormControlLabel,
@@ -13,6 +14,7 @@ import {
   RadioGroup,
   Box,
 } from "@mui/material";
+
 export default function CustomerContactSelector({
   setFormData,
   formData,
@@ -21,6 +23,7 @@ export default function CustomerContactSelector({
   const [value, setValue] = useState("old");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [contactValue, setContactValue] = useState("old");
 
   // שליפת לקוחות
   const { data: customers, isLoading: isLoadingCustomers } = useQuery({
@@ -73,9 +76,13 @@ export default function CustomerContactSelector({
   const contactOptions = contacts || [];
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column',
+      gap: 2,
+      width: '100%'
+    }}>
       <FormControl>
-        <FormLabel>בחירת לקוח</FormLabel>
         <RadioGroup
           row
           value={value}
@@ -86,13 +93,13 @@ export default function CustomerContactSelector({
         </RadioGroup>
       </FormControl>
 
-      {value === "new" && <AddNewCustomer />}
-      {value === "old" && (
-        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+      {value === "new" ? (
+        <AddNewCustomer />
+      ) : (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Autocomplete
             required
             disablePortal
-            fullWidth
             options={customerOptions}
             getOptionLabel={(option) => option.name}
             loading={isLoadingCustomers}
@@ -111,27 +118,42 @@ export default function CustomerContactSelector({
             )}
           />
 
-          <Autocomplete
-            required
-            disablePortal
-            fullWidth
-            options={contactOptions}
-            getOptionLabel={(option) => option.name}
-            loading={isLoadingContacts}
-            disabled={!selectedCustomer}
-            value={selectedContact}
-            onChange={(event, newValue) => {
-              setSelectedContact(newValue);
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="בחר איש קשר"
-                error={!!errors.contact_id}
-                helperText={errors.contact_id}
-              />
-            )}
-          />
+          {selectedCustomer && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <FormControl>
+                <RadioGroup
+                  row
+                  value={contactValue}
+                  onChange={(e) => setContactValue(e.target.value)}
+                >
+                  <FormControlLabel value="old" control={<Radio />} label="איש קשר קיים" />
+                  <FormControlLabel value="new" control={<Radio />} label="איש קשר חדש" />
+                </RadioGroup>
+              </FormControl>
+
+              {contactValue === "old" ? (
+                <Autocomplete
+                  required
+                  disablePortal
+                  options={contactOptions}
+                  getOptionLabel={(option) => option.name}
+                  loading={isLoadingContacts}
+                  value={selectedContact}
+                  onChange={(event, newValue) => setSelectedContact(newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="בחר איש קשר"
+                      error={!!errors.contact_id}
+                      helperText={errors.contact_id}
+                    />
+                  )}
+                />
+              ) : (
+                <AddNewContact />
+              )}
+            </Box>
+          )}
         </Box>
       )}
     </Box>

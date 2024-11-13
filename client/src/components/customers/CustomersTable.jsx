@@ -4,11 +4,14 @@ import { Button, ConfigProvider, Table, Tag, Modal } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import AddNewCustomer from "./AddNewCustomer";
 import { getOrdersByCustomerId } from "../../services/ordersService";
+import OrderDetails from "./OrderDetails";
 
 const CustomersTable = () => {
   const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState([]);
   const [open, setOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
 
   const fetchCustomers = async () => {
     try {
@@ -30,6 +33,16 @@ const CustomersTable = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleOrderClick = (order) => {
+    setSelectedOrder(order);
+    setShowOrderDetails(true);
+  };
+
+  const handleOrderDetailsClose = () => {
+    setShowOrderDetails(false);
+    setSelectedOrder(null);
   };
 
   useEffect(() => {
@@ -74,17 +87,18 @@ const CustomersTable = () => {
 
   const ordersColumns = [
     {
-      title: "Order ID",
+      title: "ID",
       dataIndex: "order_id",
       key: "order_id",
     },
     {
-      title: "Date",
+      title: "תאריך",
       dataIndex: "order_date",
       key: "date",
+      render: (date) => new Date(date).toLocaleDateString("he-IL"),
     },
     {
-      title: "Amount",
+      title: "סכום",
       dataIndex: "price_per_bus_customer",
       key: "amount",
     },
@@ -127,7 +141,28 @@ const CustomersTable = () => {
           </Button>,
         ]}
       >
-        <Table dataSource={orders} columns={ordersColumns} pagination={false} />
+        <Table 
+          dataSource={orders} 
+          columns={ordersColumns} 
+          pagination={false}
+          onRow={(record) => ({
+            onClick: () => handleOrderClick(record),
+            style: { cursor: 'pointer' }
+          })}
+        />
+      </Modal>
+
+      <Modal
+        title="פרטי נסיעה"
+        open={showOrderDetails}
+        onCancel={handleOrderDetailsClose}
+        footer={[
+          <Button key="close" onClick={handleOrderDetailsClose}>
+            סגור
+          </Button>,
+        ]}
+      >
+        {selectedOrder && <OrderDetails order={selectedOrder} />}
       </Modal>
     </ConfigProvider>
   );

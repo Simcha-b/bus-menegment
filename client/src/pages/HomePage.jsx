@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 function HomePage() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"))[0].name;
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <Container maxWidth="xl" dir="rtl">
       <Box sx={{ py: 4 }}>
         <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold" }}>
-          ברוך הבא, {user}
+          ברוך הבא, {user.email}
         </Typography>
 
         <Grid container spacing={3}>

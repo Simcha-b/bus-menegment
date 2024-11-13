@@ -62,7 +62,7 @@ function OrderTable({ tableType, year, month }) {
     let tags = [];
     if (!order.company_id) tags.push("חסר שיבוץ");
     if (!order.paid) tags.push("לא שולם");
-    if (!order.total_paid_customer) tags.push("שולם חלקית");
+    if (order.total_paid_customer>0) tags.push("שולם חלקית");
     return tags;
   };
 
