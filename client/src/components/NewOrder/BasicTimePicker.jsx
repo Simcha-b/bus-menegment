@@ -11,6 +11,7 @@ export default function BasicTimePicker({
   formData,
   setFormData,
   keyTable,
+  initialTime, // new prop
 }) {
   function handleTimeChange(newTime) {
     const formattedTime = dayjs(newTime).format("HH:mm");
@@ -22,6 +23,7 @@ export default function BasicTimePicker({
       <MobileTimePicker
         onChange={(newValue) => handleTimeChange(newValue)}
         label={label}
+        value={formData[keyTable] ? dayjs(formData[keyTable], "HH:mm") : (initialTime ? dayjs(initialTime, "HH:mm") : null)} // set initial value if provided
       />
     </LocalizationProvider>
   );

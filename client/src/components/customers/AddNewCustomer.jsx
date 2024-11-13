@@ -10,6 +10,9 @@ import {
   Input,
   Box,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
 import { addNewCustomer } from "../../services/customersService";
 
 const AddNewCustomer = ({ customers, setCustomers }) => {
@@ -73,7 +76,22 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
 
   return (
     <>
-      <Button
+      <IconButton
+        color="primary"
+        sx={{
+          width: "40px",
+          height: "40px",
+          borderRadius: "50%",
+          backgroundColor: "primary.main",
+          "&:hover": {
+            backgroundColor: "primary.dark",
+          },
+        }}
+        onClick={() => setOpen(true)}
+      >
+        <AddIcon sx={{ color: "white" }} />
+      </IconButton>
+      {/* <Button
         variant="contained"
         sx={{
           gridColumn: "1/-1",
@@ -85,10 +103,13 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
         onClick={() => setOpen(true)}
       >
         הוסף לקוח חדש
-      </Button>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>הוסף לקוח חדש</DialogTitle>
-        <DialogContent>
+      </Button> */}
+      
+      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ backgroundColor: "primary.main", color: "white" }}>
+          הוסף לקוח חדש
+        </DialogTitle>
+        <DialogContent sx={{ padding: "16px" }}>
           <TextField
             autoFocus
             margin="dense"
@@ -99,6 +120,7 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
             variant="standard"
             value={customer.name}
             onChange={handleChange}
+            sx={{ marginBottom: "12px" }}
           />
           <TextField
             margin="dense"
@@ -109,6 +131,7 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
             variant="standard"
             value={customer.email}
             onChange={handleChange}
+            sx={{ marginBottom: "12px" }}
           />
           <TextField
             margin="dense"
@@ -119,6 +142,7 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
             variant="standard"
             value={customer.phone}
             onChange={handleChange}
+            sx={{ marginBottom: "12px" }}
           />
           <TextField
             margin="dense"
@@ -129,10 +153,11 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
             variant="standard"
             value={customer.address}
             onChange={handleChange}
+            sx={{ marginBottom: "12px" }}
           />
           {customer.contacts.map((contact, index) => (
-            <Box key={index} sx={{ display: "flex" }}>
-              איש קשר {index + 1}
+            <Box key={index} sx={{ display: "flex", flexDirection: "column", marginBottom: "12px" }}>
+              <Box sx={{ marginBottom: "8px" }}>איש קשר {index + 1}</Box>
               <TextField
                 margin="dense"
                 label={`שם איש קשר ${index + 1}`}
@@ -143,6 +168,7 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
                 onChange={(e) =>
                   handleContactChange(index, "name", e.target.value)
                 }
+                sx={{ marginBottom: "8px" }}
               />
               <TextField
                 variant="outlined"
@@ -154,6 +180,7 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
                 onChange={(e) =>
                   handleContactChange(index, "phone", e.target.value)
                 }
+                sx={{ marginBottom: "8px" }}
               />
               <TextField
                 variant="outlined"
@@ -168,13 +195,15 @@ const AddNewCustomer = ({ customers, setCustomers }) => {
               />
             </Box>
           ))}
-          <Button variant="contained" onClick={addContactField}>
-            הוסף איש קשר
-          </Button>
+          <IconButton onClick={addContactField} sx={{ marginTop: "12px" }}>
+            <AddCircleOutlineIcon color="primary" />
+          </IconButton>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>ביטול</Button>
-          <Button onClick={handleSubmit}>הוסף</Button>
+        <DialogActions sx={{ padding: "12px" }}>
+          <Button onClick={handleClose} sx={{ color: "primary.main" }}>ביטול</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ backgroundColor: "primary.main", color: "white" }}>
+            הוסף
+          </Button>
         </DialogActions>
       </Dialog>
     </>

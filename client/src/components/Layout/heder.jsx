@@ -4,9 +4,12 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
+import { Badge, IconButton } from "@mui/material";
+import MailIcon from "@mui/icons-material/Mail";
 
 export function Heder() {
   const [currentDate, setCurrentDate] = useState("");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const updateDate = () => {
@@ -16,7 +19,6 @@ export function Heder() {
         year: "numeric",
         month: "numeric",
         day: "numeric",
-        
       });
       setCurrentDate(formattedDate);
     };
@@ -24,10 +26,17 @@ export function Heder() {
     updateDate();
   }, []);
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")).email; 
+  const user = JSON.parse(localStorage.getItem("user")).email;
 
   const handleHomeClick = () => {
     navigate("/home");
+  };
+
+  const handleDistanceClick = () => {
+    setOpen(true);
+    navigate("/distance", {
+      state: { open: true }
+    });
   };
 
   return (
@@ -41,6 +50,18 @@ export function Heder() {
         </Typography>
         <Button color="inherit" onClick={handleHomeClick}>
           דף הבית
+        </Button>
+        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+          <Badge badgeContent={4} color="error">
+            <MailIcon />
+          </Badge>
+        </IconButton>
+        
+        <Button
+          color="inherit"
+          onClick={handleDistanceClick}
+        >
+          מרחק
         </Button>
         <Button color="inherit" onClick={() => navigate("/orders")}>
           נסיעות

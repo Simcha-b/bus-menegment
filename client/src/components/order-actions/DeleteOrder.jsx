@@ -9,8 +9,8 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-function DeleteOrder({ order_id }) {
-  const [confrimDelete, setConfirmDelete] = React.useState(false);
+function DeleteOrder({ order_id, fetchOrders }) {
+  const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -22,12 +22,21 @@ function DeleteOrder({ order_id }) {
   };
 
   const handleDelete = async () => {
-    if (confrimDelete) {
-      deleteOrder(order_id);
+    if (confirmDelete) {
+      try {
+        const res = await deleteOrder(order_id);
+        if (res) {
+          fetchOrders();
+          return res;
+        }
+      } catch (error) {
+        console.error("Failed to delete order:", error);
+      }
     }
     handleClose();
     setConfirmDelete(false);
   };
+
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen}>
@@ -49,7 +58,13 @@ function DeleteOrder({ order_id }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>ביטול </Button>
-          <Button onClick={handleDelete} autoFocus>
+          <Button
+            onClick={() => {
+              setConfirmDelete(true);
+              handleDelete();
+            }}
+            autoFocus
+          >
             אני רוצה למחוק
           </Button>
         </DialogActions>

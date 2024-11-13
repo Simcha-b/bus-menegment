@@ -10,10 +10,10 @@ function EditOrder({ order }) {
       <Button
         variant="outlined"
         onClick={() => {
-          navigate(`/orders/:${order.order_id}`, {
-            state: {
-              order: order,
-            },
+          navigate(`/orders/${order.order_id}`, {
+            // state: {
+            //   orderId: order.order_id,
+            // },
           });
         }}
       >

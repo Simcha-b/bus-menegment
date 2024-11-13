@@ -56,8 +56,8 @@ function App() {
               <Route path="/" element={<Navigate to="/login" />} />
               <Route path="/login" element={<Login />} />
               <Route element={<ProtectedPages />}>
-                <Route path="/home" element={<HomePage />}></Route>
                 <Route element={<Layout />}>
+                  <Route path="/home" element={<HomePage />}></Route>
                   <Route path="/orders" element={<Orders />}></Route>
                   <Route path="/orders/all" element={<AllOrders />}></Route>
                   <Route
@@ -66,9 +66,9 @@ function App() {
                   ></Route>
                   <Route path="/orders/past" element={<PastOrders />}></Route>
                   <Route path="orders/new" element={<NewOrder />} />
-                  <Route path="orders/:id" element={<NewOrder />} />
+                  <Route path="orders/:orderId" element={<NewOrder />} />
                   <Route path="customers" element={<Customers />} />
-                  <Route path="distance" element={<Distance />} />
+                  {/* <Route path="distance" element={<Distance />} /> */}
                 </Route>
               </Route>
               <Route path="*" element={<h1>404</h1>} />

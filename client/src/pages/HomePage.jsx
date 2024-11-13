@@ -9,10 +9,6 @@ function HomePage() {
   return (
     <Container maxWidth="xl" dir="rtl">
       <Box sx={{ py: 4 }}>
-        <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold" }}>
-          ברוך הבא, {user.email}
-        </Typography>
-
         <Grid container spacing={3}>
           {/* Main Actions Section */}
           <Grid item xs={12} md={8} sx={{ order: { xs: 2, md: 2 } }}>
@@ -117,10 +113,7 @@ function HomePage() {
                 התראות מערכת
               </Typography>
               {/* Placeholder for notifications */}
-              <Box sx={
-                { display: "flex", flexDirection: "column", gap: 2 }
-                
-              } >
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <a href="#">יש 2 נסיעות השבוע שעדיין לא שובץ להם נהג</a>
                 <a href="#">יש 3 לקוחות שיש להם חוב פתוח</a>
               </Box>

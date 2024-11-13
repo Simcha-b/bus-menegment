@@ -99,22 +99,33 @@ async function insertOrders(req, res) {
   }
 }
 
+// Add this helper function
+function formatDateForMySQL(dateString) {
+  if (!dateString) return null;
+  return new Date(dateString).toISOString().slice(0, 19).replace('T', ' ');
+}
+
 async function updateOrders(req, res) {
   const orderId = req.params.id;
   const updates = req.body;
+  
+  // Format the date if it exists in the updates
+  if (updates.order_date) {
+    updates.order_date = formatDateForMySQL(updates.order_date);
+  }
+
   try {
     const updatedOrder = await ordersQueries.updateOrder(
-      reservationId,
+      orderId,
       updates
     );
     if (!updatedOrder) {
       res.status(404).json({
         success: false,
         message: "Order not found",
-        error: error.message || "Internal Server Error",
       });
     } else {
-      res.json(updateOrder);
+      res.json(updatedOrder);
     }
   } catch (error) {
     res.status(500).json({

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import {
   Checkbox,
@@ -11,7 +11,11 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { sendNewOrder } from "../services/ordersService";
+import {
+  getOrderById,
+  sendNewOrder,
+  updateOrder,
+} from "../services/ordersService";
 import { CompanySelector } from "../components/NewOrder/CompanySelector";
 import { useNavigate } from "react-router-dom";
 // import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
@@ -20,6 +24,7 @@ import CustomerContactSelector from "../components/NewOrder/CustomerContactSelec
 import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
 
 function NewOrder() {
+  const { orderId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const companyRef = useRef();
@@ -76,12 +81,20 @@ function NewOrder() {
   }, [formData]);
 
   useEffect(() => {
-    if (location.state && location.state.order) {
-      console.log("Edit order:", location.state.order);
-      // companyRef.current.focus();
-      setFormData(location.state.order);
+    if (orderId) {
+      console.log("orderId:", orderId);
+
+      const fetchOrder = async () => {
+        try {
+          const orderData = await getOrderById(orderId);
+          setFormData(orderData);
+        } catch (error) {
+          console.error("Error fetching order:", error);
+        }
+      };
+      fetchOrder();
     }
-  }, [location.state]);
+  }, [orderId]);
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -126,21 +139,44 @@ function NewOrder() {
   // Submit form
   const handleSubmit = async () => {
     if (!validateForm()) return;
+
     try {
-      const response = await sendNewOrder(formData);
+      let response;
+      if (orderId) {
+        response = await updateOrder(orderId, formData);
+      } else {
+        response = await sendNewOrder(formData);
+      }
+
       if (response.success) {
-        console.log("Order submitted successfully:", response);
+        console.log(
+          orderId
+            ? "Order updated successfully:"
+            : "Order submitted successfully:",
+          response
+        );
         setOpen(true);
         setTimeout(() => {
           navigate("/orders");
         }, 3000);
       } else {
-        console.log("Error submitting order:", response);
-        // Show error message to user
+        console.log(
+          orderId ? "Error updating order:" : "Error submitting order:",
+          response
+        );
+        setErrorMessage(
+          response.message ||
+            (orderId ? "שגיאה בעדכון ההזמנה" : "שגיאה בשליחת ההזמנה")
+        );
+        setErrorOpen(true);
       }
     } catch (error) {
-      console.error("Error submitting order:", error);
-      // Show error message to user
+      console.error(
+        orderId ? "Error updating order:" : "Error submitting order:",
+        error
+      );
+      setErrorMessage("שגיאת שרת");
+      setErrorOpen(true);
     }
   };
 
@@ -200,28 +236,30 @@ function NewOrder() {
                 keyTable="start_time"
                 formData={formData}
                 setFormData={setFormData}
-                // error={!!errors.start_time}
-                // helperText={errors.start_time}
+
               />
               <BasicTimePicker
                 label="שעת סיום"
                 keyTable="end_time"
                 formData={formData}
                 setFormData={setFormData}
-                // error={!!errors.end_time}
-                // helperText={errors.end_time}
+         
               />
-              <TextField
-                fullWidth
+                <TextField
                 id="bus_quantity"
                 label="כמות אוטובוסים"
                 type="number"
                 variant="outlined"
                 value={formData.bus_quantity}
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value >= 0) {
+                  handleInputChange(e);
+                  }
+                }}
                 error={!!errors.bus_quantity}
                 helperText={errors.bus_quantity}
-              />
+                />
             </Box>
           </Box>
 
@@ -389,9 +427,9 @@ function NewOrder() {
 
       {/* Submit Button */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-        {location.state ? (
+        {orderId ? (
           <Button
-            onClick={() => {}}
+            onClick={handleSubmit}
             variant="contained"
             sx={{
               width: "120px",
@@ -426,7 +464,7 @@ function NewOrder() {
           variant="filled"
           sx={{ width: "100%" }}
         >
-          הזמנה נוספה בהצלחה
+          {orderId ? "הזמנה עודכנה בהצלחה" : "הזמנה נוספה בהצלחה"}
         </Alert>
       </Snackbar>
 
