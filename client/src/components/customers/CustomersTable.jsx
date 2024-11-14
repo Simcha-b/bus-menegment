@@ -7,7 +7,6 @@ import { getOrdersByCustomerId } from "../../services/ordersService";
 import OrderDetails from "./OrderDetails";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
-import { title } from "framer-motion/client";
 import AddPaymentForm from "../payments/AddPaymentForm";
 
 const CustomersTable = () => {
