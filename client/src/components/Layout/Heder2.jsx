@@ -201,7 +201,7 @@ function Heder2() {
       </Container>
       <Modal
         open={open}
-        onCancel={handleClose}
+        onClose={handleClose} // Changed from onCancel to onClose
         footer={[
           <Button key="close" onClick={handleClose}>
             סגור

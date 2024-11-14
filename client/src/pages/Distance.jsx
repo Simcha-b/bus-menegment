@@ -1,5 +1,6 @@
-import { Button, Input, Box, Stack } from "@mui/material";
+import { Button, Input, Modal, Box, Stack } from "@mui/material";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Distance() {
   const [distance, setDistance] = useState("");

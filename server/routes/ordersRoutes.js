@@ -13,7 +13,6 @@ import {
   getDistance,
   getTrafikReports,
 } from "../controllers/ordersControllers.js";
-import { calculateDistance } from "../api-maps/fetchMaps.js";
 router.get("/byDate", getOrdersByDate);
 router.get("/future", getFutureOrders);
 router.get("/calculate-distance", getDistance)

@@ -5,22 +5,13 @@ import {
   getFutureOrders,
   getOrders,
   getOrdersByDate,
-  updateOrderStatus,
 } from "../../services/ordersService";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Select, FormControl, InputLabel, MenuItem } from "@mui/material";
 import ChangeStatus from "../order-actions/ChangeStatus";
 import DeleteOrder from "../order-actions/DeleteOrder";
 import EditOrder from "../order-actions/EditOrder";
 import ChooseYearAndMonth from "./ChooseYearAndMonth";
 
-const statusColors = {
-  הושלם: "green",
-  בתהליך: "orange",
-  בוטל: "red",
-  "חסר שיבוץ": "gray",
-};
 
 const tagColors = {
   "חסר שיבוץ": "orange",

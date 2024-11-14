@@ -79,7 +79,7 @@ export default function CustomerContactSelector({
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column',
-      gap: 2,
+      gap: 1, // reduced from 2
       width: '100%'
     }}>
       <FormControl>
@@ -87,18 +87,30 @@ export default function CustomerContactSelector({
           row
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          sx={{ mb: 1 }} // Added small margin bottom
         >
-          <FormControlLabel value="old" control={<Radio />} label="לקוח קיים" />
-          <FormControlLabel value="new" control={<Radio />} label="לקוח חדש" />
+          <FormControlLabel 
+            value="old" 
+            control={<Radio size="small" />} 
+            label="לקוח קיים"
+            sx={{ mr: 1 }} // Reduced margin
+          />
+          <FormControlLabel 
+            value="new" 
+            control={<Radio size="small" />} 
+            label="לקוח חדש"
+          />
         </RadioGroup>
       </FormControl>
 
       {value === "new" ? (
-        <AddNewCustomer />
+        <Box sx={{ maxWidth: '600px' }}>
+          <AddNewCustomer />
+        </Box>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Autocomplete
-            required
+            size="small" // Make the field smaller
             disablePortal
             options={customerOptions}
             getOptionLabel={(option) => option.name}
@@ -119,21 +131,31 @@ export default function CustomerContactSelector({
           />
 
           {selectedCustomer && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               <FormControl>
                 <RadioGroup
                   row
                   value={contactValue}
                   onChange={(e) => setContactValue(e.target.value)}
+                  sx={{ mb: 1 }}
                 >
-                  <FormControlLabel value="old" control={<Radio />} label="איש קשר קיים" />
-                  <FormControlLabel value="new" control={<Radio />} label="איש קשר חדש" />
+                  <FormControlLabel 
+                    value="old" 
+                    control={<Radio size="small" />} 
+                    label="איש קשר קיים"
+                    sx={{ mr: 1 }}
+                  />
+                  <FormControlLabel 
+                    value="new" 
+                    control={<Radio size="small" />} 
+                    label="איש קשר חדש"
+                  />
                 </RadioGroup>
               </FormControl>
 
               {contactValue === "old" ? (
                 <Autocomplete
-                  required
+                  size="small" // Make the field smaller
                   disablePortal
                   options={contactOptions}
                   getOptionLabel={(option) => option.name}
@@ -150,7 +172,9 @@ export default function CustomerContactSelector({
                   )}
                 />
               ) : (
-                <AddNewContact />
+                <Box sx={{ maxWidth: '600px' }}>
+                  <AddNewContact />
+                </Box>
               )}
             </Box>
           )}

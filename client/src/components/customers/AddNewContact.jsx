@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { TextField, Button, Box } from "@mui/material";
 
@@ -23,8 +22,13 @@ export default function AddNewContact({ onSave }) {
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <Box sx={{ 
+      display: "flex", 
+      flexDirection: "column", 
+      gap: "8px" // reduced from 16px
+    }}>
       <TextField
+        size="small"
         label="שם"
         name="name"
         value={contactData.name}
@@ -32,6 +36,7 @@ export default function AddNewContact({ onSave }) {
         required
       />
       <TextField
+        size="small"
         label="אימייל"
         name="email"
         value={contactData.email}
@@ -39,13 +44,20 @@ export default function AddNewContact({ onSave }) {
         required
       />
       <TextField
+        size="small"
         label="טלפון"
         name="phone"
         value={contactData.phone}
         onChange={handleChange}
         required
       />
-      <Button variant="contained" color="primary" onClick={handleSave}>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={handleSave}
+        size="small"
+        sx={{ alignSelf: 'flex-start', mt: 1 }}
+      >
         שמור איש קשר
       </Button>
     </Box>

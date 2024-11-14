@@ -25,10 +25,7 @@ import Login from "./pages/Login";
 import ProtectedPages from "./pages/ProtectedPages";
 import Layout from "./components/layout/Layout";
 import Customers from "./pages/Customers";
-import FutureOrders from "./pages/FutureOrders";
-import PastOrders from "./pages/PastOrders";
-import AllOrders from "./pages/AllOrders";
-import Distance from "./pages/Distance";
+import Companys from "./pages/Companys";
 const queryClient = new QueryClient();
 
 const theme = createTheme(
@@ -59,14 +56,9 @@ function App() {
                 <Route element={<Layout />}>
                   <Route path="/home" element={<HomePage />}></Route>
                   <Route path="/orders" element={<Orders />}></Route>
-                  <Route path="/orders/all" element={<AllOrders />}></Route>
-                  <Route
-                    path="/orders/future"
-                    element={<FutureOrders />}
-                  ></Route>
-                  <Route path="/orders/past" element={<PastOrders />}></Route>
                   <Route path="orders/new" element={<NewOrder />} />
                   <Route path="orders/:orderId" element={<NewOrder />} />
+                  <Route path="bus-company" element={<Companys />} />
                   <Route path="customers" element={<Customers />} />
                   {/* <Route path="distance" element={<Distance />} /> */}
                 </Route>

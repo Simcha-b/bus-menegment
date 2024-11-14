@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { getCustomers } from "../../services/customersService";
-import { Button, ConfigProvider, Table, Tag, Modal } from "antd";
+import { Button, ConfigProvider, Table, Tag, Modal, Form, Input, List, Space } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import AddNewCustomer from "./AddNewCustomer";
 import { getOrdersByCustomerId } from "../../services/ordersService";
 import OrderDetails from "./OrderDetails";
 import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import { title } from "framer-motion/client";
+import AddPaymentForm from "../payments/AddPaymentForm";
 
 const CustomersTable = () => {
   const [customers, setCustomers] = useState([]);
@@ -16,7 +19,17 @@ const CustomersTable = () => {
   const [selectedCustomerName, setSelectedCustomerName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [contacts, setContacts] = useState([]);
+  const [newContact, setNewContact] = useState({ name: "", phone: "" });
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [selectedOrderForPayment, setSelectedOrderForPayment] = useState(null);
+  const [form] = Form.useForm();
 
+  const navigate = useNavigate();
+
+  //function to fetch customers from the server
   const fetchCustomers = async () => {
     try {
       const customers = await getCustomers();
@@ -29,42 +42,94 @@ const CustomersTable = () => {
     }
   };
 
+  //function to handle the show orders button
   const handleShowOrders = async (record) => {
     const res = await getOrdersByCustomerId(record.customer_id);
     setOrders(res);
     setSelectedCustomerName(record.name);
     setOpen(true);
   };
-
+  //function to handle the close button
   const handleClose = () => {
     setOpen(false);
   };
-
+  //function to handle the order click
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
     setShowOrderDetails(true);
   };
-
+  //function to handle the close order details
   const handleOrderDetailsClose = () => {
     setShowOrderDetails(false);
     setSelectedOrder(null);
   };
-
+  //function to handle the edit order
   const handleEditOrder = (order) => {
     setEditingOrder(order);
     setIsEditing(true);
   };
-
+//function to handle the save order
   const handleSaveOrder = () => {
     // Implement save logic here, e.g., call an API to save the edited order
     setIsEditing(false);
     setEditingOrder(null);
   };
 
+  //function to handle the edit customer
+  const handleEditCustomer = (customer) => {
+    setSelectedCustomer(customer);
+    form.setFieldsValue(customer);
+    setContacts(customer.contacts || []);
+    setIsCustomerModalOpen(true);
+  };
+
+  //function to handle the save customer
+  const handleSaveCustomer = () => {
+    form.validateFields().then((values) => {
+      // Implement save logic here, e.g., call an API to save the edited customer
+      setIsCustomerModalOpen(false);
+      setSelectedCustomer(null);
+    });
+  };
+
+  //function to handle the close customer modal
+  const handleCustomerModalClose = () => {
+    setIsCustomerModalOpen(false);
+    setSelectedCustomer(null);
+  };
+
+  //function to handle adding a new contact
+  const handleAddContact = () => {
+    setContacts([...contacts, newContact]);
+    setNewContact({ name: "", phone: "" });
+  };
+
+  //function to handle removing a contact
+  const handleRemoveContact = (index) => {
+    setContacts(contacts.filter((_, i) => i !== index));
+  };
+
+  const handleAddPayment = (order) => {
+    setSelectedOrderForPayment(order);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePaymentModalClose = () => {
+    setIsPaymentModalOpen(false);
+    setSelectedOrderForPayment(null);
+  };
+
+  const handlePaymentAdded = () => {
+    // Refresh orders or perform any other necessary actions
+    setIsPaymentModalOpen(false);
+    setSelectedOrderForPayment(null);
+  };
+
   useEffect(() => {
     fetchCustomers();
   }, []);
 
+  //columns for the main table
   const columns = [
     {
       title: "שם",
@@ -113,8 +178,23 @@ const CustomersTable = () => {
         </>
       ),
     },
-  ];
+  {
+    title:"מצב תשלומים",
+    dataIndex:"payment_status",
+    key:"payment_status",
 
+  },
+    {
+      title: "ערוך פרטים",
+      key: "edit",
+      render: (_, record) => (
+        <Button onClick={() => handleEditCustomer(record)}>
+          ערוך
+        </Button>
+      ),
+    }
+  ];
+  //columns for the orders table
   const ordersColumns = [
     {
       title: "ID",
@@ -150,7 +230,15 @@ const CustomersTable = () => {
         <Button onClick={() => handleEditOrder(record)}>ערוך</Button>
       ),
     },
+    {
+      title: "הוסף תשלום",
+      key: "add_payment",
+      render: (_, record) => (
+        <Button onClick={() => handleAddPayment(record)}>הוסף תשלום</Button>
+      ),
+    },
   ];
+
 
   return (
     <ConfigProvider direction="rtl" locale={heIL}>
@@ -167,7 +255,6 @@ const CustomersTable = () => {
           columns={columns}
           bordered={true}
         />
-
       <Modal
         title={`פירוט נסיעות - ${selectedCustomerName}`}
         open={open}
@@ -189,7 +276,6 @@ const CustomersTable = () => {
           })}
         />
       </Modal>
-
       <Modal
         title="פרטי נסיעה"
         open={showOrderDetails}
@@ -203,23 +289,64 @@ const CustomersTable = () => {
       >
         {selectedOrder && <OrderDetails order={selectedOrder} />}
       </Modal>
-
       <Modal
-        title="ערוך פרטי נסיעה"
-        open={isEditing}
-        onCancel={() => setIsEditing(false)}
-        footer={[
-          <Button key="save" type="primary" onClick={handleSaveOrder}>
-            שמור
-          </Button>,
-          <Button key="cancel" onClick={() => setIsEditing(false)}>
-            בטל
-          </Button>,
-        ]}
-        width="80%"
+        title="ערוך פרטי לקוח"
+        open={isCustomerModalOpen}
+        onCancel={handleCustomerModalClose}
+        onOk={handleSaveCustomer}
       >
-        {editingOrder && (
-          <OrderDetails order={editingOrder} editable={true} setOrder={setEditingOrder} />
+        <Form form={form} layout="vertical">
+          <Form.Item name="name" label="שם" rules={[{ required: true, message: 'נא להזין שם' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label="אימייל" rules={[{ required: true, message: 'נא להזין אימייל' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="phone" label="טלפון" rules={[{ required: true, message: 'נא להזין טלפון' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="אנשי קשר">
+            <List
+              dataSource={contacts}
+              renderItem={(contact, index) => (
+                <List.Item
+                  actions={[
+                    <Button onClick={() => handleRemoveContact(index)}>מחק</Button>
+                  ]}
+                >
+                  {contact.name} - {contact.phone}
+                </List.Item>
+              )}
+            />
+            <Space>
+              <Input
+                placeholder="שם"
+                value={newContact.name}
+                onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
+              />
+              <Input
+                placeholder="טלפון"
+                value={newContact.phone}
+                onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
+              />
+              <Button onClick={handleAddContact}>הוסף איש קשר</Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="הוסף תשלום"
+        open={isPaymentModalOpen}
+        onCancel={handlePaymentModalClose}
+        footer={null}
+      >
+        {selectedOrderForPayment && (
+          <AddPaymentForm
+            visible={isPaymentModalOpen}
+            onClose={handlePaymentModalClose}
+            onPaymentAdded={handlePaymentAdded}
+            order={selectedOrderForPayment} // Pass the selected order
+          />
         )}
       </Modal>
       </Box>
