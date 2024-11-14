@@ -10,14 +10,53 @@ export const getFutureOrders = async () => {
   return data;
 };
 // get orders by date
-export const getOrdersByDate = async (from, to) => {
+export const getOrdersByDate = async (year, month) => {
+  try {
+    const from = `${year}-${month}-01`;
+    const to = `${year}-${month}-31`;
+    const url = `http://localhost:3001/api/orders/byDate?from=${from}&to=${to}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(
+        `Server error: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log("Fetch error:", error);
+    throw error;
+  }
+};
+
+//get order by id
+export const getOrderById = async (orderId) => {
+  console.log(orderId);
+  
+  try {
+    const response = await fetch(`http://localhost:3001/api/orders/${orderId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log("Fetch error:", error);
+    throw error;
+  }
+};
+
+//get orders by Customer Id
+export const getOrdersByCustomerId = async (id) => {
   const response = await fetch(
-    `http://localhost:3001/api/orders/date?from=${from}&to=${to}`
+    `http://localhost:3001/api/orders/customer/${id}`
   );
   const data = await response.json();
   return data;
-}
+};
+
 export const sendNewOrder = async (body) => {
+  console.log(body);
+
   const response = await fetch("http://localhost:3001/api/orders", {
     method: "POST",
     headers: {
@@ -31,7 +70,7 @@ export const sendNewOrder = async (body) => {
 
 export const updateOrder = async (id, body) => {
   const response = await fetch(`http://localhost:3001/api/orders/${id}`, {
-    method: "PUT",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -40,12 +79,32 @@ export const updateOrder = async (id, body) => {
   const data = await response.json();
   return data;
 };
+
+export async function updateOrderStatus(id, status) {
+  const response = await fetch(
+    `http://localhost:3001/api/orders/${id}/status`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Failed to update order status");
+  }
+}
+
+export const deleteOrder = async (id) => {
+  const response = await fetch(`http://localhost:3001/api/orders/${id}`, {
+    method: "DELETE",
+  });
+  const data = await response.json();
+  return data;
+};
+
 export const formatDate = (date) => {
-  //("DD/MM/YYYY")
-  const formattedDate = new Date(date).toLocaleDateString("he-IL", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }) ;
+  const formattedDate = new Date(date).toLocaleDateString("he-IL");
   return formattedDate;
 };

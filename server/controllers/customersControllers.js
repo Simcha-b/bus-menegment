@@ -1,6 +1,6 @@
 import customersQueries from "../db/queries/customersQueries.js";
 
-async function getCustomers(_, res) {
+async function getCustomers(req, res) {
   try {
     const customers = await customersQueries.getAllCustomers();
     res.json(customers);
@@ -37,8 +37,9 @@ async function getCustomer(req, res) {
 
 async function insertCustomer(req, res) {
   const customer = req.body;
+  const contacts = req.body.contacts;
   try {
-    const newCustomer = await customersQueries.insertCustomer(customer);
+    const newCustomer = await customersQueries.insertCustomerWithContacts(customer, contacts);
     res.status(201).json(newCustomer);
   } catch (error) {
     res.status(500).json({

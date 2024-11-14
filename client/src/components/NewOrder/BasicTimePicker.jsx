@@ -6,15 +6,25 @@ import { MobileTimePicker } from "@mui/x-date-pickers/MobileTimePicker";
 
 import dayjs from "dayjs";
 
-export default function BasicTimePicker({ label, formData, setFormData }) {
+export default function BasicTimePicker({
+  label,
+  formData,
+  setFormData,
+  keyTable,
+  initialTime, // new prop
+}) {
   function handleTimeChange(newTime) {
     const formattedTime = dayjs(newTime).format("HH:mm");
-    console.log(formattedTime);
-    setFormData({ ...formData, [label]: formattedTime });
+    setFormData({ ...formData, [keyTable]: formattedTime });
   }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <MobileTimePicker onChange={(newValue) => handleTimeChange(newValue)} />
+      <MobileTimePicker
+        onChange={(newValue) => handleTimeChange(newValue)}
+        label={label}
+        value={formData[keyTable] ? dayjs(formData[keyTable], "HH:mm") : (initialTime ? dayjs(initialTime, "HH:mm") : null)} // set initial value if provided
+      />
     </LocalizationProvider>
   );
 }

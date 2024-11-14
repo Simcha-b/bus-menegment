@@ -18,22 +18,31 @@ async function getOrderById(id) {
 async function getOrdersByCustomerId(id) {
   const query = `SELECT * FROM orders
   JOIN customers
-  ON orders.customer_id = customers.customer_id WHERE customer_id = ?`;
+  ON orders.customer_id = customers.customer_id WHERE customers.customer_id = ?`;
 
   const [rows] = await pool.query(query, [id]);
   return rows;
 }
+
 // select future orders
 async function getFutureOrders() {
+  const query = `SELECT * FROM orders
+    LEFT JOIN customers ON orders.customer_id = customers.customer_id
+    LEFT JOIN bus_companies ON orders.company_id = bus_companies.company_id
+    WHERE order_date > CURDATE()`;
+  const [rows] = await pool.query(query);
+  return rows;
+}
+//select orders by date
+async function getOrderByDate(from, to) {
   const [rows] = await pool.query(
     `select * from orders
-    where order_date > CURDATE()`
+    where order_date between ? and ?`,
+    [from, to]
   );
   return rows;
 }
-//select for mein orders table
-//להכניס תאריך כפרמטר ולטפל בו
-//insert
+// insert
 async function insertOrder(order) {
   const entries = Object.entries(order);
   const keys = entries.map(([key]) => key).join(", ");
@@ -52,6 +61,10 @@ async function updateOrder(id, updates) {
     throw new Error(
       "Invalid input: id is required and updates object cannot be empty"
     );
+  }
+  async function updateOrderStatus(order_id, status) {
+    const query = `UPDATE orders SET status = ? WHERE order_id = ?`;
+    await pool.query(query, [status, order_id]);
   }
 
   // Create the SET part of the query dynamically
@@ -79,6 +92,13 @@ async function updateOrder(id, updates) {
     throw error;
   }
 }
+
+//update order status
+async function updateOrderStatus(order_id, status) {
+  const query = `UPDATE orders SET status = ? WHERE order_id = ?`;
+  const result = await pool.query(query, [status, order_id]);
+  return result;
+}
 //delete
 
 async function deleteOrder(id) {
@@ -93,9 +113,10 @@ export default {
   getAllOrders,
   getOrderById,
   getFutureOrders,
+  getOrderByDate,
   getOrdersByCustomerId,
-  getFutureOrders,
   insertOrder,
   updateOrder,
+  updateOrderStatus,
   deleteOrder,
 };
