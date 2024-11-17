@@ -1,6 +1,6 @@
 import ordersQueries from "../db/queries/ordersQueries.js";
 import { calculateDistance } from "../api-maps/fetchMaps.js";
-import fetchData from "../api-trafik/trafikReports.js";
+import fetchData from "../api-trafik/traficReports.js";
 async function getOrders(req, res) {
   
   try {
@@ -199,7 +199,7 @@ async function getDistance(req, res) {
   }
 }
 
-async function getTrafikReports(req, res) {
+async function getTrafficReports(req, res) {
   try {
     const reports = await fetchData();
     res.json(reports);
@@ -222,5 +222,5 @@ export {
   updateOrderStatus,
   deleteOrder,
   getDistance,
-  getTrafikReports,
+  getTrafficReports,
 };

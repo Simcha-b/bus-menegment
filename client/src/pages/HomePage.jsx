@@ -1,6 +1,8 @@
 import React from "react";
 import { Typography, Button, Box, Container, Grid, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { TrafficReports } from "../components/home-page/TrafficReports";
+import Wether from "../components/home-page/Wether";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -130,13 +132,13 @@ function HomePage() {
                 <Grid item xs={12} md={4}>
                   <Paper elevation={4} sx={{ p: 2, minHeight: "150px" }}>
                     <Typography variant="h6">מזג אוויר</Typography>
-                    {/* Weather content placeholder */}
+                    <Wether/>
                   </Paper>
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <Paper elevation={4} sx={{ p: 2, minHeight: "150px" }}>
                     <Typography variant="h6">עדכוני תנועה</Typography>
-                    {/* Traffic updates placeholder */}
+                    <TrafficReports />
                   </Paper>
                 </Grid>
                 <Grid item xs={12} md={4}>

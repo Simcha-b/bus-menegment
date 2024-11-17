@@ -11,12 +11,13 @@ import {
   getOrdersByDate,
   updateOrderStatus,
   getDistance,
-  getTrafikReports,
+  getTrafficReports,
 } from "../controllers/ordersControllers.js";
 router.get("/byDate", getOrdersByDate);
 router.get("/future", getFutureOrders);
-router.get("/calculate-distance", getDistance)
-router.get("/trafik-reports", getTrafikReports);
+// router.get("/calculate-distance", getDistance)
+router.post("/calculate-distance", getDistance)
+router.get("/traffic-reports", getTrafficReports);
 router.get("/customer/:id", getOrdersByCustomerId);
 
 router.get("/", getOrders);
