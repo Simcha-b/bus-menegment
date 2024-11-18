@@ -32,9 +32,7 @@ export const getOrdersByDate = async (year, month) => {
 };
 
 //get order by id
-export const getOrderById = async (orderId) => {
-  console.log(orderId);
-  
+export const getOrderById = async (orderId) => {  
   try {
     const response = await fetch(`http://localhost:3001/api/orders/${orderId}`);
     const data = await response.json();
@@ -101,6 +99,7 @@ export const deleteOrder = async (id) => {
     method: "DELETE",
   });
   const data = await response.json();
+  console.log(data);
   return data;
 };
 

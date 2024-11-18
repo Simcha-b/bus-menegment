@@ -17,7 +17,7 @@ function EditOrder({ order }) {
           });
         }}
       >
-        עדכן פרטים
+        ערוך פרטים
       </Button>
     </div>
   );

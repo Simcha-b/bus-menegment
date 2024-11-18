@@ -18,7 +18,6 @@ function Wether() {
         throw new Error("שגיאה בבקשת הנתונים");
       }
       const data = await response.json();
-      console.log(data);
       setWether(data);
     } catch (error) {
       console.error("שגיאה בקריאת הדיווחים:", error);

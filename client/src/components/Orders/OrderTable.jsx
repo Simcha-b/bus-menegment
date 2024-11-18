@@ -1,27 +1,31 @@
-import { Table, ConfigProvider, Button, Tag } from "antd";
+import { Table, ConfigProvider, Button, Tag, Input, Space } from "antd";
 import heIL from "antd/lib/locale/he_IL";
+import { SearchOutlined } from "@ant-design/icons";
 import {
   formatDate,
   getFutureOrders,
   getOrders,
   getOrdersByDate,
 } from "../../services/ordersService";
-import { useEffect, useState } from "react";
-import ChangeStatus from "../order-actions/ChangeStatus";
+import { useEffect, useState, useRef } from "react";
 import DeleteOrder from "../order-actions/DeleteOrder";
 import EditOrder from "../order-actions/EditOrder";
 import ChooseYearAndMonth from "./ChooseYearAndMonth";
+import OrderDetails from "../customers/OrderDetails";
 
 const tagColors = {
   "חסר שיבוץ": "orange",
   "לא שולם": "red",
   "שולם חלקית": "blue",
+  "נתוני תשלום חסרים":"purple"
 };
 
 function OrderTable({ tableType, year, month }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const searchInput = useRef(null);
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -35,6 +39,7 @@ function OrderTable({ tableType, year, month }) {
         setData(orders);
       } else {
         const orders = await getOrders();
+        console.log(orders);
         setData(orders);
       }
     } catch (error) {
@@ -57,6 +62,18 @@ function OrderTable({ tableType, year, month }) {
     return tags;
   };
 
+  const getColumnFilterProps = (dataIndex) => ({
+    filters: [...new Set(data
+      .map(item => item[dataIndex])
+      .filter(Boolean))]
+      .map(text => ({
+        text: text,
+        value: text,
+      })),
+    onFilter: (value, record) => record[dataIndex] === value,
+    filterSearch: true,
+  });
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -71,65 +88,74 @@ function OrderTable({ tableType, year, month }) {
 
   const columns = [
     {
-      title: "מספר הזמנה",
-      dataIndex: "order_id",
-      key: "order_id",
-      sorter: (a, b) => a.order_id - b.order_id,
-      width: "5%",
-    },
-    {
       title: "תאריך",
       dataIndex: "order_date",
       key: "order_date",
-      sorter: (a, b) => new Date(a.order_date) - new Date(b.order_date),
+      sorter: {
+        compare: (a, b) => {
+          if (!a.order_date) return -1;
+          if (!b.order_date) return 1;
+          const dateA = new Date(a.order_date.split('T')[0]);
+          const dateB = new Date(b.order_date.split('T')[0]);
+          return dateA - dateB;
+        },
+        multiple: 3
+      },
       render: (text) => formatDate(text),
+      responsive: ['sm'],
     },
     {
-      title: "שם המזמין",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      title: "שם לקוח",
+      dataIndex: "customer_name",
+      key: "customer_name",
+      ...getColumnFilterProps('customer_name'),
+      sorter: {
+        compare: (a, b) => a.customer_name.localeCompare(b.customer_name),
+        multiple: 2
+      },
+      fixed: 'left',
+    },
+    {
+      title: "איש קשר",
+      dataIndex: "contact_name",
+      key: "contact_name",
+      ...getColumnFilterProps('contact_name'),
+      sorter: (a, b) => a.contact_name.localeCompare(b.contact_name),
+      responsive: ['md'],
     },
     {
       title: "שעת התחלה",
       dataIndex: "start_time",
       key: "start_time",
-      render: (text) => text.slice(0, 5),
+      responsive: ['sm'],
+      render: (text) => text ? text.slice(0, 5) : null,
     },
     {
       title: "שעת סיום",
       dataIndex: "end_time",
       key: "end_time",
-      render: (text) => text.slice(0, 5),
+      responsive: ['sm'],
+      render: (text) => text ? text.slice(0, 5) : null,
     },
     {
-      title: "כמות אוטבוסים",
+      title: "כמות",
       dataIndex: "bus_quantity",
       key: "bus_quantity",
       width: "5%",
     },
     {
-      title: "פרטי נסיעה",
-      dataIndex: "trip_details",
-      key: "trip_details",
-    },
-    {
       title: "מבצע",
       dataIndex: "company_name",
       key: "company_name",
-      sorter: (a, b) => a.company_name.localeCompare(b.company_name),
+      ...getColumnFilterProps('company_name'),
+      sorter: (a, b) => a.company_name?.localeCompare(b.company_name || ''),
       render: (text) => text || "לא שובץ",
-    },
-    {
-      title: "מצב הזמנה",
-      dataIndex: "status",
-      key: "status",
-      sorter: (a, b) => a.status.localeCompare(b.status),
+      responsive: ['md'],
     },
     {
       title: "תגיות",
       key: "tags",
-      render: (text, record) => (
+      render: (_, record) => (
         <div>
           {updateTags(record).map((tag) => (
             <Tag key={tag} color={tagColors[tag]} style={{ marginRight: 5 }}>
@@ -138,21 +164,16 @@ function OrderTable({ tableType, year, month }) {
           ))}
         </div>
       ),
-      width:"15%",
-      sorter: (a, b) => updateTags(a).length - updateTags(b).length,
+      'responsive': ['md'],
     },
     {
       title: "פעולות",
       key: "action",
-      render: (text, record) => (
+      fixed: 'right',
+      width: "15%",
+      render: (_, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
-          {/* <ChangeStatus
-              order_id={record.order_id}
-              fetchOrders={fetchOrders}
-            /> */}
-
           <EditOrder order={record} fetchOrders={fetchOrders} />
-
           <DeleteOrder order_id={record.order_id} fetchOrders={fetchOrders} />
         </div>
       ),
@@ -181,29 +202,27 @@ function OrderTable({ tableType, year, month }) {
           columns={columns}
           dataSource={dataSource}
           bordered={true}
+          scroll={{ x: 'max-content' }}
           rowSelection={{
             type: "checkbox",
             ...rowSelection,
           }}
           expandable={{
             expandedRowRender: (record) => (
-              <>
-                <span
-                  style={{
-                    display: "block",
-                    marginBottom: 16,
-                    color: "black",
-                  }}
-                >
-                  פרטי הנסיעה: {record.trip_details}
-                </span>
-                <span>
-                  סכום כולל:{" "}
-                  {record.bus_quantity * record.price_per_bus_customer}
-                </span>
-              </>
+              <OrderDetails order={record} fetchOrders={fetchOrders} />
             ),
+            expandedRowKeys,
+            onExpandedRowsChange: (newExpandedRows) => {
+              setExpandedRowKeys(newExpandedRows);
+            }
           }}
+          onRow={(record) => ({
+            onClick: () => {
+              const isExpanded = expandedRowKeys.includes(record.key);
+              setExpandedRowKeys(isExpanded ? [] : [record.key]);
+            },
+            style: { cursor: 'pointer' }
+          })}
         />
       </ConfigProvider>
     </div>

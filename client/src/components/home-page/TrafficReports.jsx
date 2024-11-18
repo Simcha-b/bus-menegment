@@ -17,7 +17,6 @@ export function TrafficReports() {
         throw new Error("שגיאה בבקשת הנתונים");
       }
       const data = await response.json();
-      console.log(data);
       setTrafficReports(data);
     } catch (error) {
       console.error("שגיאה בקריאת הדיווחים:", error);

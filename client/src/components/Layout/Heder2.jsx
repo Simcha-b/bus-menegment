@@ -23,7 +23,11 @@ const pages = [
   { name: "הזמנה חדשה", path: "/orders/new" },
   { name: "דוחות", path: "/reports" },
 ];
-const settings = ["פרופיל", "הגדרות חשבון", "התנתקות"];
+const settings = [
+  { name: "פרופיל", action: "profile" },
+  { name: "הגדרות חשבון", action: "settings" },
+  { name: "התנתקות", action: "logout" }
+];
 
 function Heder2() {
   const navigate = useNavigate();
@@ -57,6 +61,31 @@ function Heder2() {
 
   const handleLogoClick = () => {
     navigate("/home");
+  };
+
+  const handleLogout = () => {
+    // Clear local storage/session
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Navigate to login page
+    navigate('/login');
+  };
+
+  const handleSettingsAction = (action) => {
+    handleCloseUserMenu();
+    switch (action) {
+      case 'logout':
+        handleLogout();
+        break;
+      case 'profile':
+        navigate('/profile');
+        break;
+      case 'settings':
+        navigate('/settings');
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -192,9 +221,12 @@ function Heder2() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem 
+                  key={setting.name} 
+                  onClick={() => handleSettingsAction(setting.action)}
+                >
                   <Typography sx={{ textAlign: "center" }}>
-                    {setting}
+                    {setting.name}
                   </Typography>
                 </MenuItem>
               ))}
