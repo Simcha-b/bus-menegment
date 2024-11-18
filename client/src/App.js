@@ -26,6 +26,7 @@ import ProtectedPages from "./pages/ProtectedPages";
 import Layout from "./components/layout/Layout";
 import Customers from "./pages/Customers";
 import Companys from "./pages/Companys";
+import NotFoundPage from "./pages/NotFoundPage";
 const queryClient = new QueryClient();
 
 const theme = createTheme(
@@ -63,7 +64,7 @@ function App() {
                   {/* <Route path="distance" element={<Distance />} /> */}
                 </Route>
               </Route>
-              <Route path="*" element={<h1>404</h1>} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </QueryClientProvider>
         </Router>

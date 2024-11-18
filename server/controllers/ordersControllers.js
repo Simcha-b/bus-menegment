@@ -2,7 +2,6 @@ import ordersQueries from "../db/queries/ordersQueries.js";
 import { calculateDistance } from "../api-maps/fetchMaps.js";
 import fetchData from "../api-trafik/traficReports.js";
 async function getOrders(req, res) {
-  
   try {
     const orders = await ordersQueries.getAllOrders();
     res.json(orders);
@@ -39,7 +38,7 @@ async function getOrderById(req, res) {
 async function getFutureOrders(req, res) {
   try {
     const FutureOrders = await ordersQueries.getFutureOrders();
-    res.json(FutureOrders);    
+    res.json(FutureOrders);
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -49,10 +48,12 @@ async function getFutureOrders(req, res) {
   }
 }
 
- async function getOrdersByDate(req, res) {
-  const {from , to} = req.query;
+async function getOrdersByDate(req, res) {
+  const { from, to } = req.query;
   if (!from || !to) {
-    return res.status(400).json({ error: 'Start date and end date are required' });
+    return res
+      .status(400)
+      .json({ error: "Start date and end date are required" });
   }
   try {
     const orders = await ordersQueries.getOrderByDate(from, to);
@@ -102,23 +103,20 @@ async function insertOrders(req, res) {
 // Add this helper function
 function formatDateForMySQL(dateString) {
   if (!dateString) return null;
-  return new Date(dateString).toISOString().slice(0, 19).replace('T', ' ');
+  return new Date(dateString).toISOString().slice(0, 19).replace("T", " ");
 }
 
 async function updateOrders(req, res) {
   const orderId = req.params.id;
   const updates = req.body;
-  
+
   // Format the date if it exists in the updates
   if (updates.order_date) {
     updates.order_date = formatDateForMySQL(updates.order_date);
   }
 
   try {
-    const updatedOrder = await ordersQueries.updateOrder(
-      orderId,
-      updates
-    );
+    const updatedOrder = await ordersQueries.updateOrder(orderId, updates);
     if (!updatedOrder) {
       res.status(404).json({
         success: false,
@@ -185,10 +183,18 @@ async function deleteOrder(req, res) {
     });
   }
 }
+
 async function getDistance(req, res) {
-  const { origin, destination } = req.query;
+  const locations = req.body.locations;
+  if (!locations || !Array.isArray(locations) || locations.length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Locations are required and should be a non-empty array",
+    });
+  }
+
   try {
-    const distance = await calculateDistance(origin, destination);
+    const distance = await calculateDistance(locations);
     res.json(distance);
   } catch (error) {
     res.status(500).json({

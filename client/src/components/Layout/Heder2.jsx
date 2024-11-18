@@ -123,6 +123,9 @@ function Heder2() {
                   </Typography>
                 </MenuItem>
               ))}
+              <MenuItem onClick={() => setOpen(true)}>
+                <Typography sx={{ textAlign: "center" }}>חישוב מרחקים</Typography>
+                </MenuItem>
             </Menu>
           </Box>
           <DirectionsBusIcon

@@ -9,7 +9,10 @@ import usersRoutes from "./routes/usersRoutes.js";
 import paymentsRoutes from "./routes/paymentsRoutes.js";
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',  // הדומיין המדויק של הקליינט
+  credentials: true
+}));
 app.use(express.json());
 
 app.use("/api/customers", customersRoutes);

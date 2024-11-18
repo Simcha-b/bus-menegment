@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Box } from "@mui/system";
 
+const WETHER_API_KEY = process.env.REACT_APP_WETHER_API_KEY;
 function Wether() {
   const [wether, setWether] = useState({});
   const [error, setError] = useState(null);
@@ -7,7 +9,7 @@ function Wether() {
   const fetchWether = async () => {
     try {
       const response = await fetch(
-        "http://api.weatherstack.com/current?access_key=0390621ab2c2ef5b8ed65d3fc4fecffd&query=Beit-Shemesh",
+        `http://api.weatherapi.com/v1/current.json?key=${WETHER_API_KEY}&q=Beit-Shemesh&aqi=no`,
         {
           method: "GET",
         }
@@ -34,12 +36,13 @@ function Wether() {
         <div>שגיאה: {error}</div>
       ) : (
         <div>
-          {/* הצגת הנתונים */}
           {wether.current && (
             <div>
-              <p>{wether.location.name}</p>
-              <p>טמפרטורה: {wether.current.temperature}°C</p>
-              <img src={wether.current.weather_icons[0]} alt="weather icon"  />
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <p>{wether.location.name}</p>
+                <p style={{font:"icon"}}>{wether.current.temp_c}°C</p>
+                <img src={wether.current.condition.icon} alt="weather icon" />
+              </Box>
             </div>
           )}
         </div>

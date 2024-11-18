@@ -28,7 +28,7 @@ const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 //   }
 // }
 export async function calculateDistance(locations) {
-  if (locations.length < 2) {
+  if (!locations || locations.length < 2) {
     throw new Error("יש לספק לפחות שני מיקומים.");
   }
 
@@ -37,31 +37,51 @@ export async function calculateDistance(locations) {
   for (let i = 0; i < locations.length - 1; i++) {
     const origin = locations[i];
     const destination = locations[i + 1];
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${
-   encodeURIComponent(origin)}
-   &destinations=${encodeURIComponent(destination)}&key=${API_KEY}&language=he`;
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(
+      origin
+    )}&destinations=${encodeURIComponent(
+      destination
+    )}&key=${API_KEY}&language=he`;
 
     try {
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error('שגיאה בבקשת הנתונים');
+        throw new Error(
+          `שגיאה בבקשת הנתונים: ${response.status} ${response.statusText}`
+        );
       }
+
       const data = await response.json();
-      console.log(data);
-      
-      if (data.rows[0].elements[0].status === "OK") {
-        const distanceValue = data.rows[0].elements[0].distance.value; // המרחק במטרים
-        totalDistance += distanceValue;
-      } else {
-        throw new Error(`לא ניתן לחשב את המרחק בין ${origin} ל-${destination}`);
+      if (
+        !data ||
+        !data.rows ||
+        !data.rows[0] ||
+        !data.rows[0].elements ||
+        !data.rows[0].elements[0]
+      ) {
+        throw new Error("התקבלו נתונים לא תקינים מה-API");
       }
+
+      const element = data.rows[0].elements[0];
+      if (element.status !== "OK") {
+        throw new Error(
+          `לא ניתן לחשב את המרחק בין ${origin} ל-${destination}: ${element.status}`
+        );
+      }
+
+      if (!element.distance || typeof element.distance.value !== "number") {
+        throw new Error(
+          `נתוני המרחק חסרים או לא תקינים עבור הקטע בין ${origin} ל-${destination}`
+        );
+      }
+
+      totalDistance += element.distance.value;
     } catch (error) {
-      console.error('שגיאה בחישוב המרחק:', error.message);
+      console.error("שגיאה בחישוב המרחק:", error.message);
       throw error;
     }
   }
 
-  // המרה של המרחק ממטרים לקילומטרים בפורמט טקסט
   const totalDistanceInKm = (totalDistance / 1000).toFixed(2);
-  return `המרחק הכולל הוא: ${totalDistanceInKm} ק"מ`;
+  return [{ totalDistanceInKm }];
 }

@@ -12,7 +12,6 @@ import DeleteOrder from "../order-actions/DeleteOrder";
 import EditOrder from "../order-actions/EditOrder";
 import ChooseYearAndMonth from "./ChooseYearAndMonth";
 
-
 const tagColors = {
   "חסר שיבוץ": "orange",
   "לא שולם": "red",
@@ -52,8 +51,9 @@ function OrderTable({ tableType, year, month }) {
   const updateTags = (order) => {
     let tags = [];
     if (!order.company_id) tags.push("חסר שיבוץ");
+    if (!order.price_per_bus_customer) tags.push("נתוני תשלום חסרים");
     if (!order.paid) tags.push("לא שולם");
-    if (order.total_paid_customer>0) tags.push("שולם חלקית");
+    if (order.total_paid_customer > 0) tags.push("שולם חלקית");
     return tags;
   };
 
@@ -138,6 +138,7 @@ function OrderTable({ tableType, year, month }) {
           ))}
         </div>
       ),
+      width:"15%",
       sorter: (a, b) => updateTags(a).length - updateTags(b).length,
     },
     {

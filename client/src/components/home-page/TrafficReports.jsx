@@ -38,7 +38,7 @@ export function TrafficReports() {
       borderRadius: '4px',
     }}>
       <div style={{
-        animation: 'moveUp 20s linear infinite',
+        animation: 'moveUp 30s linear infinite',
         position: 'relative',
         transform: 'translateY(0)'  // התחלה מלמעלה
       }}>

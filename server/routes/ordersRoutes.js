@@ -16,6 +16,7 @@ import {
 router.get("/byDate", getOrdersByDate);
 router.get("/future", getFutureOrders);
 // router.get("/calculate-distance", getDistance)
+
 router.post("/calculate-distance", getDistance)
 router.get("/traffic-reports", getTrafficReports);
 router.get("/customer/:id", getOrdersByCustomerId);
