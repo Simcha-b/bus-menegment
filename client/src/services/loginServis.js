@@ -1,19 +1,26 @@
-import {loginWithEmailAndPassword, registerWithEmailAndPassword} from "../firebase/authentication.js";
-import { updateProfile } from "firebase/auth"; // Import updateProfile
+import { loginWithEmailAndPassword, registerWithEmailAndPassword, signInWithGoogle } from "../firebase/authentication.js";
+import { updateProfile } from "firebase/auth"; 
 
-// export const getUser = async (email) => {
-//   const response = await fetch(`http://localhost:3001/api/users/${email}`);
-//   const data = await response.json();
-//   console.log(data);
+export const getUser = async (email) => {
+  const response = await fetch(`http://localhost:3001/api/users/${email}`);
+  const data = await response.json();
+  return data;
+};
 
-//   return data;
-// };
-
-export const registerUser = async (email, password, displayName) => {
+export const registerUser = async (email, password, name) => {
   try {
     const userCredential = await registerWithEmailAndPassword(email, password);
     const user = userCredential.user;
-    await updateProfile(user, { displayName }); // Use updateProfile method
+    await updateProfile(user, { displayName: name });
+    
+    const token = await user.getIdToken();
+    const userInfo = {
+      email: user.email,
+      name: name,
+      uid: user.uid,
+      token: token
+    };
+    localStorage.setItem("user", JSON.stringify(userInfo));
     return user;
   } catch (error) {
     console.error("Error registering new user:", error);
@@ -22,13 +29,46 @@ export const registerUser = async (email, password, displayName) => {
 };
 
 export const checkLogin = async (email, password) => {
-  const user = await loginWithEmailAndPassword(email, password);
-  if (user) {
-    // const userName = user.displayName; // Assuming displayName is set during registration
-    // localStorage.setItem("user", JSON.stringify({ email: user.email}));
-    return true;
-  } else {
-    return false;
+  try {
+    const user = await loginWithEmailAndPassword(email, password);
+    if (user) {
+      console.log("User logged in:", user);
+      const token = await user.getIdToken();
+      const userInfo = {
+        email: user.email,
+        name: user.displayName || email.split('@')[0],
+        uid: user.uid,
+        token: token
+      };
+      localStorage.setItem("user", JSON.stringify(userInfo));
+      return user;
+    }
+    return null;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
+
+export const loginWithGoogle = async () => {
+  try {
+    const user = await signInWithGoogle();
+    if (user) {
+      console.log("User logged in with Google:", user);
+      const token = await user.getIdToken();
+      const userInfo = {
+        email: user.email,
+        name: user.displayName,
+        uid: user.uid,
+        token: token
+      };
+      localStorage.setItem("user", JSON.stringify(userInfo));
+      return user;
+    }
+    return null;
+  } catch (error) {
+    console.error("Google login error:", error);
+    throw error;
   }
 };
 

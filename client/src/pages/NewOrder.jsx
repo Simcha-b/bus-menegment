@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import {
   Checkbox,
@@ -18,7 +18,6 @@ import {
 } from "../services/ordersService";
 import { CompanySelector } from "../components/NewOrder/CompanySelector";
 import { useNavigate } from "react-router-dom";
-// import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
 import BasicDatePicker from "../components/NewOrder/BasicDatePicker";
 import CustomerContactSelector from "../components/NewOrder/CustomerContactSelector";
 import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
