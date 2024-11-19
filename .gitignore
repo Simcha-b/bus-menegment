@@ -8,9 +8,6 @@
 ./server/node_modules
 /.pnp
 .pnp.js
-/firebase/firebase-config.js
-/cliet/firebase/firebase-config.js
-*/firebase/firebase-config.js
 
 # testing
 /coverage
