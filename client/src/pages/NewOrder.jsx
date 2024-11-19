@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import {
   Checkbox,
@@ -18,7 +18,6 @@ import {
 } from "../services/ordersService";
 import { CompanySelector } from "../components/NewOrder/CompanySelector";
 import { useNavigate } from "react-router-dom";
-// import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
 import BasicDatePicker from "../components/NewOrder/BasicDatePicker";
 import CustomerContactSelector from "../components/NewOrder/CustomerContactSelector";
 import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
@@ -81,8 +80,6 @@ function NewOrder() {
 
   useEffect(() => {
     if (orderId) {
-      console.log("orderId:", orderId);
-
       const fetchOrder = async () => {
         try {
           const orderData = await getOrderById(orderId);
@@ -110,10 +107,16 @@ function NewOrder() {
   };
 
   const handleInputChange = (event) => {
-    const { id, value, type, checked } = event.target;
+    const { id, value } = event.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [id]: type === "Checkbox" ? checked : value,
+      [id]: value,
+    }));
+  };
+  const hendelchecked = (e) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      paid: e.target.checked
     }));
   };
 
@@ -134,7 +137,6 @@ function NewOrder() {
     }
     return Object.keys(newErrors).length === 0;
   };
-
   // Submit form
   const handleSubmit = async () => {
     if (!validateForm()) return;
@@ -142,6 +144,7 @@ function NewOrder() {
     try {
       let response;
       if (orderId) {
+        console.log(formData);
         response = await updateOrder(orderId, formData);
       } else {
         response = await sendNewOrder(formData);
@@ -190,7 +193,9 @@ function NewOrder() {
         >
           {/* Trip Details Section */}
           <Box sx={{ display: "grid", gap: 2 }}>
-            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+            <Box
+              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
+            >
               <BasicDatePicker setFormData={setFormData} formData={formData} />
               <TextField
                 required
@@ -229,7 +234,9 @@ function NewOrder() {
               helperText={errors.trip_details}
             />
 
-            <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+            <Box
+              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
+            >
               <BasicTimePicker
                 label="שעת התחלה"
                 keyTable="start_time"
@@ -266,7 +273,9 @@ function NewOrder() {
           {/* Payment Details Section */}
           {showPaymentDetails && (
             <Paper elevation={1} sx={{ p: 2 }}>
-              <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: "1fr 1fr" }}>
+              <Box
+                sx={{ display: "grid", gap: 2, gridTemplateColumns: "1fr 1fr" }}
+              >
                 <TextField
                   fullWidth
                   id="price_per_bus_customer"
@@ -283,7 +292,7 @@ function NewOrder() {
                   value={formData.extra_pay_customer}
                   onChange={handleInputChange}
                 />
-                
+
                 <Typography sx={{ gridColumn: "span 2" }}>
                   {`מחיר ללקוח: ${priceCustomer} ש"ח | סכום כולל: ${totalPriceCustomer} ש"ח`}
                 </Typography>
@@ -299,13 +308,25 @@ function NewOrder() {
                   onChange={handleInputChange}
                   sx={{ gridColumn: "span 2" }}
                 />
-                
-                <Box sx={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 2, alignItems: "center", gridColumn: "span 2" }}>
+
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "auto 1fr",
+                    gap: 2,
+                    alignItems: "center",
+                    gridColumn: "span 2",
+                  }}
+                >
                   <FormControlLabel
-                    control={<Checkbox />}
+                    control={
+                      <Checkbox
+                        checked={Boolean(formData.paid)}
+                        onChange={hendelchecked}
+                      />
+                    }
                     id="paid"
                     label="שולם"
-                    onChange={handleInputChange}
                   />
                   <TextField
                     id="total_paid_customer"
@@ -322,7 +343,9 @@ function NewOrder() {
           {/* Company Details Section */}
           {showCompanyDetails && (
             <Paper elevation={1} sx={{ p: 2 }} ref={companyRef}>
-              <Box sx={{ display: "grid", gap: 2, gridTemplateColumns: "1fr 1fr" }}>
+              <Box
+                sx={{ display: "grid", gap: 2, gridTemplateColumns: "1fr 1fr" }}
+              >
                 <CompanySelector setFormData={setFormData} />
                 <TextField
                   fullWidth
@@ -340,7 +363,7 @@ function NewOrder() {
                   value={formData.extra_pay_company}
                   onChange={handleInputChange}
                 />
-                
+
                 <Typography sx={{ gridColumn: "span 2" }}>
                   {`סכום כולל ספק: ${totalPriceCompany} ש"ח`}
                 </Typography>
@@ -356,7 +379,7 @@ function NewOrder() {
                   onChange={handleInputChange}
                   sx={{ gridColumn: "span 2" }}
                 />
-                
+
                 <FormControlLabel
                   control={<Checkbox />}
                   id="submitted_invoice"

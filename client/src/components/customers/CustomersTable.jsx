@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getCustomers } from "../../services/customersService";
-import { Button, ConfigProvider, Table, Tag, Modal, Form, Input, List, Space } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Table,
+  Tag,
+  Modal,
+  Form,
+  Input,
+  List,
+  Space,
+} from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import AddNewCustomer from "./AddNewCustomer";
 import { getOrdersByCustomerId } from "../../services/ordersService";
@@ -8,6 +18,8 @@ import OrderDetails from "./OrderDetails";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import AddPaymentForm from "../payments/AddPaymentForm";
+import EditOrder from "../order-actions/EditOrder";
+import DeleteOrder from "../order-actions/DeleteOrder";
 
 const CustomersTable = () => {
   const [customers, setCustomers] = useState([]);
@@ -26,16 +38,40 @@ const CustomersTable = () => {
   const [selectedOrderForPayment, setSelectedOrderForPayment] = useState(null);
   const [form] = Form.useForm();
 
-  const navigate = useNavigate();
-
   //function to fetch customers from the server
   const fetchCustomers = async () => {
     try {
       const customers = await getCustomers();
-      setCustomers(
-        customers.map((customer, index) => ({ ...customer, key: index }))
+      const customersWithStatus = await Promise.all(
+        customers.map(async (customer) => {
+          const orders = await getOrdersByCustomerId(customer.customer_id);
+          
+          if (orders.length === 0) {
+            return {
+              ...customer,
+              payment_status: null,
+              totalDebt: 0
+            };
+          }
+
+          let totalDebt = 0;
+          const hasUnpaidOrders = orders.some((order) => {
+            if (!order.paid) {
+              // מכפיל את המחיר לאוטובוס במספר האוטובוסים
+              totalDebt += order.price_per_bus_customer * order.bus_quantity;
+              return true;
+            }
+            return false;
+          });
+
+          return {
+            ...customer,
+            payment_status: hasUnpaidOrders ? "חוב פתוח" : "שולם",
+            totalDebt: totalDebt
+          };
+        })
       );
-      console.log(customers);
+      setCustomers(customersWithStatus);
     } catch (error) {
       console.error("Failed to fetch customers:", error);
     }
@@ -67,7 +103,7 @@ const CustomersTable = () => {
     setEditingOrder(order);
     setIsEditing(true);
   };
-//function to handle the save order
+  //function to handle the save order
   const handleSaveOrder = () => {
     // Implement save logic here, e.g., call an API to save the edited order
     setIsEditing(false);
@@ -166,32 +202,42 @@ const CustomersTable = () => {
       title: "סטטוס",
       dataIndex: "status",
       key: "status",
-      render: (_, record) => (
-        <>
-          <Tag color={"red"} key={`tag-red-${record.key}`}>
-            חוב פתוח
+      render: (_, record) => {
+        if (!record.payment_status) return null;
+        return (
+          <Tag color={record.payment_status === "חוב פתוח" ? "red" : "green"}>
+            {record.payment_status}
           </Tag>
-          <Tag color={"green"} key={`tag-green-${record.key}`}>
-            שולם
-          </Tag>
-        </>
-      ),
+        );
+      },
     },
-  {
-    title:"מצב תשלומים",
-    dataIndex:"payment_status",
-    key:"payment_status",
-
-  },
+    {
+      title: "מצב תשלומים",
+      dataIndex: "payment_status",
+      key: "payment_status",
+      render: (_, record) => {
+        if (!record.payment_status) return "אין נסיעות";
+        if (record.payment_status === "חוב פתוח") {
+          return record.totalDebt === 0 ? (
+            "נתוני תשלום חסרים"
+          ) : (
+            <span style={{ color: 'red' }}>
+              {`-${record.totalDebt} ₪`}
+            </span>
+          );
+        }
+        return "שולם";
+      },
+    },
     {
       title: "ערוך פרטים",
       key: "edit",
       render: (_, record) => (
         <Button onClick={() => handleEditCustomer(record)}>
-          ערוך
+          ערוך פרטי לקוח
         </Button>
       ),
-    }
+    },
   ];
   //columns for the orders table
   const ordersColumns = [
@@ -212,32 +258,51 @@ const CustomersTable = () => {
       key: "trip_details",
     },
     {
-      title: "סכום",
+      title: "מחיר לאוטובוס",
       dataIndex: "price_per_bus_customer",
-      key: "amount",
+      key: "price",
+    },
+    {
+      title: "כמות אוטובוסים",
+      dataIndex: "bus_quantity",
+      key: "quantity",
+    },
+    {
+      title: "סה״כ לתשלום",
+      key: "total",
+      render: (_, record) => `${record.price_per_bus_customer * record.bus_quantity} ₪`,
     },
     {
       title: "מצב הזמנה",
-      dataIndex: "is_paid",
-      key: "is_paid",
-      render: (is_paid) => (is_paid ? "שולם" : "לא שולם"),
+      dataIndex: "paid",
+      key: "paid",
+      render: (paid) => (paid ? "שולם" : "לא שולם"),
     },
     {
-      title: "ערוך",
-      key: "edit",
+      title: "פעולות",
+      key: "actions",
       render: (_, record) => (
-        <Button onClick={() => handleEditOrder(record)}>ערוך</Button>
+        <Space>
+          <EditOrder order={record} />
+          <DeleteOrder order_id={record.order_id} fetchOrders={() => handleShowOrders({ customer_id: record.customer_id })} />
+        </Space>
       ),
     },
     {
       title: "הוסף תשלום",
       key: "add_payment",
       render: (_, record) => (
-        <Button onClick={() => handleAddPayment(record)}>הוסף תשלום</Button>
+        !record.paid && (
+          <Button onClick={() => handleAddPayment(record)}>הוסף תשלום</Button>
+        )
       ),
     },
   ];
 
+  const handleDeleteOrder = (order) => {
+    // Implement delete logic here, e.g., call an API to delete the order
+    console.log("Deleting order:", order);
+  };
 
   return (
     <ConfigProvider direction="rtl" locale={heIL}>
@@ -254,100 +319,118 @@ const CustomersTable = () => {
           columns={columns}
           bordered={true}
         />
-      <Modal
-        title={`פירוט נסיעות - ${selectedCustomerName}`}
-        open={open}
-        onCancel={handleClose}
-        footer={[
-          <Button key="close" onClick={handleClose}>
-            סגור
-          </Button>,
-        ]}
-        width="90%"
-      >
-        <Table
-          dataSource={orders}
-          columns={ordersColumns}
-          pagination={false}
-          onRow={(record) => ({
-            onClick: () => handleOrderClick(record),
-            style: { cursor: "pointer" },
-          })}
-        />
-      </Modal>
-      <Modal
-        title="פרטי נסיעה"
-        open={showOrderDetails}
-        onCancel={handleOrderDetailsClose}
-        footer={[
-          <Button key="close" onClick={handleOrderDetailsClose}>
-            סגור
-          </Button>,
-        ]}
-        width="80%"
-      >
-        {selectedOrder && <OrderDetails order={selectedOrder} />}
-      </Modal>
-      <Modal
-        title="ערוך פרטי לקוח"
-        open={isCustomerModalOpen}
-        onCancel={handleCustomerModalClose}
-        onOk={handleSaveCustomer}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item name="name" label="שם" rules={[{ required: true, message: 'נא להזין שם' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="email" label="אימייל" rules={[{ required: true, message: 'נא להזין אימייל' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="phone" label="טלפון" rules={[{ required: true, message: 'נא להזין טלפון' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item label="אנשי קשר">
-            <List
-              dataSource={contacts}
-              renderItem={(contact, index) => (
-                <List.Item
-                  actions={[
-                    <Button onClick={() => handleRemoveContact(index)}>מחק</Button>
-                  ]}
-                >
-                  {contact.name} - {contact.phone}
-                </List.Item>
-              )}
-            />
-            <Space>
-              <Input
-                placeholder="שם"
-                value={newContact.name}
-                onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-              />
-              <Input
-                placeholder="טלפון"
-                value={newContact.phone}
-                onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-              />
-              <Button onClick={handleAddContact}>הוסף איש קשר</Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal
-        title="הוסף תשלום"
-        open={isPaymentModalOpen}
-        onCancel={handlePaymentModalClose}
-        footer={null}
-      >
-        {selectedOrderForPayment && (
-          <AddPaymentForm
-            visible={isPaymentModalOpen}
-            onClose={handlePaymentModalClose}
-            onPaymentAdded={handlePaymentAdded}
-            order={selectedOrderForPayment} // Pass the selected order
+        <Modal
+          title={`פירוט נסיעות - ${selectedCustomerName}`}
+          open={open}
+          onCancel={handleClose}
+          footer={[
+            <Button key="close" onClick={handleClose}>
+              סגור
+            </Button>,
+          ]}
+          width="90%"
+        >
+          <Table
+            dataSource={orders}
+            columns={ordersColumns}
+            pagination={false}
+            onRow={(record) => ({
+              onClick: () => handleOrderClick(record),
+              style: { cursor: "pointer" },
+            })}
           />
-        )}
-      </Modal>
+        </Modal>
+        <Modal
+          title="פרטי נסיעה"
+          open={showOrderDetails}
+          onCancel={handleOrderDetailsClose}
+          footer={[
+            <Button key="close" onClick={handleOrderDetailsClose}>
+              סגור
+            </Button>,
+          ]}
+          width="80%"
+        >
+          {selectedOrder && <OrderDetails order={selectedOrder} />}
+        </Modal>
+        <Modal
+          title="ערוך פרטי לקוח"
+          open={isCustomerModalOpen}
+          onCancel={handleCustomerModalClose}
+          onOk={handleSaveCustomer}
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item
+              name="name"
+              label="שם"
+              rules={[{ required: true, message: "נא להזין שם" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="email"
+              label="אימייל"
+              rules={[{ required: true, message: "נא להזין אימייל" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="phone"
+              label="טלפון"
+              rules={[{ required: true, message: "נא להזין טלפון" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item label="אנשי קשר">
+              <List
+                dataSource={contacts}
+                renderItem={(contact, index) => (
+                  <List.Item
+                    actions={[
+                      <Button onClick={() => handleRemoveContact(index)}>
+                        מחק
+                      </Button>,
+                    ]}
+                  >
+                    {contact.name} - {contact.phone}
+                  </List.Item>
+                )}
+              />
+              <Space>
+                <Input
+                  placeholder="שם"
+                  value={newContact.name}
+                  onChange={(e) =>
+                    setNewContact({ ...newContact, name: e.target.value })
+                  }
+                />
+                <Input
+                  placeholder="טלפון"
+                  value={newContact.phone}
+                  onChange={(e) =>
+                    setNewContact({ ...newContact, phone: e.target.value })
+                  }
+                />
+                <Button onClick={handleAddContact}>הוסף איש קשר</Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal
+          title="הוסף תשלום"
+          open={isPaymentModalOpen}
+          onCancel={handlePaymentModalClose}
+          footer={null}
+        >
+          {selectedOrderForPayment && (
+            <AddPaymentForm
+              visible={isPaymentModalOpen}
+              onClose={handlePaymentModalClose}
+              onPaymentAdded={handlePaymentAdded}
+              order={selectedOrderForPayment} // Pass the selected order
+            />
+          )}
+        </Modal>
       </Box>
     </ConfigProvider>
   );

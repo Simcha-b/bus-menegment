@@ -3,64 +3,45 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-//function for login with email and password
 const loginWithEmailAndPassword = async (email, password) => {
-  console.log(email + " " + password);
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-    console.log(user);
-    return user;
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
   } catch (error) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode, errorMessage);
+    console.error("Login error:", error);
+    throw error;
   }
 };
 
-//function for login with google
-const loginWithGoogle = async () => {
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log("User logged in with Google:", user);
-    return user;
-  } catch (error) {
-    console.error("Error during Google login", error);
-  }
-};
-
-//function for register with email and password
 const registerWithEmailAndPassword = async (email, password) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    const user = userCredential.user;
-    console.log(user);
-    return user;
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
   } catch (error) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode, errorMessage);
+    console.error("Registration error:", error);
+    throw error;
   }
 };
+
+const signInWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Google signin error:", error);
+    throw error;
+  }
+};
+
 export {
   loginWithEmailAndPassword,
-  loginWithGoogle,
   registerWithEmailAndPassword,
+  signInWithGoogle,
 };

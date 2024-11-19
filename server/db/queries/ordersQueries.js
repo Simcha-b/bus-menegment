@@ -3,8 +3,17 @@ import pool from "../connection.js";
 //select
 async function getAllOrders() {
   const [rows] =
-    await pool.query(`SELECT * FROM orders, customers, bus_companies
-     WHERE orders.customer_id = customers.customer_id AND orders.company_id = bus_companies.company_id`);
+    // await pool.query(`SELECT * FROM orders, customers, bus_companies
+    //  WHERE orders.customer_id = customers.customer_id AND orders.company_id = bus_companies.company_id`);
+    await pool.query(`
+SELECT o.*, c.name as customer_name, con.name as contact_name, b.company_name
+FROM orders as o
+LEFT JOIN customers as c
+ON o.customer_id = c.customer_id
+LEFT JOIN contacts as con
+ON o.contact_id = con.id 
+LEFT JOIN bus_companies as b
+ON o.company_id = b.company_id`);
   return rows;
 }
 
@@ -26,9 +35,14 @@ async function getOrdersByCustomerId(id) {
 
 // select future orders
 async function getFutureOrders() {
-  const query = `SELECT * FROM orders
-    LEFT JOIN customers ON orders.customer_id = customers.customer_id
-    LEFT JOIN bus_companies ON orders.company_id = bus_companies.company_id
+  const query = `SELECT o.*, c.name as customer_name, con.name as contact_name, b.company_name
+FROM orders as o
+LEFT JOIN customers as c
+ON o.customer_id = c.customer_id
+LEFT JOIN contacts as con
+ON o.contact_id = con.id 
+LEFT JOIN bus_companies as b
+ON o.company_id = b.company_id
     WHERE order_date > CURDATE()`;
   const [rows] = await pool.query(query);
   return rows;

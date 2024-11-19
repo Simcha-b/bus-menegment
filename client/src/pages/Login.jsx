@@ -1,10 +1,8 @@
 import React, { useRef, useState } from "react";
 import { TextField, Button, Box, Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { checkLogin } from "../services/loginServis.js";
+import { checkLogin, loginWithGoogle, registerUser } from "../services/loginServis.js";
 import "../css/login.css";
-import { loginWithGoogle } from "../firebase/authentication.js";
-import { registerUser } from "../services/loginServis.js";
 
 function Login() {
   const navigate = useNavigate();
@@ -19,16 +17,17 @@ function Login() {
     e.preventDefault();
     setError(null);
     try {
+      if (!email.current.value || !password.current.value) {
+        throw new Error("נא למלא את כל השדות");
+      }
       const user = await checkLogin(
         email.current.value,
         password.current.value
       );
       if (!user) throw new Error("שם משתמש או סיסמה לא נכונים");
-      console.log("User logged in:", user);
-      localStorage.setItem("token", user.token); // Store token in local storage
       navigate("/home");
     } catch (error) {
-      setError("שם משתמש או סיסמה לא נכונים");
+      setError(error.message || "שם משתמש או סיסמה לא נכונים");
     }
   };
 
@@ -37,8 +36,8 @@ function Login() {
     try {
       const user = await loginWithGoogle();
       console.log("User logged in with Google:", user);
-      localStorage.setItem("token", user.token); // Store token in local storage
-      navigate("/home");
+      localStorage.setItem("token", user.accessToken); // Store token in local storage
+      navigate("/home"); // Updated to navigate to home page
     } catch (error) {
       setError("שגיאה בהתחברות עם גוגל");
     }
@@ -49,17 +48,18 @@ function Login() {
     e.preventDefault();
     setError(null);
     try {
+      if (!email.current.value || !password.current.value || !username.current.value) {
+        throw new Error("שדות חסרים");
+      }
       const user = await registerUser(
         email.current.value,
         password.current.value,
-        { displayName: username.current.value }
+        username.current.value
       );
-      if (!user) throw new Error("רישום נכשל");
       console.log("User registered:", user);
-      localStorage.setItem("token", user.token); // Store token in local storage
       navigate("/home");
     } catch (error) {
-      setError("רישום נכשל");
+      setError(error.message || "רישום נכשל");
     }
   };
 

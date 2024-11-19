@@ -1,11 +1,10 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Heder } from "./Heder";
-import Heder2 from "./Heder2";
+import  Heder  from "./Heder";
 function Layout() {
   return (
     <>
-      <Heder2 />
+      <Heder />
       <Outlet />
     </>
   );

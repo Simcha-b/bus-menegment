@@ -22,7 +22,7 @@ function DeleteOrder({ order_id, fetchOrders }) {
   };
 
   const handleDelete = async () => {
-    if (confirmDelete) {
+    console.log(111);
       try {
         const res = await deleteOrder(order_id);
         if (res) {
@@ -32,7 +32,6 @@ function DeleteOrder({ order_id, fetchOrders }) {
       } catch (error) {
         console.error("Failed to delete order:", error);
       }
-    }
     handleClose();
     setConfirmDelete(false);
   };
