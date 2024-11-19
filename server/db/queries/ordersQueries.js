@@ -32,6 +32,15 @@ async function getOrdersByCustomerId(id) {
   const [rows] = await pool.query(query, [id]);
   return rows;
 }
+//select orders by company id
+async function getOrdersByCompanyId(id) {
+  const query = `SELECT * FROM orders
+  JOIN bus_companies
+  ON orders.company_id = bus_companies.company_id WHERE bus_companies.company_id = ?`;
+
+  const [rows] = await pool.query(query, [id]);
+  return rows;
+}
 
 // select future orders
 async function getFutureOrders() {
@@ -56,6 +65,7 @@ async function getOrderByDate(from, to) {
   );
   return rows;
 }
+
 // insert
 async function insertOrder(order) {
   const entries = Object.entries(order);
@@ -129,6 +139,7 @@ export default {
   getFutureOrders,
   getOrderByDate,
   getOrdersByCustomerId,
+  getOrdersByCompanyId,
   insertOrder,
   updateOrder,
   updateOrderStatus,

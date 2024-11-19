@@ -10,7 +10,7 @@ import {
 
 
 
-router.get("/", getCompanies); 
+router.get("/", getCompanies);
 router.get("/:id", getCompany);
 
 router.post("/", insertCompany);
