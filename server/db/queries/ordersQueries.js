@@ -34,10 +34,7 @@ async function getOrdersByCustomerId(id) {
 }
 //select orders by company id
 async function getOrdersByCompanyId(id) {
-  const query = `SELECT * FROM orders
-  JOIN bus_companies
-  ON orders.company_id = bus_companies.company_id WHERE bus_companies.company_id = ?`;
-
+  const query = `SELECT * FROM orders WHERE company_id = ?`;
   const [rows] = await pool.query(query, [id]);
   return rows;
 }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -32,15 +32,18 @@ const settings = [
 
 function Heder() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [userName, setUserName] = React.useState("");
+  const [userPhoto, setUserPhoto] = React.useState("");
 
   React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setUserName(user.name || user.email.split('@')[0]);
+      setUserPhoto(user.photoURL || ""); // Set user photo URL if available
     }
   }, []);
 
@@ -116,7 +119,7 @@ function Heder() {
   };
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="sticky" sx={{ bgcolor: "primary.dark" }}> {/* Change AppBar color */}
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <DirectionsBusIcon
@@ -212,13 +215,17 @@ function Heder() {
               <Button
                 key={page.name}
                 onClick={() => handleNavigation(page.path)}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{ 
+                  my: 2, 
+                  color: location.pathname === page.path ? "secondary.main" : "white", // Adjust highlight color
+                  display: "block" 
+                }}
               >
                 {page.name}
               </Button>
             ))}
             <Button
-              color="inherit"
+              color={location.pathname === "/distance" ? "secondary.main" : "inherit"} // Adjust highlight color
               onClick={() => setOpen(true)}
               sx={{ my: 2 }}
             >
@@ -229,7 +236,7 @@ function Heder() {
             <Typography sx={{ mr: 2 }}>{userName}</Typography>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={userName}  />
+                <Avatar alt={userName} src={userPhoto} /> {/* Set avatar src */}
               </IconButton>
             </Tooltip>
             <Menu
