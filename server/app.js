@@ -6,6 +6,7 @@ import companyRoutes from "./routes/companyRoutes.js";
 import contactsRoutes from "./routes/contactRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
 import paymentsRoutes from "./routes/paymentsRoutes.js";
+
 const app = express();
 
 app.use(cors({
