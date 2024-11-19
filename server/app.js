@@ -9,10 +9,15 @@ import paymentsRoutes from "./routes/paymentsRoutes.js";
 
 const app = express();
 
-app.use(cors({
-  origin: 'http://localhost:3000', 
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://bederech-hayshar-914f7e5318cb.herokuapp.com/",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/customers", customersRoutes);
@@ -22,14 +27,13 @@ app.use("/api/contacts", contactsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/payments", paymentsRoutes);
 
-
 app.use((req, res) => {
-    res.status(404).json({ error: "Not Found" });
-  });
-  
-  app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: "Something went wrong!" });
-  });
+  res.status(404).json({ error: "Not Found" });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Something went wrong!" });
+});
 
 export default app;
