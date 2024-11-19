@@ -52,6 +52,13 @@ export const getOrdersByCustomerId = async (id) => {
   return data;
 };
 
+//get orders by Company Id
+export const getOrdersByCompanyId = async (id) => {
+  const response = await fetch(`http://localhost:3001/api/orders/company/${id}`);
+  const data = await response.json();
+  return data;
+};
+
 export const sendNewOrder = async (body) => {
   console.log(body);
 

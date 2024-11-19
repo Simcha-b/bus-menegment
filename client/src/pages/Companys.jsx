@@ -1,8 +1,9 @@
 import React from 'react'
+import CompanyTable from '../components/companys/CompanyTable'
 
 function Companys() {
   return (
-    <div>Companys</div>
+    <div><CompanyTable/></div>
   )
 }
 

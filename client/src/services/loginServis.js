@@ -60,7 +60,8 @@ export const loginWithGoogle = async () => {
         email: user.email,
         name: user.displayName,
         uid: user.uid,
-        token: token
+        token: token,
+        photoURL: user.photoURL
       };
       localStorage.setItem("user", JSON.stringify(userInfo));
       return user;

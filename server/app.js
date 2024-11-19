@@ -6,6 +6,7 @@ import companyRoutes from "./routes/companyRoutes.js";
 import contactsRoutes from "./routes/contactRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
 import paymentsRoutes from "./routes/paymentsRoutes.js";
+
 const app = express();
 
 app.use(cors({
@@ -20,6 +21,7 @@ app.use("/api/companies", companyRoutes);
 app.use("/api/contacts", contactsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/payments", paymentsRoutes);
+
 
 app.use((req, res) => {
     res.status(404).json({ error: "Not Found" });

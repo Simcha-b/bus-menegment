@@ -4,6 +4,7 @@ import {
   getOrders,
   getOrderById,
   getOrdersByCustomerId,
+  getOrdersByCompanyId,
   getFutureOrders,
   insertOrders,
   updateOrders,
@@ -19,7 +20,9 @@ router.get("/future", getFutureOrders);
 
 router.post("/calculate-distance", getDistance)
 router.get("/traffic-reports", getTrafficReports);
+
 router.get("/customer/:id", getOrdersByCustomerId);
+router.get("/company/:id", getOrdersByCompanyId);
 
 router.get("/", getOrders);
 router.get("/:id", getOrderById);
