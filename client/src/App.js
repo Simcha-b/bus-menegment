@@ -23,7 +23,7 @@ import HomePage from "./pages/HomePage";
 import NewOrder from "./pages/NewOrder";
 import Login from "./pages/Login";
 import ProtectedPages from "./pages/ProtectedPages";
-import Layout from "./components/layout/Layout";
+import Layout from "./components/layout-com/Layout";
 import Customers from "./pages/Customers";
 import Companys from "./pages/Companys";
 import NotFoundPage from "./pages/NotFoundPage";
