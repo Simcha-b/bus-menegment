@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://bederech-hayshar-914f7e5318cb.herokuapp.com/",
+      "https://bederech-hayshar-914f7e5318cb.herokuapp.com",
     ],
     credentials: true,
   })
@@ -27,9 +27,7 @@ app.use("/api/contacts", contactsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/payments", paymentsRoutes);
 
-app.use((req, res) => {
-  res.status(404).json({ error: "Not Found" });
-});
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
