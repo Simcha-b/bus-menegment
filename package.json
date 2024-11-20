@@ -1,8 +1,8 @@
 {
   "scripts": {
+    "heroku-postbuild": "cd server && npm install && cd ../client && npm install && npm run build",
     "build": "npm run build --prefix client",
-    "start": "node server/server.js",
-    "heroku-postbuild": "cd server && npm install && cd ../client && npm install && npm run build"
+    "start": "node server/server.js"
   },
   "engines": {
     "node": "20.15.0"
