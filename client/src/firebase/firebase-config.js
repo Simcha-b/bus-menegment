@@ -14,5 +14,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig, {
   popupRedirectResolver: undefined
 });
-
 export default app;
