@@ -52,14 +52,16 @@ async function getFutureOrders(req, res) {
 }
 //function to get orders by date
 async function getOrdersByDate(req, res) {
-  const { from, to } = req.query;
-  if (!from || !to) {
+  const { year, month } = req.query;
+  if (!year || !month) {
     return res
       .status(400)
       .json({ error: "Start date and end date are required" });
   }
   try {
-    const orders = await ordersQueries.getOrderByDate(from, to);
+    const orders = await ordersQueries.getOrderByDate(year, month);
+    console.log(orders);
+    
     res.json(orders);
   } catch (error) {
     console.log("hahah");

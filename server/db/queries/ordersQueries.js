@@ -54,11 +54,10 @@ ON o.company_id = b.company_id
   return rows;
 }
 //select orders by date
-async function getOrderByDate(from, to) {
+async function getOrderByDate(year, month) {
   const [rows] = await pool.query(
-    `select * from orders
-    where order_date between ? and ?`,
-    [from, to]
+    `select * from orders where month(order_date) = ? and year(order_date) = ?`,
+    [month, year]
   );
   return rows;
 }
