@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@mui/system";
 
-const WETHER_API_KEY = process.env.REACT_APP_WETHER_API_KEY;
 function Wether() {
   const [wether, setWether] = useState({});
   const [error, setError] = useState(null);
@@ -9,7 +8,7 @@ function Wether() {
   const fetchWether = async () => {
     try {
       const response = await fetch(
-        `http://api.weatherapi.com/v1/current.json?key=${WETHER_API_KEY}&q=Beit-Shemesh&aqi=no`,
+        `http://api.weatherapi.com/v1/current.json?key=${process.env.REACT_APP_WETHER_API_KEY}&q=Beit-Shemesh&aqi=no`,
         {
           method: "GET",
         }

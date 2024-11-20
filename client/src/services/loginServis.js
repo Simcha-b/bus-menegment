@@ -1,8 +1,8 @@
 import { loginWithEmailAndPassword, registerWithEmailAndPassword, signInWithGoogle } from "../firebase/authentication.js";
 import { updateProfile } from "firebase/auth"; 
-
+const API_URL = process.env.REACT_APP_BASE_URL;
 export const getUser = async (email) => {
-  const response = await fetch(`http://localhost:3001/api/users/${email}`);
+  const response = await fetch(`${API_URL}/api/users/${email}`);
   const data = await response.json();
   return data;
 };

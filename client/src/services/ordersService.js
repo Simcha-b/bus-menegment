@@ -1,22 +1,20 @@
+const API_URL = process.env.REACT_APP_BASE_URL;
 export const getOrders = async () => {
-  const response = await fetch("http://localhost:3001/api/orders");
+  const response = await fetch(`${API_URL}/api/orders`);
   const data = await response.json();
   return data;
 };
 //get orders future
 export const getFutureOrders = async () => {
-  const response = await fetch("http://localhost:3001/api/orders/future");
+  const response = await fetch(`${API_URL}/api/orders/future`);
   const data = await response.json();
   return data;
 };
 // get orders by date
 export const getOrdersByDate = async (year, month) => {
   try {
-    const from = `${year}-${month}-01`;
-    const to = `${year}-${month}-31`;
-    const url = `http://localhost:3001/api/orders/byDate?from=${from}&to=${to}`;
+    const url = `${API_URL}/api/orders/byDate?year=${year}&month=${month}`;
     const response = await fetch(url);
-
     if (!response.ok) {
       throw new Error(
         `Server error: ${response.status} ${response.statusText}`
@@ -34,7 +32,7 @@ export const getOrdersByDate = async (year, month) => {
 //get order by id
 export const getOrderById = async (orderId) => {  
   try {
-    const response = await fetch(`http://localhost:3001/api/orders/${orderId}`);
+    const response = await fetch(`${API_URL}/api/orders/${orderId}`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -46,7 +44,7 @@ export const getOrderById = async (orderId) => {
 //get orders by Customer Id
 export const getOrdersByCustomerId = async (id) => {
   const response = await fetch(
-    `http://localhost:3001/api/orders/customer/${id}`
+    `${API_URL}/api/orders/customer/${id}`
   );
   const data = await response.json();
   return data;
@@ -54,7 +52,7 @@ export const getOrdersByCustomerId = async (id) => {
 
 //get orders by Company Id
 export const getOrdersByCompanyId = async (id) => {
-  const response = await fetch(`http://localhost:3001/api/orders/company/${id}`);
+  const response = await fetch(`${API_URL}/api/orders/company/${id}`);
   const data = await response.json();
   return data;
 };
@@ -62,7 +60,7 @@ export const getOrdersByCompanyId = async (id) => {
 export const sendNewOrder = async (body) => {
   console.log(body);
 
-  const response = await fetch("http://localhost:3001/api/orders", {
+  const response = await fetch(`${API_URL}/api/orders`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -74,7 +72,7 @@ export const sendNewOrder = async (body) => {
 };
 
 export const updateOrder = async (id, body) => {
-  const response = await fetch(`http://localhost:3001/api/orders/${id}`, {
+  const response = await fetch(`${API_URL}/api/orders/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -87,7 +85,7 @@ export const updateOrder = async (id, body) => {
 
 export async function updateOrderStatus(id, status) {
   const response = await fetch(
-    `http://localhost:3001/api/orders/${id}/status`,
+    `${API_URL}/api/orders/${id}/status`,
     {
       method: "PUT",
       headers: {
@@ -102,7 +100,7 @@ export async function updateOrderStatus(id, status) {
 }
 
 export const deleteOrder = async (id) => {
-  const response = await fetch(`http://localhost:3001/api/orders/${id}`, {
+  const response = await fetch(`${API_URL}/api/orders/${id}`, {
     method: "DELETE",
   });
   const data = await response.json();
