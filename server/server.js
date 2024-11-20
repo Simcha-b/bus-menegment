@@ -8,12 +8,11 @@ const __dirname = path.dirname(__filename);
 
 const port = process.env.PORT || 3001;
 
-// שנה את הנתיב כאן
 app.use(express.static(path.join(__dirname, "../client/build")));
 
-app.use((req, res) => {
-  res.status(404).json({ error: "Not Found" });
-});
+// app.use((req, res) => {
+//   res.status(404).json({ error: "Not Found" });
+// });
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client", "build", "index.html"));
