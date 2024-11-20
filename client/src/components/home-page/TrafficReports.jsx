@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-
+const baseUrl = process.env.REACT_APP_API_BASE_URL;
 export function TrafficReports() {
   const [trafficReports, setTrafficReports] = useState([]);
   const fetchReports = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/orders/traffic-reports",
+        `${baseUrl}api/orders/traffic-reports`,
         {
           method: "GET",
           headers: {
