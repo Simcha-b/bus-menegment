@@ -1,4 +1,4 @@
-import { Button, Input, Modal, Box, Stack, Alert } from "@mui/material";
+import { Button, Input, Box, Stack, Alert } from "@mui/material";
 import React, { useState } from "react";
 
 function Distance() {
@@ -44,22 +44,22 @@ function Distance() {
 
     try {
       const response = await fetch(
-        "http://localhost:3001/api/orders/calculate-distance",
+        `${process.env.REACT_APP_BASE_URL}/api/orders/calculate-distance`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            Accept: "application/json",
           },
           credentials: "include",
           body: JSON.stringify({
-            locations: validLocations.map(loc => loc.trim()),
+            locations: validLocations.map((loc) => loc.trim()),
           }),
         }
       );
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || "שגיאה בתקשורת עם השרת");
       }
@@ -95,10 +95,16 @@ function Distance() {
         p: 4,
       }}
     >
-      <h2 style={{ textAlign: "center", marginBottom: "20px" ,font:"menu", fontSize:"large"}}>
+      <h2
+        style={{
+          textAlign: "center",
+          marginBottom: "20px",
+          font: "menu",
+          fontSize: "large",
+        }}
+      >
         חישוב מרחק נסיעה
       </h2>
-
       <Stack spacing={3}>
         {locations.map((loc, index) => (
           <Box
@@ -141,7 +147,7 @@ function Distance() {
         </Button>
 
         {error && (
-          <Alert severity="error" sx={{ width: '100%' }}>
+          <Alert severity="error" sx={{ width: "100%" }}>
             {error}
           </Alert>
         )}
@@ -166,7 +172,7 @@ function Distance() {
             sx={{ minWidth: "120px" }}
             disabled={loading} // Disable button when loading
           >
-            {loading ? "טוען..." : "חשב מרחק"} 
+            {loading ? "טוען..." : "חשב מרחק"}
           </Button>
           <Button
             onClick={() => {
@@ -179,7 +185,8 @@ function Distance() {
             איפוס
           </Button>
         </Stack>
-      </Stack>    </Box>
+      </Stack>{" "}
+    </Box>
   );
 }
 
