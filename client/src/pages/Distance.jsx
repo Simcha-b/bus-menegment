@@ -1,6 +1,6 @@
 import { Button, Input, Box, Stack, Alert } from "@mui/material";
 import React, { useState } from "react";
-const BASE_URL = REACT_APP_BASE_URL.process.env;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 function Distance() {
   const [distance, setDistance] = useState("");
   const [locations, setLocations] = useState(["", ""]); // Initialize with two empty inputs
