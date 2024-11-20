@@ -16,7 +16,6 @@ import AddNewCustomer from "./AddNewCustomer";
 import { getOrdersByCustomerId } from "../../services/ordersService";
 import OrderDetails from "./OrderDetails";
 import { Box } from "@mui/system";
-import { useNavigate } from "react-router-dom";
 import AddPaymentForm from "../payments/AddPaymentForm";
 import EditOrder from "../order-actions/EditOrder";
 import DeleteOrder from "../order-actions/DeleteOrder";

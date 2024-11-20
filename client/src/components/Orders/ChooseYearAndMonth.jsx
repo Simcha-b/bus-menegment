@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -10,10 +9,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { useNavigate } from "react-router-dom";
 
 export default function ChooseYearAndMonth(props) {
-  const navigate = useNavigate();
   const setOpenProps = props.setOpen;
 
   //לשנות את הפונקציה לתאריך מינימום

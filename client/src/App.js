@@ -23,9 +23,9 @@ import HomePage from "./pages/HomePage";
 import NewOrder from "./pages/NewOrder";
 import Login from "./pages/Login";
 import ProtectedPages from "./pages/ProtectedPages";
-import Layout from "./components/layout/Layout";
+import Layout from "./components/layout-com/Layout";
 import Customers from "./pages/Customers";
-import Companys from "./pages/Companys";
+import Companies from "./pages/Companies";
 import NotFoundPage from "./pages/NotFoundPage";
 const queryClient = new QueryClient();
 
@@ -59,7 +59,7 @@ function App() {
                   <Route path="/orders" element={<Orders />}></Route>
                   <Route path="orders/new" element={<NewOrder />} />
                   <Route path="orders/:orderId" element={<NewOrder />} />
-                  <Route path="bus-company" element={<Companys />} />
+                  <Route path="bus-company" element={<Companies />} />
                   <Route path="customers" element={<Customers />} />
                   {/* <Route path="distance" element={<Distance />} /> */}
                 </Route>

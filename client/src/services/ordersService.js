@@ -12,9 +12,7 @@ export const getFutureOrders = async () => {
 // get orders by date
 export const getOrdersByDate = async (year, month) => {
   try {
-    const from = `${year}-${month}-01`;
-    const to = `${year}-${month}-31`;
-    const url = `http://localhost:3001/api/orders/byDate?from=${from}&to=${to}`;
+    const url = `http://localhost:3001/api/orders/byDate?year=${year}&month=${month}`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -32,7 +30,7 @@ export const getOrdersByDate = async (year, month) => {
 };
 
 //get order by id
-export const getOrderById = async (orderId) => {  
+export const getOrderById = async (orderId) => {
   try {
     const response = await fetch(`http://localhost:3001/api/orders/${orderId}`);
     const data = await response.json();
@@ -54,7 +52,9 @@ export const getOrdersByCustomerId = async (id) => {
 
 //get orders by Company Id
 export const getOrdersByCompanyId = async (id) => {
-  const response = await fetch(`http://localhost:3001/api/orders/company/${id}`);
+  const response = await fetch(
+    `http://localhost:3001/api/orders/company/${id}`
+  );
   const data = await response.json();
   return data;
 };

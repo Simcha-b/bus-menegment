@@ -1,37 +1,39 @@
-import { Table, ConfigProvider, Button, Tag, Input, Space } from "antd";
+import { Table, ConfigProvider, Tag, Button } from "antd";
 import heIL from "antd/lib/locale/he_IL";
-import { SearchOutlined } from "@ant-design/icons";
 import {
   formatDate,
   getFutureOrders,
   getOrders,
   getOrdersByDate,
 } from "../../services/ordersService";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import DeleteOrder from "../order-actions/DeleteOrder";
 import EditOrder from "../order-actions/EditOrder";
-import ChooseYearAndMonth from "./ChooseYearAndMonth";
 import OrderDetails from "../customers/OrderDetails";
+import ChooseYearAndMonth from "./ChooseYearAndMonth";
 
 const tagColors = {
   "חסר שיבוץ": "orange",
   "לא שולם": "red",
   "שולם חלקית": "blue",
-  "נתוני תשלום חסרים":"purple"
+  "נתוני תשלום חסרים": "purple",
 };
 
-function OrderTable({ tableType, year, month }) {
+function OrderTable({ tableType }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-  const searchInput = useRef(null);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [open, setOpen] = useState(false);
 
   const fetchOrders = async () => {
     setIsLoading(true);
     setError(null);
     try {
       if (tableType === "past") {
+        console.log(year, month);
         const orders = await getOrdersByDate(year, month);
         setData(orders);
       } else if (tableType === "future") {
@@ -63,13 +65,12 @@ function OrderTable({ tableType, year, month }) {
   };
 
   const getColumnFilterProps = (dataIndex) => ({
-    filters: [...new Set(data
-      .map(item => item[dataIndex])
-      .filter(Boolean))]
-      .map(text => ({
-        text: text,
-        value: text,
-      })),
+    filters: [
+      ...new Set(data.map((item) => item[dataIndex]).filter(Boolean)),
+    ].map((text) => ({
+      text: text,
+      value: text,
+    })),
     onFilter: (value, record) => record[dataIndex] === value,
     filterSearch: true,
   });
@@ -95,47 +96,47 @@ function OrderTable({ tableType, year, month }) {
         compare: (a, b) => {
           if (!a.order_date) return -1;
           if (!b.order_date) return 1;
-          const dateA = new Date(a.order_date.split('T')[0]);
-          const dateB = new Date(b.order_date.split('T')[0]);
+          const dateA = new Date(a.order_date.split("T")[0]);
+          const dateB = new Date(b.order_date.split("T")[0]);
           return dateA - dateB;
         },
-        multiple: 3
+        multiple: 3,
       },
       render: (text) => formatDate(text),
-      responsive: ['sm'],
+      responsive: ["sm"],
     },
     {
       title: "שם לקוח",
       dataIndex: "customer_name",
       key: "customer_name",
-      ...getColumnFilterProps('customer_name'),
+      ...getColumnFilterProps("customer_name"),
       sorter: {
         compare: (a, b) => a.customer_name.localeCompare(b.customer_name),
-        multiple: 2
+        multiple: 2,
       },
-      fixed: 'left',
+      fixed: "left",
     },
     {
       title: "איש קשר",
       dataIndex: "contact_name",
       key: "contact_name",
-      ...getColumnFilterProps('contact_name'),
+      ...getColumnFilterProps("contact_name"),
       sorter: (a, b) => a.contact_name.localeCompare(b.contact_name),
-      responsive: ['md'],
+      responsive: ["md"],
     },
     {
       title: "שעת התחלה",
       dataIndex: "start_time",
       key: "start_time",
-      responsive: ['sm'],
-      render: (text) => text ? text.slice(0, 5) : null,
+      responsive: ["sm"],
+      render: (text) => (text ? text.slice(0, 5) : null),
     },
     {
       title: "שעת סיום",
       dataIndex: "end_time",
       key: "end_time",
-      responsive: ['sm'],
-      render: (text) => text ? text.slice(0, 5) : null,
+      responsive: ["sm"],
+      render: (text) => (text ? text.slice(0, 5) : null),
     },
     {
       title: "כמות",
@@ -147,10 +148,10 @@ function OrderTable({ tableType, year, month }) {
       title: "מבצע",
       dataIndex: "company_name",
       key: "company_name",
-      ...getColumnFilterProps('company_name'),
-      sorter: (a, b) => a.company_name?.localeCompare(b.company_name || ''),
+      ...getColumnFilterProps("company_name"),
+      sorter: (a, b) => a.company_name?.localeCompare(b.company_name || ""),
       render: (text) => text || "לא שובץ",
-      responsive: ['md'],
+      responsive: ["md"],
     },
     {
       title: "תגיות",
@@ -164,12 +165,12 @@ function OrderTable({ tableType, year, month }) {
           ))}
         </div>
       ),
-      'responsive': ['md'],
+      responsive: ["md"],
     },
     {
       title: "פעולות",
       key: "action",
-      fixed: 'right',
+      fixed: "right",
       width: "15%",
       render: (_, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
@@ -194,15 +195,26 @@ function OrderTable({ tableType, year, month }) {
     <div>
       {tableType === "past" && (
         <>
+          <Button onClick={() => setOpen(true)}>שנה חודש ושנה</Button>
           <h1>{`הזמנות חודש ${month}/${year}`}</h1>
         </>
       )}
+      <>
+        <ChooseYearAndMonth
+          open={open}
+          year={year}
+          month={month}
+          setOpen={setOpen}
+          setYear={setYear}
+          setMonth={setMonth}
+        />
+      </>
       <ConfigProvider direction="rtl" locale={heIL}>
         <Table
           columns={columns}
           dataSource={dataSource}
           bordered={true}
-          scroll={{ x: 'max-content' }}
+          scroll={{ x: "max-content" }}
           rowSelection={{
             type: "checkbox",
             ...rowSelection,
@@ -214,14 +226,14 @@ function OrderTable({ tableType, year, month }) {
             expandedRowKeys,
             onExpandedRowsChange: (newExpandedRows) => {
               setExpandedRowKeys(newExpandedRows);
-            }
+            },
           }}
           onRow={(record) => ({
             onClick: () => {
               const isExpanded = expandedRowKeys.includes(record.key);
               setExpandedRowKeys(isExpanded ? [] : [record.key]);
             },
-            style: { cursor: 'pointer' }
+            style: { cursor: "pointer" },
           })}
         />
       </ConfigProvider>
