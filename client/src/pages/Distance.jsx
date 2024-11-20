@@ -1,6 +1,6 @@
 import { Button, Input, Box, Stack, Alert } from "@mui/material";
 import React, { useState } from "react";
-
+const BASE_URL = REACT_APP_BASE_URL.process.env;
 function Distance() {
   const [distance, setDistance] = useState("");
   const [locations, setLocations] = useState(["", ""]); // Initialize with two empty inputs
@@ -44,7 +44,7 @@ function Distance() {
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BASE_URL}/api/orders/calculate-distance`,
+        `${BASE_URL}/api/orders/calculate-distance`,
         {
           method: "POST",
           headers: {
