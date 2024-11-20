@@ -4,7 +4,7 @@ export function TrafficReports() {
   const fetchReports = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_API_BASE_URL}/api/orders/traffic-reports`,
+        `${process.env.REACT_APP_BASE_URL}/api/orders/traffic-reports`,
         {
           method: "GET",
           headers: {
