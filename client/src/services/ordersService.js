@@ -16,7 +16,7 @@ export const getFutureOrders = async () => {
 // get orders by date
 export const getOrdersByDate = async (year, month) => {
   try {
-    const url = `${API_URL}api/orders/byDate?year=${year}&month=${month}`;
+    const url = `${API_URL}/api/orders/byDate?year=${year}&month=${month}`;
     const response = await fetch(url);
 
     if (!response.ok) {
