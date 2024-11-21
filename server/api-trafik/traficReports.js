@@ -5,13 +5,10 @@ const URL = "https://www.iroads.co.il/";
 async function fetchTrafficReports() {
   try {
     // שליפת התוכן של הדף
-    const { data } = await axios.get(URL, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      },
-    });
-    
+    const res = await axios.get(URL);
+    console.log("HTTP Status:", res.status);
+
+    const data = await res.data;
     const $ = cheerio.load(data);
     // שמירת כל סוגי הדיווחים
     const reportCategories = [
@@ -48,7 +45,10 @@ async function fetchTrafficReports() {
     });
     return reports;
   } catch (error) {
-    console.error("Error fetching traffic reports:", error);
+    console.error(
+      "Request failed:",
+      error.response ? error.res.status : error.message
+    );
   }
 }
 
