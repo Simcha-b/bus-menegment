@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 export function TrafficReports() {
   const [trafficReports, setTrafficReports] = useState([]);
+  const containerRef = useRef(null);
+
   const fetchReports = async () => {
     try {
       const response = await fetch(
@@ -20,7 +22,6 @@ export function TrafficReports() {
       setTrafficReports(data);
     } catch (error) {
       console.error("שגיאה בקריאת הדיווחים:", error);
-      alert("אירעה שגיאה בקריאת הדיווחים");
     }
   };
 
@@ -28,18 +29,28 @@ export function TrafficReports() {
     fetchReports();
   }, []);
 
+  const handleMouseLeave = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+  };
+
   return (
-    <div style={{
-      height: '150px',
-      overflow: 'hidden',
-      position: 'relative',
-      border: '1px solid #ccc',
-      borderRadius: '4px',
-    }}>
-      <div style={{
-        animation: 'moveUp 30s linear infinite',
+    <div 
+      ref={containerRef}
+      className="traffic-container" 
+      onMouseLeave={handleMouseLeave}
+      style={{
+        height: '150px',
+        overflow: 'auto',
         position: 'relative',
-        transform: 'translateY(0)'  // התחלה מלמעלה
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+      }}
+    >
+      <div className="traffic-content" style={{
+        position: 'relative',
+        transform: 'translateY(0)'
       }}>
         {trafficReports.map((report, index) => (
           <div key={index} style={{
@@ -53,6 +64,14 @@ export function TrafficReports() {
       </div>
       <style>
         {`
+          .traffic-content {
+            animation: moveUp 50s linear infinite;
+          }
+
+          .traffic-container:hover .traffic-content {
+            animation-play-state: paused;
+          }
+
           @keyframes moveUp {
             0% { transform: translateY(0); }
             100% { transform: translateY(-50%); }

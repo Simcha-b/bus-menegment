@@ -1,60 +1,63 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-} from "@mui/material";
+import React, { useState } from "react";
 import { Box } from "@mui/system";
+import { ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import OrderTable from "../components/Orders/OrderTable";
 
 function Orders() {
-  
-
   const [tableType, setTableType] = useState("future");
 
-  // useEffect(() => {
-  //   if (tableType !== "past") {
-  //     setYear("");
-  //     setMonth("");
-  //   }
-  // }, [tableType]);
+  const handleChange = (event, newValue) => {
+    if (newValue !== null) {
+      setTableType(newValue);
+    }
+  };
 
   return (
-    <Box>
-      <FormControl>
-        <RadioGroup
-          row
+    <Box sx={{ p: 3 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mb: 4,
+        }}
+      >
+        <ToggleButtonGroup
           value={tableType}
-          onChange={(e) => {
-            setTableType(e.target.value);
-            // if (e.target.value === "past") {
-            //   setOpen(true);
-            // }
+          exclusive
+          onChange={handleChange}
+          aria-label="order type selection"
+          sx={{
+            backgroundColor: 'background.paper',
+            boxShadow: 1,
+            borderRadius: 2,
+            '& .MuiToggleButton-root': {
+              px: 3,
+              py: 1.5,
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              '&.Mui-selected': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                }
+              }
+            }
           }}
         >
-          <FormControlLabel
-            value="future"
-            control={<Radio />}
-            label="הזמנות עתידיות"
-          />
-          <FormControlLabel
-            value="past"
-            control={<Radio />}
-            label="הזמנות קודמות"
-          />
-          <FormControlLabel
-            value="all"
-            control={<Radio />}
-            label="כל ההזמנות"
-          />
-        </RadioGroup>
-      </FormControl>
+          <ToggleButton value="future">
+            הזמנות עתידיות
+          </ToggleButton>
+          <ToggleButton value="past">
+            הזמנות קודמות
+          </ToggleButton>
+          <ToggleButton value="all">
+            כל ההזמנות
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
 
-      <OrderTable
-        tableType={tableType}
-      />
+      <OrderTable tableType={tableType} />
     </Box>
   );
 }

@@ -194,21 +194,34 @@ function OrderTable({ tableType }) {
   return (
     <div>
       {tableType === "past" && (
-        <>
-          <Button onClick={() => setOpen(true)}>שנה חודש ושנה</Button>
-          <h1>{`הזמנות חודש ${month}/${year}`}</h1>
-        </>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'center',  // שינוי ל-center
+          marginBottom: '20px',
+          padding: '10px'
+        }}>
+          <div style={{ 
+            display: 'flex',
+            alignItems: 'center',
+            gap: '24px'
+          }}>
+            <h1 style={{ 
+              margin: 0,
+              fontSize: '24px',
+              fontFamily: 'Rubik, sans-serif',
+              fontWeight: '500'
+            }}>{`הזמנות חודש ${month}/${year}`}</h1>
+            
+            <ChooseYearAndMonth
+              year={year}
+              month={month}
+              setYear={setYear}
+              setMonth={setMonth}
+            />
+          </div>
+        </div>
       )}
-      <>
-        <ChooseYearAndMonth
-          open={open}
-          year={year}
-          month={month}
-          setOpen={setOpen}
-          setYear={setYear}
-          setMonth={setMonth}
-        />
-      </>
       <ConfigProvider direction="rtl" locale={heIL}>
         <Table
           columns={columns}
