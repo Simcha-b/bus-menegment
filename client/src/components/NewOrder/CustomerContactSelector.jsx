@@ -9,7 +9,6 @@ import AddNewContact from "../customers/AddNewContact";
 import {
   FormControl,
   FormControlLabel,
-  FormLabel,
   Radio,
   RadioGroup,
   Box,
@@ -33,26 +32,36 @@ export default function CustomerContactSelector({
 
   // שליפת אנשי קשר של המוסד שנבחר
   const { data: contacts, isLoading: isLoadingContacts } = useQuery({
-    queryKey: ["contacts", selectedCustomer?.id],
+    queryKey: ["contacts", selectedCustomer?.customer_id],
     queryFn: () => getContactsByCustomerId(selectedCustomer?.customer_id),
     enabled: !!selectedCustomer?.customer_id,
   });
 
+  // Update customer selection when formData changes
   useEffect(() => {
-    if (formData.customer_id && customers) {
+    if (formData.customer_id && customers && !selectedCustomer) {
       const customer = customers.find(
-        (inst) => inst.customer_id === formData.customer_id
+        (cust) => cust.customer_id === formData.customer_id
       );
-      setSelectedCustomer(customer);
+      if (customer) {
+        setSelectedCustomer(customer);
+        setValue("old"); // Ensure we're in "old customer" mode
+      }
     }
-  }, [formData.customer_id, customers]);
+  }, [formData.customer_id, customers, selectedCustomer]);
 
+  // Update contact selection when contacts are loaded
   useEffect(() => {
-    if (formData.contact_id && contacts) {
-      const contact = contacts.find((cont) => cont.id === formData.contact_id);
-      setSelectedContact(contact);
+    if (formData.contact_id && contacts && !selectedContact) {
+      const contact = contacts.find(
+        (cont) => cont.id === formData.contact_id
+      );
+      if (contact) {
+        setSelectedContact(contact);
+        setContactValue("old"); // Ensure we're in "old contact" mode
+      }
     }
-  }, [formData.contact_id, contacts]);
+  }, [formData.contact_id, contacts, selectedContact]);
 
   useEffect(() => {
     if (selectedCustomer) {

@@ -10,12 +10,14 @@ export function CompanySelector({ setFormData, formData }) {
     queryKey: ["companies"],
     queryFn: getCompanies,
   });
-  // useEffect(() => {
-  //   if (formData.company_id && companies) {
-  //     const company = companies.find((com) => com.company_id === formData.company_id);
-  //     setSelectedCompany(company);
-  //   }
-  // }, [formData.company_id, companies]);
+  
+  useEffect(() => {
+    if (formData?.company_id && companies) {
+      const company = companies.find((com) => com.company_id === formData.company_id);
+      setSelectedCompany(company);
+    }
+  }, [formData?.company_id, companies]);
+
   useEffect(() => {
     if (selectedCompany) {
       setFormData((prevFormData) => ({

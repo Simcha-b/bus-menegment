@@ -22,8 +22,7 @@ import BasicDatePicker from "../components/NewOrder/BasicDatePicker";
 import CustomerContactSelector from "../components/NewOrder/CustomerContactSelector";
 import BasicTimePicker from "../components/NewOrder/BasicTimePicker";
 
-function NewOrder() {
-  const { orderId } = useParams();
+function NewOrder({ orderId, isModal, onClose }) {
   const navigate = useNavigate();
   const companyRef = useRef();
 
@@ -144,39 +143,28 @@ function NewOrder() {
     try {
       let response;
       if (orderId) {
-        console.log(formData);
         response = await updateOrder(orderId, formData);
       } else {
         response = await sendNewOrder(formData);
       }
 
       if (response.success) {
-        console.log(
-          orderId
-            ? "Order updated successfully:"
-            : "Order submitted successfully:",
-          response
-        );
         setOpen(true);
-        setTimeout(() => {
-          navigate("/orders");
-        }, 3000);
+        if (isModal) {
+          setTimeout(() => {
+            onClose();
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            navigate("/orders");
+          }, 1500);
+        }
       } else {
-        console.log(
-          orderId ? "Error updating order:" : "Error submitting order:",
-          response
-        );
-        setErrorMessage(
-          response.message ||
-            (orderId ? "שגיאה בעדכון ההזמנה" : "שגיאה בשליחת ההזמנה")
-        );
+        setErrorMessage(response.message || (orderId ? "שגיאה בעדכון ההזמנה" : "שגיאה בשליחת ההזמנה"));
         setErrorOpen(true);
       }
     } catch (error) {
-      console.error(
-        orderId ? "Error updating order:" : "Error submitting order:",
-        error
-      );
+      console.error(error);
       setErrorMessage("שגיאת שרת");
       setErrorOpen(true);
     }

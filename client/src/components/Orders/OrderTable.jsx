@@ -197,7 +197,7 @@ function OrderTable({ tableType }) {
         <div style={{ 
           display: 'flex', 
           alignItems: 'center',
-          justifyContent: 'center',  // שינוי ל-center
+          justifyContent: 'center', 
           marginBottom: '20px',
           padding: '10px'
         }}>
