@@ -27,6 +27,7 @@ import Layout from "./components/layout-com/Layout";
 import Customers from "./pages/Customers";
 import Companies from "./pages/Companies";
 import NotFoundPage from "./pages/NotFoundPage";
+import Reports from "./pages/Reports";
 const queryClient = new QueryClient();
 
   const theme = createTheme(
@@ -97,6 +98,7 @@ function App() {
                   <Route path="orders/:orderId" element={<NewOrder />} />
                   <Route path="bus-company" element={<Companies />} />
                   <Route path="customers" element={<Customers />} />
+                  <Route path="reports" element={<Reports />} />
                   {/* <Route path="distance" element={<Distance />} /> */}
                 </Route>
               </Route>

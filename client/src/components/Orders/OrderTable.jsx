@@ -1,5 +1,6 @@
-import { Table, ConfigProvider, Tag } from "antd";
+import { Table, ConfigProvider, Tag, Input } from "antd";
 import heIL from "antd/lib/locale/he_IL";
+import ExportToExcel from '../common/ExportToExcel';
 import {
   formatDate,
   getFutureOrders,
@@ -21,11 +22,13 @@ const tagColors = {
 
 function OrderTable({ tableType }) {
   const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [tableFilters, setTableFilters] = useState({});
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -73,6 +76,36 @@ function OrderTable({ tableType }) {
     onFilter: (value, record) => record[dataIndex] === value,
     filterSearch: true,
   });
+
+  const getFilteredData = () => {
+    return data.filter((item) => {
+      const searchFields = [
+        item.customer_name,
+        item.contact_name,
+        item.company_name,
+        item.order_date,
+      ];
+      
+      return searchFields.some(
+        (field) =>
+          field &&
+          field.toString().toLowerCase().includes(searchText.toLowerCase())
+      );
+    });
+  };
+
+  const exportColumns = [
+    { title: 'תאריך', dataIndex: 'order_date', render: formatDate },
+    { title: 'שם לקוח', dataIndex: 'customer_name' },
+    { title: 'איש קשר', dataIndex: 'contact_name' },
+    { title: 'שעת התחלה', dataIndex: 'start_time', render: text => text?.slice(0, 5) || '' },
+    { title: 'שעת סיום', dataIndex: 'end_time', render: text => text?.slice(0, 5) || '' },
+    { title: 'כמות אוטובוסים', dataIndex: 'bus_quantity' },
+    { title: 'חברה מבצעת', dataIndex: 'company_name', render: text => text || 'לא שובץ' },
+    { title: 'סטטוס', dataIndex: 'tags', render: (_, record) => updateTags(record).join(', ') },
+    { title: 'מחיר ליחידה', dataIndex: 'price_per_bus_customer' },
+    { title: 'סה״כ שולם', dataIndex: 'total_paid_customer' },
+  ];
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -190,6 +223,10 @@ function OrderTable({ tableType }) {
     },
   };
 
+  const handleTableChange = (pagination, filters, sorter) => {
+    setTableFilters(filters);
+  };
+
   return (
     <div>
       {tableType === "past" && (
@@ -221,10 +258,38 @@ function OrderTable({ tableType }) {
           </div>
         </div>
       )}
+      
+      <div style={{ 
+        marginBottom: 16,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <Input.Search
+          placeholder="חיפוש..."
+          allowClear
+          enterButton
+          onSearch={(value) => setSearchText(value)}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ maxWidth: 300 }}
+        />
+        
+        <ExportToExcel
+          data={getFilteredData()}
+          columns={exportColumns}
+          fileName={`הזמנות_${tableType}`}
+          disabled={getFilteredData().length === 0}
+          tableFilters={tableFilters}
+        />
+      </div>
+
       <ConfigProvider direction="rtl" locale={heIL}>
         <Table
           columns={columns}
-          dataSource={dataSource}
+          dataSource={getFilteredData().map((item) => ({
+            ...item,
+            key: item.order_id,
+          }))}
           bordered={true}
           scroll={{ x: "max-content" }}
           rowSelection={{
@@ -247,6 +312,7 @@ function OrderTable({ tableType }) {
             },
             style: { cursor: "pointer" },
           })}
+          onChange={handleTableChange}
         />
       </ConfigProvider>
     </div>
