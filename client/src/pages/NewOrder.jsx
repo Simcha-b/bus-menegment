@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import {
   Checkbox,
@@ -10,7 +9,9 @@ import {
   Button,
   Paper,
   Typography,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   getOrderById,
   sendNewOrder,
@@ -109,7 +110,7 @@ function NewOrder({ orderId, isModal, onClose }) {
     const { id, value } = event.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [id]: value,
+      [id]: value === "" ? "" : value,
     }));
   };
   const hendelchecked = (e) => {
@@ -144,8 +145,12 @@ function NewOrder({ orderId, isModal, onClose }) {
       let response;
       if (orderId) {
         response = await updateOrder(orderId, formData);
+        console.log("updateOrder" , response);
+        
       } else {
         response = await sendNewOrder(formData);
+        console.log("sendNewOrder");
+        
       }
 
       if (response.success) {
@@ -172,7 +177,15 @@ function NewOrder({ orderId, isModal, onClose }) {
 
   return (
     <Box sx={{ p: 2, maxWidth: 800, margin: "0 auto" }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
+      <Paper elevation={3} sx={{ p: 3, position: "relative" }}>
+        {isModal && (
+          <IconButton
+            onClick={onClose}
+            sx={{ position: "absolute", top: 8, right: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        )}
         <Box
           component="form"
           noValidate
@@ -193,13 +206,14 @@ function NewOrder({ orderId, isModal, onClose }) {
                 label="כמות אוטובוסים"
                 type="number"
                 variant="outlined"
-                value={formData.bus_quantity}
+                value={formData.bus_quantity || ""}
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value >= 0) handleInputChange(e);
                 }}
                 error={!!errors.bus_quantity}
                 helperText={errors.bus_quantity}
+                InputProps={{ notched: true }}
               />
             </Box>
 
@@ -216,7 +230,7 @@ function NewOrder({ orderId, isModal, onClose }) {
               id="trip_details"
               label="פרטי הנסיעה"
               variant="outlined"
-              value={formData.trip_details}
+              value={formData.trip_details || ""}
               onChange={handleInputChange}
               error={!!errors.trip_details}
               helperText={errors.trip_details}
@@ -269,7 +283,7 @@ function NewOrder({ orderId, isModal, onClose }) {
                   id="price_per_bus_customer"
                   label="מחיר לאוטובוס"
                   variant="outlined"
-                  value={formData.price_per_bus_customer}
+                  value={formData.price_per_bus_customer || ""}
                   onChange={handleInputChange}
                 />
                 <TextField
@@ -277,7 +291,7 @@ function NewOrder({ orderId, isModal, onClose }) {
                   id="extra_pay_customer"
                   label="תשלומים נוספים"
                   variant="outlined"
-                  value={formData.extra_pay_customer}
+                  value={formData.extra_pay_customer || ""}
                   onChange={handleInputChange}
                 />
 
@@ -292,7 +306,7 @@ function NewOrder({ orderId, isModal, onClose }) {
                   variant="outlined"
                   multiline
                   rows={2}
-                  value={formData.notes_customer}
+                  value={formData.notes_customer || ""}
                   onChange={handleInputChange}
                   sx={{ gridColumn: "span 2" }}
                 />
@@ -320,7 +334,7 @@ function NewOrder({ orderId, isModal, onClose }) {
                     id="total_paid_customer"
                     label="סה''כ שולם"
                     variant="outlined"
-                    value={formData.total_paid_customer}
+                    value={formData.total_paid_customer || ""}
                     onChange={handleInputChange}
                   />
                 </Box>
@@ -340,7 +354,7 @@ function NewOrder({ orderId, isModal, onClose }) {
                   id="price_per_bus_company"
                   label="מחיר ספק לאוטובוס"
                   variant="outlined"
-                  value={formData.price_per_bus_company}
+                  value={formData.price_per_bus_company || ""}
                   onChange={handleInputChange}
                 />
                 <TextField
@@ -348,7 +362,7 @@ function NewOrder({ orderId, isModal, onClose }) {
                   id="extra_pay_company"
                   label="תשלומים נוספים"
                   variant="outlined"
-                  value={formData.extra_pay_company}
+                  value={formData.extra_pay_company || ""}
                   onChange={handleInputChange}
                 />
 
@@ -363,7 +377,7 @@ function NewOrder({ orderId, isModal, onClose }) {
                   variant="outlined"
                   multiline
                   rows={2}
-                  value={formData.notes_company}
+                  value={formData.notes_company || ""}
                   onChange={handleInputChange}
                   sx={{ gridColumn: "span 2" }}
                 />

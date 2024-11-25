@@ -128,7 +128,11 @@ async function updateOrders(req, res) {
 
   // Format the date if it exists in the updates
   if (updates.order_date) {
+    console.log(updates.order_date);
+    
     updates.order_date = formatDateForMySQL(updates.order_date);
+    console.log(updates.order_date);
+
   }
 
   try {

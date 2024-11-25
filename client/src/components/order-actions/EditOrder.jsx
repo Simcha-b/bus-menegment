@@ -11,6 +11,10 @@ function EditOrder({ order, fetchOrders }) {
     setOpen(true);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
       <Button
@@ -20,10 +24,7 @@ function EditOrder({ order, fetchOrders }) {
       />
       <EditOrderModal 
         open={open} 
-        onClose={() => {
-          setOpen(false);
-          fetchOrders();
-        }}
+        onClose={handleClose}
         orderId={order.order_id}
       />
     </>

@@ -16,7 +16,6 @@ import AddNewCustomer from "./AddNewCustomer";
 import { getOrdersByCustomerId } from "../../services/ordersService";
 import OrderDetails from "./OrderDetails";
 import { Box } from "@mui/system";
-import AddPaymentForm from "../payments/AddPaymentForm";
 import EditOrder from "../order-actions/EditOrder";
 import DeleteOrder from "../order-actions/DeleteOrder";
 
@@ -27,14 +26,10 @@ const CustomersTable = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [selectedCustomerName, setSelectedCustomerName] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingOrder, setEditingOrder] = useState(null);
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [contacts, setContacts] = useState([]);
   const [newContact, setNewContact] = useState({ name: "", phone: "" });
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [selectedOrderForPayment, setSelectedOrderForPayment] = useState(null);
   const [form] = Form.useForm();
 
   //function to fetch customers from the server
@@ -97,17 +92,6 @@ const CustomersTable = () => {
     setShowOrderDetails(false);
     setSelectedOrder(null);
   };
-  //function to handle the edit order
-  const handleEditOrder = (order) => {
-    setEditingOrder(order);
-    setIsEditing(true);
-  };
-  //function to handle the save order
-  const handleSaveOrder = () => {
-    // Implement save logic here, e.g., call an API to save the edited order
-    setIsEditing(false);
-    setEditingOrder(null);
-  };
 
   //function to handle the edit customer
   const handleEditCustomer = (customer) => {
@@ -141,22 +125,6 @@ const CustomersTable = () => {
   //function to handle removing a contact
   const handleRemoveContact = (index) => {
     setContacts(contacts.filter((_, i) => i !== index));
-  };
-
-  const handleAddPayment = (order) => {
-    setSelectedOrderForPayment(order);
-    setIsPaymentModalOpen(true);
-  };
-
-  const handlePaymentModalClose = () => {
-    setIsPaymentModalOpen(false);
-    setSelectedOrderForPayment(null);
-  };
-
-  const handlePaymentAdded = () => {
-    // Refresh orders or perform any other necessary actions
-    setIsPaymentModalOpen(false);
-    setSelectedOrderForPayment(null);
   };
 
   useEffect(() => {
@@ -287,15 +255,6 @@ const CustomersTable = () => {
         </Space>
       ),
     },
-    {
-      title: "הוסף תשלום",
-      key: "add_payment",
-      render: (_, record) => (
-        !record.paid && (
-          <Button onClick={() => handleAddPayment(record)}>הוסף תשלום</Button>
-        )
-      ),
-    },
   ];
 
   const handleDeleteOrder = (order) => {
@@ -414,21 +373,6 @@ const CustomersTable = () => {
               </Space>
             </Form.Item>
           </Form>
-        </Modal>
-        <Modal
-          title="הוסף תשלום"
-          open={isPaymentModalOpen}
-          onCancel={handlePaymentModalClose}
-          footer={null}
-        >
-          {selectedOrderForPayment && (
-            <AddPaymentForm
-              visible={isPaymentModalOpen}
-              onClose={handlePaymentModalClose}
-              onPaymentAdded={handlePaymentAdded}
-              order={selectedOrderForPayment} // Pass the selected order
-            />
-          )}
         </Modal>
       </Box>
     </ConfigProvider>

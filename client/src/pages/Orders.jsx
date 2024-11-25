@@ -49,7 +49,7 @@ function Orders() {
             הזמנות עתידיות
           </ToggleButton>
           <ToggleButton value="past">
-            הזמנות קודמות
+            הזמנות לפי חודש
           </ToggleButton>
           <ToggleButton value="all">
             כל ההזמנות

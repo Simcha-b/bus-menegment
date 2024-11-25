@@ -7,7 +7,11 @@ import "dayjs/locale/he"; // Import Hebrew locale
 
 export default function BasicDatePicker({ formData, setFormData }) {
   function handleDateChange(newDate) {
-    const formattedDate = newDate.toISOString().split("T")[0]; // המרת התאריך לפורמט YYYY-MM-DD
+
+    newDate = new Date(newDate);
+
+    const formattedDate = dayjs(newDate).format("YYYY-MM-DD");
+
     setFormData({ ...formData, order_date: formattedDate });
   }
 

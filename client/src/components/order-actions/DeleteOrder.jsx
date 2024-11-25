@@ -1,13 +1,15 @@
 import React from "react";
+import { Button } from 'antd';
+
 import { deleteOrder } from "../../services/ordersService";
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function DeleteOrder({ order_id, fetchOrders }) {
   const [confirmDelete, setConfirmDelete] = React.useState(false);
@@ -23,24 +25,26 @@ function DeleteOrder({ order_id, fetchOrders }) {
 
   const handleDelete = async () => {
     console.log(111);
-      try {
-        const res = await deleteOrder(order_id);
-        if (res) {
-          fetchOrders();
-          return res;
-        }
-      } catch (error) {
-        console.error("Failed to delete order:", error);
+    try {
+      const res = await deleteOrder(order_id);
+      if (res) {
+        fetchOrders();
+        return res;
       }
+    } catch (error) {
+      console.error("Failed to delete order:", error);
+    }
     handleClose();
     setConfirmDelete(false);
   };
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        מחק
-      </Button>
+      <Button
+        size="small"
+        onClick={handleClickOpen}
+        icon={<DeleteIcon />}
+      ></Button>
       <Dialog
         open={open}
         onClose={handleClose}

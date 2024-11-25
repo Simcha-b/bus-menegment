@@ -1,4 +1,4 @@
-import { Table, ConfigProvider, Tag, Button } from "antd";
+import { Table, ConfigProvider, Tag } from "antd";
 import heIL from "antd/lib/locale/he_IL";
 import {
   formatDate,
@@ -26,7 +26,6 @@ function OrderTable({ tableType }) {
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [open, setOpen] = useState(false);
 
   const fetchOrders = async () => {
     setIsLoading(true);

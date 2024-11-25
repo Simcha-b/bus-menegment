@@ -279,7 +279,9 @@ function Heder() {
         ]}
         width="90%"
       >
-        <Distance />
+        <Box>
+          <Distance />
+        </Box>
       </Modal>
     </AppBar>
   );
