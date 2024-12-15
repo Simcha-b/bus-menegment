@@ -77,7 +77,7 @@ function Heder() {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     navigate("/login");
   };
 
@@ -100,7 +100,6 @@ function Heder() {
 
   return (
     <AppBar position="sticky" sx={{ bgcolor: "primary.dark" }}>
-      {" "}
       {/* Change AppBar color */}
       <Container maxWidth="xl">
         <Toolbar disableGutters>

@@ -1,7 +1,6 @@
 import { Button, Input, Box, Stack, Alert } from "@mui/material";
 import React, { useState } from "react";
 const API_URL = process.env.REACT_APP_API_URL;
-const token = localStorage.getItem("token");
 
 function Distance() {
   const [distance, setDistance] = useState("");
@@ -50,7 +49,7 @@ function Distance() {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
         credentials: "include",
         body: JSON.stringify({
