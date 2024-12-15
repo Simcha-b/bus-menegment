@@ -9,7 +9,6 @@ import AddNewContact from "../customers/AddNewContact";
 import {
   FormControl,
   FormControlLabel,
-  FormLabel,
   Radio,
   RadioGroup,
   Box,
@@ -25,6 +24,24 @@ export default function CustomerContactSelector({
   const [selectedContact, setSelectedContact] = useState(null);
   const [contactValue, setContactValue] = useState("old");
 
+  const handleNewCustomerSuccess = (newCustomer) => {
+    setValue("old");
+    setSelectedCustomer(newCustomer);
+    setFormData(prev => ({
+      ...prev,
+      customer_id: newCustomer.customer_id
+    }));
+  };
+
+  const handleNewContactSuccess = (newContact) => {
+    setContactValue("old");
+    setSelectedContact(newContact);
+    setFormData(prev => ({
+      ...prev,
+      contact_id: newContact.id
+    }));
+  };
+
   // שליפת לקוחות
   const { data: customers, isLoading: isLoadingCustomers } = useQuery({
     queryKey: ["customers"],
@@ -33,26 +50,36 @@ export default function CustomerContactSelector({
 
   // שליפת אנשי קשר של המוסד שנבחר
   const { data: contacts, isLoading: isLoadingContacts } = useQuery({
-    queryKey: ["contacts", selectedCustomer?.id],
+    queryKey: ["contacts", selectedCustomer?.customer_id],
     queryFn: () => getContactsByCustomerId(selectedCustomer?.customer_id),
     enabled: !!selectedCustomer?.customer_id,
   });
 
+  // Update customer selection when formData changes
   useEffect(() => {
-    if (formData.customer_id && customers) {
+    if (formData.customer_id && customers && !selectedCustomer) {
       const customer = customers.find(
-        (inst) => inst.customer_id === formData.customer_id
+        (cust) => cust.customer_id === formData.customer_id
       );
-      setSelectedCustomer(customer);
+      if (customer) {
+        setSelectedCustomer(customer);
+        setValue("old"); // Ensure we're in "old customer" mode
+      }
     }
-  }, [formData.customer_id, customers]);
+  }, [formData.customer_id, customers, selectedCustomer]);
 
+  // Update contact selection when contacts are loaded
   useEffect(() => {
-    if (formData.contact_id && contacts) {
-      const contact = contacts.find((cont) => cont.id === formData.contact_id);
-      setSelectedContact(contact);
+    if (formData.contact_id && contacts && !selectedContact) {
+      const contact = contacts.find(
+        (cont) => cont.id === formData.contact_id
+      );
+      if (contact) {
+        setSelectedContact(contact);
+        setContactValue("old"); // Ensure we're in "old contact" mode
+      }
     }
-  }, [formData.contact_id, contacts]);
+  }, [formData.contact_id, contacts, selectedContact]);
 
   useEffect(() => {
     if (selectedCustomer) {
@@ -105,7 +132,7 @@ export default function CustomerContactSelector({
 
       {value === "new" ? (
         <Box sx={{ maxWidth: '600px' }}>
-          <AddNewCustomer />
+          <AddNewCustomer onSuccess={handleNewCustomerSuccess} />
         </Box>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -113,7 +140,7 @@ export default function CustomerContactSelector({
             size="small" // Make the field smaller
             disablePortal
             options={customerOptions}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option?.name || ''}  // Add null check
             loading={isLoadingCustomers}
             value={selectedCustomer}
             onChange={(event, newValue) => {
@@ -173,7 +200,10 @@ export default function CustomerContactSelector({
                 />
               ) : (
                 <Box sx={{ maxWidth: '600px' }}>
-                  <AddNewContact />
+                  <AddNewContact 
+                    customer_id={formData.customer_id} 
+                    onSuccess={handleNewContactSuccess}
+                  />
                 </Box>
               )}
             </Box>

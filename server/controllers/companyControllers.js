@@ -1,4 +1,5 @@
 import companiesQueries from "../db/queries/companiesQueries.js";
+
 async function getCompanies(_, res) {
   try {
     const companies = await companiesQueries.getAllCompanies();
@@ -42,6 +43,8 @@ async function insertCompany(req, res) {
     const newCompany = await companiesQueries.insertCompany(company);
     res.status(201).json(newCompany);
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({
       success: false,
       message: "Error inserting company",

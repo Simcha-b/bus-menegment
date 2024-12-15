@@ -6,7 +6,9 @@ import companyRoutes from "./routes/companyRoutes.js";
 import contactsRoutes from "./routes/contactRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
 import paymentsRoutes from "./routes/paymentsRoutes.js";
+import mailRoutes from "./routes/mailRoutes.js";
 
+import verifyToken from "./middlewares/verifyToken.js";
 const app = express();
 
 app.use(
@@ -14,18 +16,22 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://bederech-hayshar-914f7e5318cb.herokuapp.com",
+      "https://bederech-hayshar.netlify.app"
     ],
     credentials: true,
   })
 );
 app.use(express.json());
 
-app.use("/api/customers", customersRoutes);
-app.use("/api/orders", ordersRoutes);
-app.use("/api/companies", companyRoutes);
-app.use("/api/contacts", contactsRoutes);
+app.use("/api/customers",verifyToken, customersRoutes);
+app.use("/api/orders",verifyToken, ordersRoutes);
+app.use("/api/companies",verifyToken, companyRoutes);
+app.use("/api/contacts",verifyToken, contactsRoutes);
+app.use("/api/payments",verifyToken, paymentsRoutes);
+app.use("/api/mail", mailRoutes);
 app.use("/api/users", usersRoutes);
-app.use("/api/payments", paymentsRoutes);
+
+
 
 
 

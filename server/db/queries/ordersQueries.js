@@ -54,11 +54,18 @@ ON o.company_id = b.company_id
   return rows;
 }
 //select orders by date
-async function getOrderByDate(from, to) {
+async function getOrderByDate(year, month) {
   const [rows] = await pool.query(
-    `select * from orders
-    where order_date between ? and ?`,
-    [from, to]
+    `SELECT o.*, c.name as customer_name, con.name as contact_name, b.company_name
+FROM orders as o
+LEFT JOIN customers as c
+ON o.customer_id = c.customer_id
+LEFT JOIN contacts as con
+ON o.contact_id = con.id 
+LEFT JOIN bus_companies as b
+ON o.company_id = b.company_id
+     where year(order_date) = ? and month(order_date) = ?`,
+    [year, month]
   );
   return rows;
 }
@@ -83,11 +90,6 @@ async function updateOrder(id, updates) {
       "Invalid input: id is required and updates object cannot be empty"
     );
   }
-  async function updateOrderStatus(order_id, status) {
-    const query = `UPDATE orders SET status = ? WHERE order_id = ?`;
-    await pool.query(query, [status, order_id]);
-  }
-
   // Create the SET part of the query dynamically
   const setClause = Object.keys(updates)
     .map((key) => `${key} = ?`)

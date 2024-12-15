@@ -1,25 +1,39 @@
-import { Button } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Button } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import EditOrderModal from '../Orders/EditOrderModal';
 
-function EditOrder({ order }) {
-  const navigate = useNavigate();
+function EditOrder({ order, fetchOrders, refreshOrders }) {
+  const [open, setOpen] = useState(false);
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (fetchOrders) {
+      fetchOrders();
+    }
+    if (refreshOrders) {
+      refreshOrders();
+    }
+  };
 
   return (
-    <div>
+    <>
       <Button
-        variant="outlined"
-        onClick={() => {
-          navigate(`/orders/${order.order_id}`, {
-            // state: {
-            //   orderId: order.order_id,
-            // },
-          });
-        }}
-      >
-        ערוך פרטים
-      </Button>
-    </div>
+        onClick={handleClick}
+        icon={<EditOutlined />}
+        size="small"
+      />
+      <EditOrderModal 
+        open={open} 
+        onClose={handleClose}
+        orderId={order.order_id}
+      />
+    </>
   );
 }
 
